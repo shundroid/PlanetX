@@ -1,0 +1,19 @@
+{
+  "name": "pla",
+  "version": "1.0.0",
+  "description": "",
+  "main": "n/a",
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "gulp-typescript": "^2.10.0",
+    "typescript": "^1.7.3"
+  },
+  "devDependencies": {
+    "gulp-less": "^3.0.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "shundroid",
+  "license": "ISC"
+}

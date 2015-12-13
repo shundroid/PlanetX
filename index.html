@@ -5,8 +5,21 @@
   <meta name="viewport" content="width=device-width,inital-scale=1.0" />
   <title>Planet</title>
   <link rel="stylesheet" href="css/ui.css" />
-  <script type="text/javascript" src="js/classes.js"></script>
-  <script type="text/javascript" src="js/canvas.js"></script>
+  <!--
+    script
+    読み込む順番:
+    1. js/lib/ 以下
+    2. js/ 以下
+    3. main.js
+  -->
+  <script type="text/javascript" src="js/lib/classes.js"></script>
+  <script type="text/javascript" src="js/lib/util.js"></script>
+  <script type="text/javascript" src="js/lib/canvas.js"></script>
+  
+  <script type="text/javascript" src="js/ui.js"></script>
+  <script type="text/javascript" src="js/planet.js"></script>
+  
+  <!-- 一番最後に -->
   <script type="text/javascript" src="js/main.js"></script>
 </head>
 <body>

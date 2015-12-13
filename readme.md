@@ -9,3 +9,13 @@
 npm i
 bower i
 ```
+
+## APIなどについて
+
+使用するもの
+- Array.prototype.forEach
+- DOMContentLoaded Event
+
+# jsのルール
+- document.addEventListener, document.getElementById はui.ts以外には書かない。
+- lib/ 以下のファイルから、main.ts, planet.ts, ui.tsは参照しない。

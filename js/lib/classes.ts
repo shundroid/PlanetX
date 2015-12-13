@@ -1,3 +1,6 @@
+/**
+ * PlanetでTypescriptを活用するためのクラスを提供します。
+ */
 module p {
   export class List<list> {
     private data:Object;
@@ -21,6 +24,25 @@ module p {
     }
     clear() {
       this.data = {};
+    }
+    contains(index:string):boolean {
+      return this.data.hasOwnProperty(index);
+    }
+  }
+  export class Vector2 {
+    x:number;
+    y:number;
+    constructor(x:number, y:number) {
+      this.x = x;
+      this.y = y;
+    }
+  }
+  export class plaEvent {
+    constructor() {
+      
+    }
+    static empty() {
+      return new this();
     }
   }
 }

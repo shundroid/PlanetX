@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,inital-scale=1.0" />
   <title>Planet</title>
   <link rel="stylesheet" href="css/ui.css" />
+  <script type="text/javascript" src="bower_components/web-animations-js/web-animations.min.js"></script>
   <!--
     script
     読み込む順番:
@@ -23,6 +24,15 @@
   <script type="text/javascript" src="js/main.js"></script>
 </head>
 <body>
+  <div class="loading">
+  </div>
   <canvas id="pla-canvas" width="300" height="300"></canvas>
+  <footer class="pla-footer">
+    <div class="tray">
+      <button id="tray-fullscreen">^</button>
+      <ul class="tray-ul">
+      </ul>
+    </div>
+  </footer>
 </body>
 </html>

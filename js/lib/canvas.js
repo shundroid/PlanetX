@@ -38,7 +38,7 @@ var Canvas;
      * 指定された画像を描画します。
      * @param {HTMLImageElement} img - 描画する画像
      * @param {pRect} rect - 描画する部分(x, y, width, height)
-     * @return {number} 画像を消すなどするときに、判別するID
+     * @return {number} 画像を消すなどするとき \に、判別するID
      */
     function render(img, rect) {
         ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);

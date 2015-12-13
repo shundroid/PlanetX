@@ -1,0 +1,21 @@
+{
+  "name": "pla",
+  "description": "",
+  "main": "n/a",
+  "authors": [
+    "shundroid"
+  ],
+  "license": "ISC",
+  "moduleType": [],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "web-animations-js": "~2.1.4"
+  }
+}

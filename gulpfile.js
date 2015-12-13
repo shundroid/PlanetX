@@ -10,7 +10,7 @@ gulp.task("ts", function() {
 gulp.task("less", function() {
   gulp.src('css/*.less').pipe(less()).pipe(gulp.dest('./css/'));
 });
-gulp.task("watch", function() {
+gulp.task("build", function() {
   gulp.watch("./js/**/*.ts", ["ts"]);
   gulp.watch("./css/*.less", ["less"]);
 });

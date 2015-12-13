@@ -1,3 +1,8 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 /**
  * PlanetでTypescriptを活用するためのクラスを提供します。
  */
@@ -39,13 +44,120 @@ var p;
         return Vector2;
     })();
     p.Vector2 = Vector2;
-    var plaEvent = (function () {
-        function plaEvent() {
-        }
-        plaEvent.empty = function () {
-            return new this();
-        };
-        return plaEvent;
-    })();
-    p.plaEvent = plaEvent;
 })(p || (p = {}));
+var pack;
+(function (pack) {
+    var pPackModule = (function () {
+        function pPackModule(data) {
+            var _this = this;
+            this.pack = new pPackInfo(data["pack"]);
+            this.blocks = new p.List();
+            Object.keys(data["blocks"]).forEach(function (i) {
+                _this.blocks.push(i, new pBlockInfo({ bName: data["blocks"][i]["name"], filename: data["blocks"][i]["filename"] }));
+            });
+            this.objs = new p.List();
+            Object.keys(data["objs"]).forEach(function (i) {
+                var cur = data["objs"][i];
+                if (cur["hidden"]) {
+                    _this.objs.push(i, new pObjInfo({ oName: cur["name"], filename: cur["filename"], width: cur["width"], height: cur["height"], type: cur["type"] }));
+                }
+                else {
+                    _this.objs.push(i, new pObjInfo({ oName: cur["name"], filename: cur["filename"], width: cur["width"], height: cur["height"], type: cur["type"], hidden: cur["hidden"] }));
+                }
+            });
+            this.descriptions = new p.List();
+            Object.keys(data["descriptions"]).forEach(function (i) {
+                var cur = data["descriptions"][i];
+                _this.descriptions.push(i, new pDesInfo(cur));
+            });
+            var a1 = new p.List();
+            Object.keys(data["abilities"]["selectelement"]).forEach(function (i) {
+                a1.push(i, data["abilities"]["selectelement"][i]);
+            });
+            var a2 = new p.List();
+            Object.keys(data["abilities"]["keys"]).forEach(function (i) {
+                a2.push(i, data["abilities"]["keys"][i]);
+            });
+            var a3 = new p.List();
+            Object.keys(data["abilities"]["types"]).forEach(function (i) {
+                a3.push(i, data["abilities"]["keys"][i]);
+            });
+            this.abilities = new pAbilityInfo({ selectelement: a1, keys: a2, types: a3 });
+        }
+        return pPackModule;
+    })();
+    pack.pPackModule = pPackModule;
+    var pPackInfo = (function () {
+        function pPackInfo(data) {
+            this.pName = data["name"];
+            this.version = data["version"];
+            this.author = data["author"];
+            this.exportType = data["exportType"];
+        }
+        return pPackInfo;
+    })();
+    pack.pPackInfo = pPackInfo;
+    var pInfo = (function () {
+        function pInfo(p) {
+            this.data = p;
+        }
+        return pInfo;
+    })();
+    pack.pInfo = pInfo;
+    var pBlockInfo = (function (_super) {
+        __extends(pBlockInfo, _super);
+        function pBlockInfo() {
+            _super.apply(this, arguments);
+        }
+        return pBlockInfo;
+    })(pInfo);
+    pack.pBlockInfo = pBlockInfo;
+    var pObjInfo = (function (_super) {
+        __extends(pObjInfo, _super);
+        function pObjInfo() {
+            _super.apply(this, arguments);
+        }
+        return pObjInfo;
+    })(pInfo);
+    pack.pObjInfo = pObjInfo;
+    var pDesInfo = (function (_super) {
+        __extends(pDesInfo, _super);
+        function pDesInfo() {
+            _super.apply(this, arguments);
+        }
+        return pDesInfo;
+    })(pInfo);
+    pack.pDesInfo = pDesInfo;
+    var pAbilityInfo = (function (_super) {
+        __extends(pAbilityInfo, _super);
+        function pAbilityInfo() {
+            _super.apply(this, arguments);
+        }
+        return pAbilityInfo;
+    })(pInfo);
+    pack.pAbilityInfo = pAbilityInfo;
+})(pack || (pack = {}));
+var ev;
+(function (ev_1) {
+    var events = new p.List();
+    function addPlaEventListener(eventName, listener) {
+        if (events.contains(eventName)) {
+            var a = events.get(eventName);
+            a.push(listener);
+            events.update(eventName, a);
+        }
+        else {
+            events.push(eventName, [listener]);
+        }
+    }
+    ev_1.addPlaEventListener = addPlaEventListener;
+    function raiseEvent(eventName, e) {
+        if (events.contains(eventName)) {
+            events.get(eventName).forEach(function (i) {
+                // i.call(e); だとeがundefinedで渡されてしまう
+                i(e);
+            });
+        }
+    }
+    ev_1.raiseEvent = raiseEvent;
+})(ev || (ev = {}));

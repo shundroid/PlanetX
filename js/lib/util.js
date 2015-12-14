@@ -7,12 +7,27 @@ var util;
     /**
      * 面倒くさい処理をせず、簡潔にHTMLImageElementインスタンスを生成します。
      */
-    function QuickImage(filename, size) {
-        var a = new Image(size.x, size.y);
+    function QuickImage(filename) {
+        var a = new Image();
         a.src = filename;
         return a;
     }
     util.QuickImage = QuickImage;
+    function makeNoJaggyURL(filename, size) {
+        var a = new Image();
+        a.src = filename;
+        var width = (a.width + size.x) / 2;
+        var height = (a.height + size.y) / 2;
+        var newC, ctx;
+        var saveURL;
+        newC = document.createElement("canvas");
+        newC.width = width;
+        newC.height = height;
+        ctx = newC.getContext("2d");
+        ctx.drawImage(a, 0, 0, width, height);
+        return newC.toDataURL("image/png");
+    }
+    util.makeNoJaggyURL = makeNoJaggyURL;
     /**
      * いっぺんにたくさんのlogを飛ばせるが、飛ばした元関数がわかりにくくなるのが欠点。
      */

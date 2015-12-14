@@ -7,6 +7,7 @@
 module ui {
   function init() {
     document.addEventListener("DOMContentLoaded", loadDOM);
+    document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen);
     ev.addPlaEventListener("ui_clickTray", clickTray);
     ev.addPlaEventListener("ui_mousedownCanvas", clickCanvas);
   }
@@ -26,7 +27,7 @@ module ui {
     var elem = <HTMLElement>document.getElementsByClassName("loading")[0];
     elem.style.opacity = "0";
     elem.animate([
-      { opacity: 1},
+      { opacity: 0.8},
       { opacity: 0 }
     ], {
       direction: 'alternate',
@@ -79,7 +80,7 @@ module ui {
           if (i === list.length - 1) {
             ev.raiseEvent("initedTray", null);
           } else {
-            loadingStatus("loading tray : " + i.toString() + " / " + (list.length - 1).toString()):
+            loadingStatus("loading tray : " + i.toString() + " / " + (list.length - 1).toString());
             async(i + 1);
           }
         };
@@ -89,6 +90,29 @@ module ui {
   }
   export function loadingStatus(text) {
     (<HTMLElement>document.getElementsByClassName("loading")[0]).innerHTML = "Loading...<br />" + text;
+  }
+  export function startUIWaitMode() {
+    document.getElementById("pla-canvas").style.cursor = "wait";
+  }
+  export function endUIWaitMode() {
+    document.getElementById("pla-canvas").style.cursor = "crosshair";
+  }
+  export function togglefullScreen() {
+    if (!main.isFullscreen) {
+      var footer = <HTMLElement>document.getElementsByClassName("pla-footer")[0];
+      var tray = document.getElementById("tray");
+      footer.style.height = window.innerHeight + "px";
+      tray.style.height = window.innerHeight + "px";
+      footer.animate([
+        { height: 50 },
+        { height: window.innerHeight }
+      ], {
+        // begin to...
+      })
+    } else {
+      
+    }
+    main.isFullscreen = !main.isFullscreen;
   }
   init();
 }

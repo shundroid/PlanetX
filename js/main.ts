@@ -17,6 +17,8 @@ module main {
   }
   function init() {
     packName = "halstar";
+    trayIconURLs = new p.List<string>();
+    isFullscreen = false;
     ui.setupCanvas();
     loadPack(packName).then((obj) => {
       packModule = new pack.pPackModule(obj);
@@ -24,8 +26,17 @@ module main {
       ui.initTray();
     });
     ev.addPlaEventListener("initedTray", () => {
+      makeDataURL();
       updateSelectedBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック");
+      ui.loadingStatus("Are you ready?");
       ev.raiseEvent("ready", null);
+    });
+  }
+  function makeDataURL() {
+    ui.loadingStatus("making DataURL");
+    var blockList = packModule.blocks.getAll();
+    Object.keys(blockList).forEach(i => {
+      trayIconURLs.push(i, util.makeNoJaggyURL("pack/" + packName + "/" + packModule.blocks.get(i).data.filename, new p.Vector2(50, 50)));
     });
   }
   function loadPack(packname:string) {
@@ -55,7 +66,7 @@ module main {
     }
     var detail = planet.getFromGrid(new p.Vector2(prefab.gridX, prefab.gridY));
     if (!detail.contains) {
-      var id = Canvas.render(util.QuickImage(prefab.filename, new p.Vector2(50, 50)), {x: prefab.gridX, y: prefab.gridY, width: 50, height: 50});
+      var id = Canvas.render(selectedImage, {x: prefab.gridX, y: prefab.gridY, width: 50, height: 50});
       planet.add(id, prefab);
     } else {
       Canvas.clearByRect({x: prefab.gridX, y: prefab.gridY, width: 50, height: 50});
@@ -64,8 +75,17 @@ module main {
   }
   export var packModule: pack.pPackModule;
   export var packName: string;
+  export var trayIconURLs: p.List<string>;
   export function updateSelectedBlock(blockName, fileName, showName) {
     selectedBlock = { blockName: blockName, fileName: fileName, showBlockName: showName};
+    updateSelectedImage();
+  }
+  export function updateSelectedImage() {
+    selectedImage = util.QuickImage(trayIconURLs.get(selectedBlock.blockName));
+    ui.startUIWaitMode();
+    selectedImage.onload = () => {
+      ui.endUIWaitMode();
+    }
   }
   export interface TrayBlockDetails {
     blockName:string;
@@ -74,5 +94,9 @@ module main {
     showBlockName:string;
   }
   export var selectedBlock:TrayBlockDetails;
+  var selectedImage:HTMLImageElement;
+  
+  export var isFullscreen:boolean;
+  
   attachListeners();
 }

@@ -22,27 +22,28 @@ footer.pla-footer {
 footer.pla-footer .tray {
   margin: 0 10px;
   background-color: rgba(255, 255, 255, 0.6);
-  height: 50px;
+  height: 100%;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   padding-left: 5px;
   padding-right: 5px;
 }
-footer.pla-footer .tray ul.tray-ul {
-  overflow-y: scroll;
-  height: 50px;
-  padding-left: 0;
+footer.pla-footer .tray .tray-items {
+  overflow-y: hidden;
   padding-top: 5px;
-  margin: 0;
   display: flex;
   flex-wrap: wrap;
-  list-style-type: none;
 }
-footer.pla-footer .tray ul.tray-ul li.tray-list {
+footer.pla-footer .tray .tray-items .tray-list {
   width: 40px;
   height: 40px;
   margin-right: 5px;
   margin-bottom: 5px;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.01, 0.64, 0.43, 2.12) 0s;
+}
+footer.pla-footer .tray .tray-items .tray-list:hover {
+  transform: scale(1.2);
 }
 footer.pla-footer .tray #tray-fullscreen {
   float: right;
@@ -53,14 +54,23 @@ footer.pla-footer .tray #tray-fullscreen {
   margin-left: 5px;
   margin-top: 5px;
 }
-.tray-list img {
+.tray-list-block img {
   width: 40px;
   height: 40px;
   cursor: pointer;
-  transition: transform 0.25s cubic-bezier(0.01, 0.64, 0.43, 2.12) 0s;
 }
-.tray-list img:hover {
-  transform: scale(1.2);
+.tray-list-tool {
+  background: skyblue;
+  border-radius: 40px;
+  text-align: center;
+  line-height: 40px;
+}
+.tool-active {
+  background: linear-gradient(red, orange, yellow, limegreen, skyblue, royalblue, rebeccapurple);
+}
+.tool-btn {
+  background-color: yellow;
+  color: black;
 }
 .loading {
   z-index: 1;

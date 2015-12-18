@@ -141,13 +141,20 @@ var ev;
 (function (ev_1) {
     var events = new p.List();
     function addPlaEventListener(eventName, listener) {
-        if (events.contains(eventName)) {
-            var a = events.get(eventName);
-            a.push(listener);
-            events.update(eventName, a);
+        if (eventName.indexOf("|") !== -1) {
+            eventName.split("|").forEach(function (i) {
+                addPlaEventListener(i, listener);
+            });
         }
         else {
-            events.push(eventName, [listener]);
+            if (events.contains(eventName)) {
+                var a = events.get(eventName);
+                a.push(listener);
+                events.update(eventName, a);
+            }
+            else {
+                events.push(eventName, [listener]);
+            }
         }
     }
     ev_1.addPlaEventListener = addPlaEventListener;

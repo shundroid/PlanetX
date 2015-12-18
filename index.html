@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,inital-scale=1.0" />
   <title>Planet</title>
+  <link rel="stylesheet" href="lib/fontawesome/css/font-awesome.css" />
   <link rel="stylesheet" href="css/ui.css" />
   <script type="text/javascript" src="bower_components/web-animations-js/web-animations.min.js"></script>
+
   <!--
     script
     読み込む順番:
@@ -29,9 +31,16 @@
   <canvas id="pla-canvas" width="300" height="300"></canvas>
   <footer class="pla-footer">
     <div class="tray">
-      <button id="tray-fullscreen">^</button>
-      <ul class="tray-ul">
-      </ul>
+      <button id="tray-fullscreen">↑</button>
+      <div class="tray-items">
+        <div class="tray-list tray-list-tool tool-active" data-toolname="pencil"><i class="fa fa-pencil"></i></div>
+        <div class="tray-list tray-list-tool" data-toolname="brush"><i class="fa fa-paint-brush"></i></div>
+        <div class="tray-list tray-list-tool" data-toolname="erase"><i class="fa fa-eraser"></i></div>
+        <div class="tray-list tray-list-tool" data-toolname="hand"><i class="fa fa-hand-paper-o"></i></div>
+        <div class="tray-list tray-list-tool" data-toolname="choice"><i class="fa fa-eyedropper"></i></div>
+        <div class="tray-list tray-list-tool" data-toolname="edit"><i class="fa fa-list"></i></div>
+        <div class="tray-list tray-list-tool tool-btn" data-toolname="io"><i class="fa fa-floppy-o"></i></div>
+      </div>
     </div>
   </footer>
 </body>

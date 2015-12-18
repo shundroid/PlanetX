@@ -10,6 +10,9 @@ module planet {
     gridX:number;
     gridY:number;
     filename:string;
+    blockName:string;
+    gridW:number;
+    gridH:number;
   }
   var list:p.List<Prefab>;
   export function add(id:number, p:Prefab) {
@@ -17,6 +20,9 @@ module planet {
   }
   export function get(id:number):Prefab {
     return list.get(id.toString());
+  }
+  export function all() {
+    return list.getAll();
   }
   export function remove(id:number) {
     list.remove(id.toString());
@@ -33,7 +39,8 @@ module planet {
     // breakするための try
     try {
       Object.keys(l).forEach(i => {
-        if (l[i]["gridX"] === grid.x && l[i]["gridY"] === grid.y) {
+        if (grid.x >= l[i]["gridX"] && grid.x < l[i]["gridX"] + l[i]["gridW"] && 
+          grid.y >= l[i]["gridY"] && grid.y < l[i]["gridY"] + l[i]["gridH"]) {
           result = { prefab: l[i], id: parseInt(i), contains: true };
           throw breakException;
         }

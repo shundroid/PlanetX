@@ -34,12 +34,4 @@ module util {
       console.log(i);
     });
   }
-  export function clientPos2Grid(clientPos:p.Vector2):p.Vector2 {
-    var blockSize = 50;
-    var eX = clientPos.x - (clientPos.x % blockSize);
-    var eY = clientPos.y - (clientPos.y % blockSize);
-    var gridX = eX / blockSize;
-    var gridY = eY / blockSize;
-    return new p.Vector2(gridX, gridY);
-  }
 }

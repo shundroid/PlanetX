@@ -41,13 +41,4 @@ var util;
         });
     }
     util.log = log;
-    function clientPos2Grid(clientPos) {
-        var blockSize = 50;
-        var eX = clientPos.x - (clientPos.x % blockSize);
-        var eY = clientPos.y - (clientPos.y % blockSize);
-        var gridX = eX / blockSize;
-        var gridY = eY / blockSize;
-        return new p.Vector2(gridX, gridY);
-    }
-    util.clientPos2Grid = clientPos2Grid;
 })(util || (util = {}));

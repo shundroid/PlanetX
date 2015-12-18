@@ -123,12 +123,18 @@ module pack {
 module ev {
   var events:p.List<((ev: any) => any)[]> = new p.List<((ev: any) => any)[]>();
   export function addPlaEventListener(eventName:string, listener: (ev: any) => any) {
-    if (events.contains(eventName)) {
-      var a = events.get(eventName);
-      a.push(listener);
-      events.update(eventName, a);
+    if (eventName.indexOf("|") !== -1) {
+      eventName.split("|").forEach(i => {
+        addPlaEventListener(i, listener);
+      });
     } else {
-      events.push(eventName, [listener]);
+      if (events.contains(eventName)) {
+        var a = events.get(eventName);
+        a.push(listener);
+        events.update(eventName, a);
+      } else {
+        events.push(eventName, [listener]);
+      }
     }
   }
   export function raiseEvent(eventName:string, e:any) {

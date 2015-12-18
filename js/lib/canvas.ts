@@ -33,7 +33,7 @@ module Canvas {
    * 指定された画像を描画します。
    * @param {HTMLImageElement} img - 描画する画像
    * @param {pRect} rect - 描画する部分(x, y, width, height)
-   * @return {number} 画像を消すなどするとき \に、判別するID
+   * @return {number} 画像を消すなどするときに、判別するID
    */
   export function render(img:HTMLImageElement, rect:pRect):number {
     ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
@@ -49,6 +49,10 @@ module Canvas {
   // }
   export function clearByRect(rect:pRect) {
     ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
+  }
+  
+  export function clear() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
   export interface pRect {
     x:number;

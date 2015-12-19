@@ -1,0 +1,54 @@
+doctype html
+html(lang="ja")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width,inital-scale=1.0")
+    title Planet
+    link(rel="stylesheet", href="lib/fontawesome/css/font-awesome.css")
+    link(rel="stylesheet", href="css/ui.css")
+    script(type="text/javascript", src="bower_components/web-animations-js/web-animations.min.js")
+    // script
+    // 読み込む順番
+    // 1. js/lib/ 以下
+    // 2. js/ 以下
+    // 3. main.js
+    script(type='text/javascript', src='js/lib/classes.js')
+    script(type='text/javascript', src='js/lib/util.js')
+    script(type='text/javascript', src='js/lib/canvas.js')
+    script(type='text/javascript', src='js/ui.js')
+    script(type='text/javascript', src='js/planet.js')
+    
+    // 一番最後に
+    script(type='text/javascript', src='js/main.js')
+  body
+    .loading
+    canvas#pla-canvas(width='300', height='200')
+    .pla-inspector
+      button#ins-close.pla-btn &times;
+      .ins-content#ins-io
+        .ins-header
+          h1 Import / Export
+        textarea#pla-io
+        .pla-btngroup
+          button.pla-btn
+            i.fa.fa-upload
+          button.pla-btn
+            i.fa.fa-download
+    footer.pla-footer
+      .tray
+        button.pla-btn#tray-fullscreen ↑
+        .tray-items
+          .tray-list.tray-list-tool.tool-active(data-toolname='pencil')
+            i.fa.fa-pencil
+          .tray-list.tray-list-tool(data-toolname='brush')
+            i.fa.fa-paint-brush
+          .tray-list.tray-list-tool(data-toolname='erase')
+            i.fa.fa-eraser
+          .tray-list.tray-list-tool(data-toolname='hand')
+            i.fa.fa-hand-paper-o
+          .tray-list.tray-list-tool(data-toolname='choice')
+            i.fa.fa-eyedropper
+          .tray-list.tray-list-tool(data-toolname='edit')
+            i.fa.fa-list
+          .tray-list.tray-list-tool.tool-btn(data-toolname='io')
+            i.fa.fa-floppy-o

@@ -48,9 +48,7 @@ footer.pla-footer .tray .tray-items .tray-list:hover {
 footer.pla-footer .tray #tray-fullscreen {
   float: right;
   width: 20px;
-  border: none;
   height: 100%;
-  background-color: white;
   margin-left: 5px;
   margin-top: 5px;
 }
@@ -85,4 +83,40 @@ footer.pla-footer .tray #tray-fullscreen {
 }
 .tray-active {
   border: 1px solid black;
+}
+.pla-inspector {
+  position: fixed;
+  left: 100%;
+  top: 5px;
+  bottom: 55px;
+  height: auto;
+  width: 20%;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-bottom-left-radius: 20px;
+  border-top-left-radius: 20px;
+  padding: 5px 5px 5px 10px;
+  box-sizing: border-box;
+}
+.pla-inspector #ins-close {
+  float: right;
+}
+.pla-inspector .ins-content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+.pla-inspector .ins-content .ins-header h1 {
+  font-size: 16px;
+}
+.pla-inspector #ins-io textarea#pla-io {
+  height: 70%;
+  resize: none;
+}
+.pla-btn {
+  border: none;
+  background-color: white;
+  border-radius: 5px;
+}
+.pla-btngroup button {
+  margin-right: 5px;
 }

@@ -14,6 +14,8 @@ module main {
     ev.addPlaEventListener("gridCanvas", gridCanvas);
     ev.addPlaEventListener("ready", ready);
     ev.addPlaEventListener("packLoaded", initTray);
+    ev.addPlaEventListener("resize", resize);
+    ev.addPlaEventListener("clickTrayToolbtn", clickTrayToolbtn);
     activeToolName = "pencil";
   }
   function init() {
@@ -23,6 +25,8 @@ module main {
     isActiveObj = false;
     defaultGridSize = 25;
     defaultBlockSize = 50;
+    isResizeRequest = false;
+    isShowInspector = false;
     ui.setupCanvas();
     loadPack(packName).then((obj) => {
       packModule = new pack.pPackModule(obj);
@@ -182,5 +186,25 @@ module main {
       });
     });
   }
+  
+  var isResizeRequest:boolean;
+  var resizeTimerId:number;
+  function resize() {
+    if (isResizeRequest) {
+      clearTimeout(resizeTimerId);
+    }
+    isResizeRequest = true;
+    resizeTimerId = setTimeout(() => {
+      isResizeRequest = false;
+      main.renderByPlanet();
+    }, 100);
+  }
+  function clickTrayToolbtn(name:string) {
+    if (name === "io") {
+      ui.showInspector();
+    }
+  }
+  
+  export var isShowInspector;
   attachListeners();
 }

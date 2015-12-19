@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,inital-scale=1.0" />
+  <title>Planet</title>
+  <link rel="stylesheet" href="lib/fontawesome/css/font-awesome.css" />
+  <link rel="stylesheet" href="css/ui.css" />
+  <script type="text/javascript" src="bower_components/web-animations-js/web-animations.min.js"></script>
+
+  <!--
+    script
+    読み込む順番:
+    1. js/lib/ 以下
+    2. js/ 以下
+    3. main.js
+  -->
+  <script type="text/javascript" src="js/lib/classes.js"></script>
+  <script type="text/javascript" src="js/lib/util.js"></script>
+  <script type="text/javascript" src="js/lib/canvas.js"></script>
+  
+  <script type="text/javascript" src="js/ui.js"></script>
+  <script type="text/javascript" src="js/planet.js"></script>
+  
+  <!-- 一番最後に -->
+  <script type="text/javascript" src="js/main.js"></script>
+</head>
+<body>
+  <div class="loading">
+  </div>
+  <canvas id="pla-canvas" width="300" height="300"></canvas>
+  <div class="pla-inspector">
+    <button id="ins-close" class="pla-btn">&times;</button>
+    <div class="ins-content" id="ins-io">
+      <div class="ins-header">
+        <h1>Import / Export</h1>
+      </div>
+      <textarea id="pla-io"></textarea>
+      <div class="pla-btngroup">
+        <button class="pla-btn"><i class="fa fa-upload"></i></button>
+        <button class="pla-btn"><i class="fa fa-download"></i></button>
+      </div>
+    </div>
+  </div>
+  <footer class="pla-footer">
+    <div class="tray">
+      <button id="tray-fullscreen" class="pla-btn">↑</button>
+      <div class="tray-items">
+        <div class="tray-list tray-list-tool tool-active" data-toolname="pencil"><i class="fa fa-pencil"></i></div>
+        <div class="tray-list tray-list-tool" data-toolname="brush"><i class="fa fa-paint-brush"></i></div>
+        <div class="tray-list tray-list-tool" data-toolname="erase"><i class="fa fa-eraser"></i></div>
+        <div class="tray-list tray-list-tool" data-toolname="hand"><i class="fa fa-hand-paper-o"></i></div>
+        <div class="tray-list tray-list-tool" data-toolname="choice"><i class="fa fa-eyedropper"></i></div>
+        <div class="tray-list tray-list-tool" data-toolname="edit"><i class="fa fa-list"></i></div>
+        <div class="tray-list tray-list-tool tool-btn" data-toolname="io"><i class="fa fa-floppy-o"></i></div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

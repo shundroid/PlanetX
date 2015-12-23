@@ -1,0 +1,158 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+body {
+  background-image: url("../pack/halstar/images/skybox/sky-w1.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+#pla-canvas {
+  cursor: crosshair;
+}
+@tray-margin: 10px;
+@footer-height: 50px;
+@tray-border-radius: 10px;
+@tray-list-size: 40px;
+footer.pla-footer {
+  position: fixed;
+  width: 100%;
+  height: @footer-height;
+  bottom: 0;
+  .tray {
+    margin: 0 @tray-margin;
+    background-color: rgba(255,255,255,0.6);
+    height: 100%;
+    border-top-left-radius: @tray-border-radius;
+    border-top-right-radius: @tray-border-radius;
+    padding-left: 5px;
+    padding-right: 5px;
+    .tray-items {
+      overflow-y: hidden;
+      padding-top: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      .tray-list {
+        width: @tray-list-size;
+        height: @tray-list-size;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        transition: transform 0.25s cubic-bezier(.01,.64,.43,2.12) 0s;
+        &:hover {
+          transform: scale(1.2);
+        }
+      }
+    }
+    #tray-fullscreen {
+      float: right;
+      width: 20px;
+      height: 100%;
+      margin-left: 5px;
+      margin-top: 5px;
+    }
+  }
+}
+.tray-list-block img {
+  width: @tray-list-size;
+  height: @tray-list-size;
+  cursor: pointer;
+}
+
+.tray-list-tool {
+  background: skyblue;
+  border-radius: @tray-list-size;
+  text-align: center;
+  line-height: @tray-list-size;
+}
+.tool-active {
+  background: linear-gradient(red, orange, yellow, limegreen, skyblue, royalblue, rebeccapurple);
+}
+.tool-btn {
+  background-color: yellow;
+  color: black;
+}
+.loading {
+  z-index: 1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  text-align: center;
+  font-size: 20px;
+  padding-top: 20px;
+  opacity: 0.8;
+}
+.tray-active {
+  border: 1px solid black;
+}
+.pla-inspector {
+  position: fixed;
+  left: 100%;
+  top: 5px;
+  bottom: @footer-height + 5px;
+  height: auto;
+  width: 20%;
+  background-color: rgba(255,255,255,0.6);
+  border-bottom-left-radius: 20px;
+  border-top-left-radius: 20px;
+  padding: 5px 5px 5px 10px;
+  box-sizing: border-box; // paddingをwidthに含む
+  #ins-close {
+    float: right;
+  }
+  .ins-article {
+    visibility: hidden;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    h1 {
+      font-size: 16px;
+    }
+    .ins-content {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      flex: 1;
+    }
+  }
+  .ins-article-active {
+    visibility: visible;
+  }
+  #ins-io {
+    .ins-content textarea#pla-io {
+      margin-bottom: 5px;
+      height: 100%;
+      resize: none;
+      box-sizing: border-box;
+      flex: 1;
+    }
+  }
+  #ins-conv-old-file {
+    .ins-content textarea {
+      flex: 1;
+    }
+  }
+  #ins-header-footer {
+    .ins-content textarea {
+      flex: 1;
+    }
+  }
+}
+.pla-btn {
+  border: none;
+  background-color: white;
+  border-radius: 5px;
+}
+.pla-btngroup {
+  button {
+    margin-right: 5px;
+  }
+}
+.ta-no-resize {
+  resize: none;
+}

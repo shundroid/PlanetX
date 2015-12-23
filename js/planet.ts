@@ -1,10 +1,23 @@
 /// <reference path="lib/classes.ts" />
+/// <reference path="main.ts" />
+/// <reference path="lib/compiler.ts" />
 /**
  * Planetのデータを管理します。
  */
 module planet {
   function init() {
     list = new p.List<Prefab>();
+    header = "";
+    footer = "";
+  }
+  var maxId = 0;
+  export function getId() {
+    var result = maxId;
+    maxId++;
+    return result;
+  }
+  function initId() {
+    maxId = 0;
   }
   export interface Prefab {
     gridX:number;
@@ -26,6 +39,9 @@ module planet {
   }
   export function remove(id:number) {
     list.remove(id.toString());
+  }
+  export function clear() {
+    list.clear();
   }
   export interface getFromGridDetails {
     contains:boolean;
@@ -50,5 +66,50 @@ module planet {
     }
     return result;
   }
+  export function exportText():string {
+    var result = [];
+    result.push("//:csv");
+    if (header.replace(/ /g, "").replace(/\n/g, "") !== "") {
+      result.push("//:header");
+      var hLines = header.split("\n");
+      hLines.forEach(i => {
+        result.push(i);
+      });
+      result.push("//:/header");
+    }
+    var items = list.getAll();
+    Object.keys(items).forEach(i => {
+      var item = <Prefab>items[i];
+      result.push([[item.blockName, item.gridX, item.gridY].join(","), i].join("="));
+    });
+    if (footer.replace(/ /g, "").replace(/\n/g, "") !== "") {
+      result.push("//:footer");
+      var fLines = footer.split("\n");
+      fLines.forEach(i => {
+        result.push(i);
+      });
+      result.push("//:/footer");
+    }
+    return result.join("\n");
+  }
+  export function importText(file:string) {
+    clear();
+    initId();
+    var centerLang = compiler.toCenterLang(compiler.getLangAuto(file.split("\n")[0]), file);
+    header = centerLang.header; footer = centerLang.footer;
+    var clang = centerLang.prefabList.getAll();
+    Object.keys(clang).forEach(i => {
+      var item = centerLang.prefabList.get(i);
+      if (main.packModule.objs.contains(item.blockName)) {
+        let objData = main.packModule.objs.get(item.blockName);
+        add(getId(), { gridX: item.x, gridY: item.y, blockName: item.blockName, filename: objData.data.filename, gridW: objData.data.width / main.defaultGridSize, gridH: objData.data.height / main.defaultGridSize });
+      } else {
+        let blockData = main.packModule.blocks.get(item.blockName);
+        add(getId(), { gridX: item.x, gridY: item.y, blockName: item.blockName, filename: blockData.data.filename, gridW: 2, gridH: 2 });
+      }
+    })
+  }
+  export var header:string;
+  export var footer:string;
   init();
 }

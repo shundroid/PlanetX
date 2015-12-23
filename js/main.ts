@@ -2,8 +2,9 @@
 /// <reference path="lib/canvas.ts" />
 /// <reference path="ui.ts" />
 /// <reference path="lib/util.ts" />
+/// <reference path="lib/compiler.ts" />
 /// <reference path="planet.ts" />
-/// <reference path="definitely/es6-promise.d.ts" />
+/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /**
  * Planetのメイン処理を行います。
  * UIとは直接かかわりません。
@@ -80,8 +81,12 @@ module main {
   }
   
   export class gridDetail {
-    constructor(public gridPos:p.Vector2, public eventName:string) {}
+    constructor(public gridPos:p.Vector2, public eventName:string, public mousePos:p.Vector2) {}
   }
+  var scrollX = 0;
+  var scrollY = 0;
+  var scrollPrevX = -1;
+  var scrollPrevY = -1;
   function gridCanvas(e:gridDetail) {
     var prefab:planet.Prefab = {
       gridX: e.gridPos.x,
@@ -93,12 +98,12 @@ module main {
     };
     var detail = planet.getFromGrid(new p.Vector2(prefab.gridX, prefab.gridY));
     var rect:Canvas.pRect = 
-      { x: getCenterPos(prefab.gridX * defaultGridSize, prefab.gridW * defaultGridSize), y: getCenterPos(prefab.gridY * defaultGridSize, prefab.gridH * defaultGridSize), 
+      { x: scrollX + getCenterPos(prefab.gridX * defaultGridSize, prefab.gridW * defaultGridSize), y: scrollY + getCenterPos(prefab.gridY * defaultGridSize, prefab.gridH * defaultGridSize), 
         width: prefab.gridW * defaultGridSize, height: prefab.gridH * defaultGridSize };
     if (main.activeToolName === "pencil" && e.eventName === "mousedown") {
       if (!detail.contains) {
-        var id = Canvas.render(selectedImage, rect);
-        planet.add(id, prefab);
+        Canvas.render(selectedImage, rect);
+        planet.add(planet.getId(), prefab);
       } else {
         planet.remove(detail.id);
         renderByPlanet();
@@ -109,6 +114,17 @@ module main {
         updateSelectedBlock(detail.prefab.blockName, bData.data.bName, getPackPath(packName) + bData.data.filename);
         ui.changeUIActiveBlock(detail.prefab.blockName);
       }
+    } else if (main.activeToolName === "hand") {
+      if (e.eventName === "mousedown") {
+        scrollPrevX = e.mousePos.x;
+        scrollPrevY = e.mousePos.y;
+      } else if (e.eventName === "mousemove") {
+        scrollX +=  e.mousePos.x - scrollPrevX;
+        scrollY +=  e.mousePos.y - scrollPrevY;
+        renderByPlanet();
+        scrollPrevX = e.mousePos.x;
+        scrollPrevY = e.mousePos.y;
+      }
     } else if (e.eventName === "mousemove" || e.eventName === "mousedown") {
       if (main.activeToolName === "brush") {
         if (detail.contains && detail.prefab.blockName !== selectedBlock.blockName) {
@@ -116,8 +132,8 @@ module main {
           renderByPlanet();
         }
         if (!detail.contains) {
-          var id = Canvas.render(selectedImage, rect);
-          planet.add(id, prefab);
+          Canvas.render(selectedImage, rect);
+          planet.add(planet.getId(), prefab);
         }
       } else if (main.activeToolName === "erase" && detail.contains) {
         planet.remove(detail.id);
@@ -166,11 +182,19 @@ module main {
     return center - ((size - defaultGridSize) / 2);
   }
   export function clientPos2Grid(clientPos:p.Vector2):p.Vector2 {
-    var eX = clientPos.x - (clientPos.x % defaultGridSize);
-    var eY = clientPos.y - (clientPos.y % defaultGridSize);
+    var cX = clientPos.x - scrollX; var cY = clientPos.y - scrollY;
+    var eX = cX - (cX % defaultGridSize);
+    var eY = cY - (cY % defaultGridSize);
     var gridX = eX / defaultGridSize;
     var gridY = eY / defaultGridSize;
     return new p.Vector2(gridX, gridY);
+  }
+  export function clientPos2BlockSizeGrid(clientPos:p.Vector2):p.Vector2 {
+    var eX = clientPos.x - (clientPos.x % defaultBlockSize);
+    var eY = clientPos.y - (clientPos.y % defaultBlockSize);
+    var gridX = eX / defaultBlockSize;
+    var gridY = eY / defaultBlockSize;
+    return new p.Vector2(gridX * 2, gridY * 2);
   }
   
   export function renderByPlanet() {
@@ -179,8 +203,8 @@ module main {
     Object.keys(list).forEach(i => {
       var item = <planet.Prefab>list[i];
       Canvas.render(util.QuickImage(trayIconURLs.get(item.blockName)), {
-        x: getCenterPos(item.gridX * defaultGridSize, item.gridW * defaultGridSize),
-        y: getCenterPos(item.gridY * defaultGridSize, item.gridH * defaultGridSize),
+        x: scrollX + getCenterPos(item.gridX * defaultGridSize, item.gridW * defaultGridSize),
+        y: scrollY + getCenterPos(item.gridY * defaultGridSize, item.gridH * defaultGridSize),
         width: item.gridW * defaultGridSize,
         height: item.gridH * defaultGridSize
       });
@@ -201,10 +225,15 @@ module main {
   }
   function clickTrayToolbtn(name:string) {
     if (name === "io") {
-      ui.showInspector();
+      ui.showInspector("io");
+    } else if (name === "setting") {
+      ui.showInspector("inspector");
     }
   }
-  
+  export function convertOldFile(oldFile:string):string {
+    return compiler.old2CSV(oldFile);
+  }
   export var isShowInspector;
+  
   attachListeners();
 }

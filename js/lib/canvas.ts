@@ -21,25 +21,14 @@ module Canvas {
     canvas.height = window.innerHeight;
   }
   // var pImageList:p.List<pRect>;
-  export class pImgLstCtrlr {
-    private static maxIndex = 0;
-    static getIndex():number {
-      var result = this.maxIndex;
-      this.maxIndex++;
-      return result;
-    }
-  }
   /**
    * 指定された画像を描画します。
    * @param {HTMLImageElement} img - 描画する画像
    * @param {pRect} rect - 描画する部分(x, y, width, height)
    * @return {number} 画像を消すなどするときに、判別するID
    */
-  export function render(img:HTMLImageElement, rect:pRect):number {
+  export function render(img:HTMLImageElement, rect:pRect):void {
     ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
-    var index = pImgLstCtrlr.getIndex();
-    // pImageList.push(index.toString(), rect);
-    return index;
   }
   // export function clear(index:number) {
   //   var rect = pImageList.get(index.toString());

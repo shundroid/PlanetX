@@ -41,4 +41,11 @@ var util;
         });
     }
     util.log = log;
+    function addEventListenerforQuery(query, event, listener) {
+        var elems = document.querySelectorAll(query);
+        for (var i = 0; i < elems.length; i++) {
+            elems[i].addEventListener(event, listener);
+        }
+    }
+    util.addEventListenerforQuery = addEventListenerforQuery;
 })(util || (util = {}));

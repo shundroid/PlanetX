@@ -22,18 +22,6 @@ var Canvas;
         canvas.height = window.innerHeight;
     }
     // var pImageList:p.List<pRect>;
-    var pImgLstCtrlr = (function () {
-        function pImgLstCtrlr() {
-        }
-        pImgLstCtrlr.getIndex = function () {
-            var result = this.maxIndex;
-            this.maxIndex++;
-            return result;
-        };
-        pImgLstCtrlr.maxIndex = 0;
-        return pImgLstCtrlr;
-    })();
-    Canvas.pImgLstCtrlr = pImgLstCtrlr;
     /**
      * 指定された画像を描画します。
      * @param {HTMLImageElement} img - 描画する画像
@@ -42,9 +30,6 @@ var Canvas;
      */
     function render(img, rect) {
         ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
-        var index = pImgLstCtrlr.getIndex();
-        // pImageList.push(index.toString(), rect);
-        return index;
     }
     Canvas.render = render;
     // export function clear(index:number) {

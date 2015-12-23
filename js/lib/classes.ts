@@ -32,7 +32,9 @@ module p {
   export class Vector2 {
     constructor(public x:number, public y:number) { }
   }
-
+  export class prefabLite {
+    constructor(public x:number, public y:number, public blockName:string) {};
+  }
 }
 module pack {
   export class pPackModule {

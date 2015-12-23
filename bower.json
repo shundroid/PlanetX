@@ -16,6 +16,7 @@
     "tests"
   ],
   "devDependencies": {
-    "move.js": "~0.3.3"
+    "move.js": "~0.3.3",
+    "balloon": "*"
   }
 }

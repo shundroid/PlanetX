@@ -44,6 +44,16 @@ var p;
         return Vector2;
     })();
     p.Vector2 = Vector2;
+    var prefabLite = (function () {
+        function prefabLite(x, y, blockName) {
+            this.x = x;
+            this.y = y;
+            this.blockName = blockName;
+        }
+        ;
+        return prefabLite;
+    })();
+    p.prefabLite = prefabLite;
 })(p || (p = {}));
 var pack;
 (function (pack) {

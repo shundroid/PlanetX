@@ -4,17 +4,20 @@ html(lang="ja")
     meta(charset="utf-8")
     meta(name="viewport", content="width=device-width,inital-scale=1.0")
     title Planet
+    link(rel="stylesheet", href="bower_components/balloon/balloon.css")
     link(rel="stylesheet", href="lib/fontawesome/css/font-awesome.css")
     link(rel="stylesheet", href="css/ui.css")
     script(type="text/javascript", src="bower_components/web-animations-js/web-animations.min.js")
-    // script
-    // 読み込む順番
-    // 1. js/lib/ 以下
-    // 2. js/ 以下
-    // 3. main.js
+    // 
+      script
+      読み込む順番
+      1. js/lib/ 以下
+      2. js/ 以下
+      3. main.js
     script(type='text/javascript', src='js/lib/classes.js')
     script(type='text/javascript', src='js/lib/util.js')
     script(type='text/javascript', src='js/lib/canvas.js')
+    script(type='text/javascript', src='js/lib/compiler.js')
     script(type='text/javascript', src='js/ui.js')
     script(type='text/javascript', src='js/planet.js')
     
@@ -25,15 +28,47 @@ html(lang="ja")
     canvas#pla-canvas(width='300', height='200')
     .pla-inspector
       button#ins-close.pla-btn &times;
-      .ins-content#ins-io
-        .ins-header
-          h1 Import / Export
-        textarea#pla-io
-        .pla-btngroup
-          button.pla-btn
-            i.fa.fa-upload
-          button.pla-btn
-            i.fa.fa-download
+      .ins-article#ins-io
+        h1 Import / Export
+        .ins-content
+          select
+            option(value="csv") csv
+            option(value="json") json
+            option(value="jsPla") jsWithPlaLib
+            option(value="yaml") yaml
+            option(value="in:auto") Auto (Import Only)
+          textarea#pla-io
+          .pla-btngroup
+            button.pla-btn.bl.bl-top#io-export(data-bl="Export"): i.fa.fa-upload
+            button.pla-btn.bl.bl-top#io-import(data-bl="Import"): i.fa.fa-download
+      .ins-article#ins-inspector
+        h1 Inspector
+        .ins-content
+          ul
+            li: button.pla-btn Stage Effect
+            li: button.pla-btn.ins-show-btn(data-ins="io") Import / Export
+            li: button.pla-btn.ins-show-btn(data-ins="header-footer") Header / Footer
+            li: button.pla-btn.ins-show-btn(data-ins="conv-old-file") Convert old file
+            li: button.pla-btn Editor Preferences
+      .ins-article#ins-conv-old-file
+        h1 Convert old file
+        .ins-content
+          span Old:
+          br
+          textarea#conv-old.ta-no-resize
+          span New:
+          br
+          textarea#conv-new.ta-no-resize(readonly)
+          div: button.pla-btn.bl.bl-top#conv(data-bl="convert"): i.fa.fa-exchange
+      .ins-article#ins-header-footer
+        h1 Header / Footer
+        .ins-content
+          span Header:
+          br
+          textarea.io-hf#io-header.ta-no-resize
+          span Footer:
+          br
+          textarea.io-hf#io-footer.ta-no-resize
     footer.pla-footer
       .tray
         button.pla-btn#tray-fullscreen ↑
@@ -52,3 +87,5 @@ html(lang="ja")
             i.fa.fa-list
           .tray-list.tray-list-tool.tool-btn(data-toolname='io')
             i.fa.fa-floppy-o
+          .tray-list.tray-list-tool.tool-btn(data-toolname='setting')
+            i.fa.fa-cog

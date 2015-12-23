@@ -34,4 +34,10 @@ module util {
       console.log(i);
     });
   }
+  export function addEventListenerforQuery(query:string, event:string, listener:(ev:any)=>any) {
+    var elems = document.querySelectorAll(query);
+    for (var i = 0; i < elems.length; i++) {
+      elems[i].addEventListener(event, listener);
+    }
+  }
 }

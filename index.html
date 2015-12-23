@@ -4,17 +4,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,inital-scale=1.0">
     <title>Planet</title>
+    <link rel="stylesheet" href="bower_components/balloon/balloon.css">
     <link rel="stylesheet" href="lib/fontawesome/css/font-awesome.css">
     <link rel="stylesheet" href="css/ui.css">
     <script type="text/javascript" src="bower_components/web-animations-js/web-animations.min.js"></script>
-    <!-- script-->
-    <!-- 読み込む順番-->
-    <!-- 1. js/lib/ 以下-->
-    <!-- 2. js/ 以下-->
-    <!-- 3. main.js-->
+    <!-- 
+    script
+    読み込む順番
+    1. js/lib/ 以下
+    2. js/ 以下
+    3. main.js
+    -->
     <script type="text/javascript" src="js/lib/classes.js"></script>
     <script type="text/javascript" src="js/lib/util.js"></script>
     <script type="text/javascript" src="js/lib/canvas.js"></script>
+    <script type="text/javascript" src="js/lib/compiler.js"></script>
     <script type="text/javascript" src="js/ui.js"></script>
     <script type="text/javascript" src="js/planet.js"></script>
     <!-- 一番最後に-->
@@ -25,14 +29,60 @@
     <canvas id="pla-canvas" width="300" height="200"></canvas>
     <div class="pla-inspector">
       <button id="ins-close" class="pla-btn">&times;</button>
-      <div id="ins-io" class="ins-content">
-        <div class="ins-header">
-          <h1>Import / Export</h1>
+      <div id="ins-io" class="ins-article">
+        <h1>Import / Export</h1>
+        <div class="ins-content">
+          <select>
+            <option value="csv">csv</option>
+            <option value="json">json</option>
+            <option value="jsPla">jsWithPlaLib</option>
+            <option value="yaml">yaml</option>
+            <option value="in:auto">Auto (Import Only)</option>
+          </select>
+          <textarea id="pla-io"></textarea>
+          <div class="pla-btngroup">
+            <button id="io-export" data-bl="Export" class="pla-btn bl bl-top"><i class="fa fa-upload"></i></button>
+            <button id="io-import" data-bl="Import" class="pla-btn bl bl-top"><i class="fa fa-download"></i></button>
+          </div>
         </div>
-        <textarea id="pla-io"></textarea>
-        <div class="pla-btngroup">
-          <button class="pla-btn"><i class="fa fa-upload"></i></button>
-          <button class="pla-btn"><i class="fa fa-download"></i></button>
+      </div>
+      <div id="ins-inspector" class="ins-article">
+        <h1>Inspector</h1>
+        <div class="ins-content">
+          <ul>
+            <li>
+              <button class="pla-btn">Stage Effect</button>
+            </li>
+            <li>
+              <button data-ins="io" class="pla-btn ins-show-btn">Import / Export</button>
+            </li>
+            <li>
+              <button data-ins="header-footer" class="pla-btn ins-show-btn">Header / Footer</button>
+            </li>
+            <li>
+              <button data-ins="conv-old-file" class="pla-btn ins-show-btn">Convert old file</button>
+            </li>
+            <li>
+              <button class="pla-btn">Editor Preferences</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div id="ins-conv-old-file" class="ins-article">
+        <h1>Convert old file</h1>
+        <div class="ins-content"><span>Old:</span><br>
+          <textarea id="conv-old" class="ta-no-resize"></textarea><span>New:</span><br>
+          <textarea id="conv-new" readonly class="ta-no-resize"></textarea>
+          <div>
+            <button id="conv" data-bl="convert" class="pla-btn bl bl-top"><i class="fa fa-exchange"></i></button>
+          </div>
+        </div>
+      </div>
+      <div id="ins-header-footer" class="ins-article">
+        <h1>Header / Footer</h1>
+        <div class="ins-content"><span>Header:</span><br>
+          <textarea id="io-header" class="io-hf ta-no-resize"></textarea><span>Footer:</span><br>
+          <textarea id="io-footer" class="io-hf ta-no-resize"></textarea>
         </div>
       </div>
     </div>
@@ -47,6 +97,7 @@
           <div data-toolname="choice" class="tray-list tray-list-tool"><i class="fa fa-eyedropper"></i></div>
           <div data-toolname="edit" class="tray-list tray-list-tool"><i class="fa fa-list"></i></div>
           <div data-toolname="io" class="tray-list tray-list-tool tool-btn"><i class="fa fa-floppy-o"></i></div>
+          <div data-toolname="setting" class="tray-list tray-list-tool tool-btn"><i class="fa fa-cog"></i></div>
         </div>
       </div>
     </footer>

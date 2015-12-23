@@ -100,17 +100,38 @@ footer.pla-footer .tray #tray-fullscreen {
 .pla-inspector #ins-close {
   float: right;
 }
-.pla-inspector .ins-content {
+.pla-inspector .ins-article {
+  visibility: hidden;
   position: absolute;
   top: 0;
   bottom: 0;
+  display: flex;
+  flex-direction: column;
 }
-.pla-inspector .ins-content .ins-header h1 {
+.pla-inspector .ins-article h1 {
   font-size: 16px;
 }
-.pla-inspector #ins-io textarea#pla-io {
-  height: 70%;
+.pla-inspector .ins-article .ins-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+}
+.pla-inspector .ins-article-active {
+  visibility: visible;
+}
+.pla-inspector #ins-io .ins-content textarea#pla-io {
+  margin-bottom: 5px;
+  height: 100%;
   resize: none;
+  box-sizing: border-box;
+  flex: 1;
+}
+.pla-inspector #ins-conv-old-file .ins-content textarea {
+  flex: 1;
+}
+.pla-inspector #ins-header-footer .ins-content textarea {
+  flex: 1;
 }
 .pla-btn {
   border: none;
@@ -119,4 +140,7 @@ footer.pla-footer .tray #tray-fullscreen {
 }
 .pla-btngroup button {
   margin-right: 5px;
+}
+.ta-no-resize {
+  resize: none;
 }

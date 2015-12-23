@@ -1,4 +1,5 @@
 /// <reference path="main.ts" />
+/// <reference path="planet.ts" />
 /// <reference path="lib/util.ts" />
 /// <reference path="definitely/web-anim.d.ts" />
 /// <reference path="definitely/move.d.ts" />
@@ -18,6 +19,17 @@ module ui {
     ev.raiseEvent("initDom", null);
     document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen);
     document.getElementById("ins-close").addEventListener("click", closeInspector);
+    document.getElementById("io-export").addEventListener("click", clickExport);
+    document.getElementById("io-import").addEventListener("click", clickImport);
+    util.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
+    util.addEventListenerforQuery(".io-hf", "change", changeHeaderorFooterValue);
+    (<HTMLTextAreaElement>document.getElementById("conv-new")).value = "";
+    (<HTMLTextAreaElement>document.getElementById("conv-old")).value = "";
+    document.getElementById("conv").addEventListener("click", () => {
+      (<HTMLTextAreaElement>document.getElementById("conv-new")).value =
+        main.convertOldFile((<HTMLTextAreaElement>document.getElementById("conv-old")).value);
+    });
+    (<HTMLTextAreaElement>document.getElementById("pla-io")).value = "";
     var tools = document.getElementsByClassName("tray-list-tool");
     for (var i = 0; i < tools.length; i++) {
       tools.item(i).addEventListener("click", clickTrayTool);
@@ -63,7 +75,7 @@ module ui {
 
   function mouseCanvas(e: MouseEvent) {
     var grid = main.clientPos2Grid(new p.Vector2(e.clientX, e.clientY));
-    ev.raiseEvent("gridCanvas", new main.gridDetail(grid, e.type));
+    ev.raiseEvent("gridCanvas", new main.gridDetail(grid, e.type, new p.Vector2(e.clientX, e.clientY)));
   }
 
   function clickTray(e: MouseEvent) {
@@ -153,6 +165,7 @@ module ui {
   }
   export function togglefullScreen(e: MouseEvent) {
     if (!main.isFullscreen) {
+      closeInspector();
       move(".pla-footer").set("height", "100%").duration("0.5s").end();
       (<HTMLElement>e.target).textContent = "↓";
     } else {
@@ -178,14 +191,16 @@ module ui {
   function resize() {
     ev.raiseEvent("resize", null);
   }
-  
-  export function showInspector() {
+
+  export function showInspector(mode) {
+    document.querySelector(".ins-article-active") && document.querySelector(".ins-article-active").classList.remove("ins-article-active");
+    document.getElementById("ins-" + mode).classList.add("ins-article-active");
     if (main.isShowInspector) return;
     main.isShowInspector = true;
     move(".pla-inspector")
       .set("left", "80%")
       .duration("0.5s")
-    .end();
+      .end();
   }
   export function closeInspector() {
     if (!main.isShowInspector) return;
@@ -193,7 +208,25 @@ module ui {
     move(".pla-inspector")
       .set("left", "100%")
       .duration("0.5s")
-    .end();
+      .end();
+  }
+  export function clickExport() {
+    (<HTMLTextAreaElement>document.getElementById("pla-io")).value = planet.exportText();
+  }
+  export function clickImport() {
+    planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
+    main.renderByPlanet();
+  }
+  export function clickInsShowBtn(e:MouseEvent) {
+    showInspector((<HTMLElement>e.target).dataset["ins"]);
+  }
+  export function changeHeaderorFooterValue(e:MouseEvent) {
+    var elem = <HTMLTextAreaElement>e.target;
+    if (elem.id === "io-header") {
+      planet.header = elem.value;
+    } else if (elem.id === "io-footer") {
+      planet.footer = elem.value;
+    }
   }
   init();
 }

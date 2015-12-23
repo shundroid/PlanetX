@@ -202,12 +202,19 @@ module main {
     var list = planet.all();
     Object.keys(list).forEach(i => {
       var item = <planet.Prefab>list[i];
-      Canvas.render(util.QuickImage(trayIconURLs.get(item.blockName)), {
-        x: scrollX + getCenterPos(item.gridX * defaultGridSize, item.gridW * defaultGridSize),
-        y: scrollY + getCenterPos(item.gridY * defaultGridSize, item.gridH * defaultGridSize),
-        width: item.gridW * defaultGridSize,
-        height: item.gridH * defaultGridSize
-      });
+      var x = scrollX + getCenterPos(item.gridX * defaultGridSize, item.gridW * defaultGridSize);
+      var y = scrollY + getCenterPos(item.gridY * defaultGridSize, item.gridH * defaultGridSize);
+      var width = item.gridW * defaultGridSize;
+      var height = item.gridH * defaultGridSize;
+      if (x + width >= Canvas.canvasRect.x && x <= Canvas.canvasRect.width &&
+        y + height >= Canvas.canvasRect.y && y <= Canvas.canvasRect.height) {
+        Canvas.render(util.QuickImage(trayIconURLs.get(item.blockName)), {
+          x: x,
+          y: y,
+          width: width,
+          height: height
+        });
+      }
     });
   }
   

@@ -7,9 +7,11 @@
 module Canvas {
   var canvas:HTMLCanvasElement;
   var ctx:CanvasRenderingContext2D;
+  export var canvasRect:pRect;
   document.addEventListener("DOMContentLoaded", () => {
     // pImageList = new p.List<pRect>();
     canvas = <HTMLCanvasElement>document.getElementById("pla-canvas");
+    canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
     resizeCanvas();
     if (canvas && canvas.getContext) {
       ctx = canvas.getContext("2d");
@@ -19,6 +21,7 @@ module Canvas {
   function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
   }
   // var pImageList:p.List<pRect>;
   /**

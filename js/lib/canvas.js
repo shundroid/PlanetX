@@ -11,6 +11,7 @@ var Canvas;
     document.addEventListener("DOMContentLoaded", function () {
         // pImageList = new p.List<pRect>();
         canvas = document.getElementById("pla-canvas");
+        Canvas.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
         resizeCanvas();
         if (canvas && canvas.getContext) {
             ctx = canvas.getContext("2d");
@@ -20,6 +21,7 @@ var Canvas;
     function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        Canvas.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
     }
     // var pImageList:p.List<pRect>;
     /**

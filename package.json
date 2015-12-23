@@ -6,15 +6,18 @@
   "dependencies": {
     "gulp": "^3.9.0",
     "gulp-typescript": "^2.10.0",
-    "typescript": "^1.7.3"
-  },
-  "devDependencies": {
+    "typescript": "^1.7.3",
     "gulp-jade": "^1.1.0",
-    "gulp-less": "^3.0.5"
+    "gulp-less": "^3.0.5",
+    "tsify": "^0.13.1",
+    "browserify": "^12.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "shundroid",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "vinyl-source-stream": "^1.1.0"
+  }
 }

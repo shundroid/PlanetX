@@ -1,3 +1,7 @@
+var browserify = require('browserify');
+var tsify = require('tsify');
+var source = require('vinyl-source-stream');
+
 var gulp = require("gulp");
 var ts = require("gulp-typescript");
 var less = require("gulp-less");
@@ -21,4 +25,12 @@ gulp.task("build", function() {
   gulp.watch("./js/**/*.ts", ["ts"]);
   gulp.watch("./css/*.less", ["less"]);
   gulp.watch("./*.jade", ["jade"]);
+});
+gulp.task("browserify", function() {
+  browserify()
+    .add("js/main.ts").add("js/modules/initDOM.ts").add("js/modules/list.ts").add("js/modules/packLoader.ts").add("js/modules/packManager.ts").add("js/modules/preferences.ts").add("js/modules/ui.ts")
+    .add("js/modules/event.ts")
+    .plugin(tsify, { noImplicitAny: true, declaration: true })
+    .bundle().on("error", (err) => { console.error(err.toString()); }).pipe(source("all.js"))
+    .pipe(gulp.dest('js/'));
 });

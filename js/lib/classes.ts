@@ -38,6 +38,12 @@ module p {
   export class prefabLite {
     constructor(public x:number, public y:number, public blockName:string) {};
   }
+  export class stageSettings {
+    public skybox:string;
+    constructor() {
+      this.skybox = "";
+    }
+  }
 }
 module pack {
   export class pPackModule {

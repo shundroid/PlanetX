@@ -219,7 +219,10 @@ module ui {
     (<HTMLTextAreaElement>document.getElementById("pla-io")).value = planet.exportText();
   }
   export function clickImport() {
-    planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
+    var effects = planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
+    main.stageSettings = effects;
+    console.log(effects.skybox);
+    setSkybox(main.packModule.skyboxes.get(effects.skybox).data.filename);
     main.renderByPlanet();
   }
   export function clickInsShowBtn(e:MouseEvent) {
@@ -249,8 +252,8 @@ module ui {
     });
   }
   export function changeSkybox(e:Event) {
-    main.skyBoxName = (<HTMLSelectElement>e.target).value;
-    setSkybox(main.packModule.skyboxes.get(main.skyBoxName).data.filename);
+    main.stageSettings.skybox = (<HTMLSelectElement>e.target).value;
+    setSkybox(main.packModule.skyboxes.get(main.stageSettings.skybox).data.filename);
   }
   init();
 }

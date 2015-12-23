@@ -16,7 +16,7 @@ module compiler {
     auto
   }
   export class centerLang {
-    constructor(public prefabList:p.List<p.prefabLite>, public header:string, public footer:string) {};
+    constructor(public prefabList:p.List<p.prefabLite>, public header:string, public footer:string, public effects:p.stageSettings) {};
   }
   export function toCenterLang(mode:compileLangs, text:string):centerLang {
     switch (mode) {
@@ -27,10 +27,11 @@ module compiler {
     return null;
   }
   export function CSV2CenterLang(text:string) {
-    var lines = text.split("\n");
+    var lines = text.replace(/;/g, "").split("\n");
     var result = new p.List<p.prefabLite>();
     var header = [];
     var footer = [];
+    var effects = new p.stageSettings();
     var mode = 0; // 0: normal, 1: header, 2: footer
     lines.forEach(i => {
       if (mode === 0) {
@@ -43,6 +44,12 @@ module compiler {
           if (i === "") return;
           if (i.substring(0, 2) === "//") return;
           var items = i.split(",");
+          if (items[0].substring(0, 1) === "*") {
+            if (items[0] === "*skybox") {
+              effects.skybox = items[1];
+            }
+            return;
+          }
           result.push(i, new p.prefabLite(parseInt(items[1]), parseInt(items[2]), items[0]));
         }
       } else if (mode === 1) {
@@ -53,7 +60,7 @@ module compiler {
         footer.push(i);
       }
     });
-    return new centerLang(result, header.join("\n"), footer.join("\n"));
+    return new centerLang(result, header.join("\n"), footer.join("\n"), effects);
   }
   export function old2CSV(old:string):string {
     var lines = old.split("\n");
@@ -93,7 +100,12 @@ module compiler {
           mode += 2;
           return;
         }
-        if (i.substring(0, 1) === "*") return; // TODO:
+        if (i.substring(0, 1) === "*") {
+          if (i.indexOf("*skybox,") !== -1) {
+            result.push(i);
+          }
+          return;
+        }
         if (i.substring(0, 1) === ":") return;
         i = i.replace(/ /g, "");
         if (i.substring(0, 2) === "//") return;

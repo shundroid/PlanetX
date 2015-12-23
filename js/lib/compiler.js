@@ -19,10 +19,11 @@ var compiler;
     })(compiler.compileLangs || (compiler.compileLangs = {}));
     var compileLangs = compiler.compileLangs;
     var centerLang = (function () {
-        function centerLang(prefabList, header, footer) {
+        function centerLang(prefabList, header, footer, effects) {
             this.prefabList = prefabList;
             this.header = header;
             this.footer = footer;
+            this.effects = effects;
         }
         ;
         return centerLang;
@@ -38,10 +39,11 @@ var compiler;
     }
     compiler.toCenterLang = toCenterLang;
     function CSV2CenterLang(text) {
-        var lines = text.split("\n");
+        var lines = text.replace(/;/g, "").split("\n");
         var result = new p.List();
         var header = [];
         var footer = [];
+        var effects = new p.stageSettings();
         var mode = 0; // 0: normal, 1: header, 2: footer
         lines.forEach(function (i) {
             if (mode === 0) {
@@ -58,6 +60,12 @@ var compiler;
                     if (i.substring(0, 2) === "//")
                         return;
                     var items = i.split(",");
+                    if (items[0].substring(0, 1) === "*") {
+                        if (items[0] === "*skybox") {
+                            effects.skybox = items[1];
+                        }
+                        return;
+                    }
                     result.push(i, new p.prefabLite(parseInt(items[1]), parseInt(items[2]), items[0]));
                 }
             }
@@ -76,7 +84,7 @@ var compiler;
                 footer.push(i);
             }
         });
-        return new centerLang(result, header.join("\n"), footer.join("\n"));
+        return new centerLang(result, header.join("\n"), footer.join("\n"), effects);
     }
     compiler.CSV2CenterLang = CSV2CenterLang;
     function old2CSV(old) {
@@ -124,8 +132,12 @@ var compiler;
                     mode += 2;
                     return;
                 }
-                if (i.substring(0, 1) === "*")
-                    return; // TODO:
+                if (i.substring(0, 1) === "*") {
+                    if (i.indexOf("*skybox,") !== -1) {
+                        result.push(i);
+                    }
+                    return;
+                }
                 if (i.substring(0, 1) === ":")
                     return;
                 i = i.replace(/ /g, "");

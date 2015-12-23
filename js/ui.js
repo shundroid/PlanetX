@@ -233,7 +233,10 @@ var ui;
     }
     ui.clickExport = clickExport;
     function clickImport() {
-        planet.importText(document.getElementById("pla-io").value);
+        var effects = planet.importText(document.getElementById("pla-io").value);
+        main.stageSettings = effects;
+        console.log(effects.skybox);
+        setSkybox(main.packModule.skyboxes.get(effects.skybox).data.filename);
         main.renderByPlanet();
     }
     ui.clickImport = clickImport;
@@ -269,8 +272,8 @@ var ui;
     }
     ui.initSelectElems = initSelectElems;
     function changeSkybox(e) {
-        main.skyBoxName = e.target.value;
-        setSkybox(main.packModule.skyboxes.get(main.skyBoxName).data.filename);
+        main.stageSettings.skybox = e.target.value;
+        setSkybox(main.packModule.skyboxes.get(main.stageSettings.skybox).data.filename);
     }
     ui.changeSkybox = changeSkybox;
     init();

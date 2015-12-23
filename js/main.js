@@ -40,7 +40,8 @@ var main;
         loadPack(main.packName).then(function (obj) {
             main.packModule = new pack.pPackModule(obj);
             ev.raiseEvent("packloaded", null);
-            main.skyBoxName = main.packModule.editor.defaultSkybox;
+            main.stageSettings = new p.stageSettings();
+            main.stageSettings.skybox = main.packModule.editor.defaultSkybox;
             ui.setSkybox(main.packModule.skyboxes.get(main.packModule.editor.defaultSkybox).data.filename);
             ui.initSelectElems();
             ev.raiseEvent("initedUI", null);

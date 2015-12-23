@@ -69,6 +69,7 @@ module planet {
   export function exportText():string {
     var result = [];
     result.push("//:csv");
+    // header
     if (header.replace(/ /g, "").replace(/\n/g, "") !== "") {
       result.push("//:header");
       var hLines = header.split("\n");
@@ -77,11 +78,17 @@ module planet {
       });
       result.push("//:/header");
     }
+    // effects
+    result.push(["*skybox", main.stageSettings.skybox].join(","));
+    
+    // blocks
     var items = list.getAll();
     Object.keys(items).forEach(i => {
       var item = <Prefab>items[i];
       result.push([[item.blockName, item.gridX, item.gridY].join(","), i].join("="));
     });
+    
+    // footer
     if (footer.replace(/ /g, "").replace(/\n/g, "") !== "") {
       result.push("//:footer");
       var fLines = footer.split("\n");
@@ -98,6 +105,7 @@ module planet {
     var centerLang = compiler.toCenterLang(compiler.getLangAuto(file.split("\n")[0]), file);
     header = centerLang.header; footer = centerLang.footer;
     var clang = centerLang.prefabList.getAll();
+    var result = centerLang.effects;
     Object.keys(clang).forEach(i => {
       var item = centerLang.prefabList.get(i);
       if (main.packModule.objs.contains(item.blockName)) {
@@ -107,7 +115,8 @@ module planet {
         let blockData = main.packModule.blocks.get(item.blockName);
         add(getId(), { gridX: item.x, gridY: item.y, blockName: item.blockName, filename: blockData.data.filename, gridW: 2, gridH: 2 });
       }
-    })
+    });
+    return result;
   }
   export var header:string;
   export var footer:string;

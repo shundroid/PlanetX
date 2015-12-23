@@ -11,7 +11,6 @@
  */
 module main {
   export var isShowInspector;
-  export var skyBoxName:string;
   export var packModule: pack.pPackModule;
   export var packName: string;
   export var trayIconURLs: p.List<string>;
@@ -28,7 +27,7 @@ module main {
   export var defaultBlockSize:number;
   var isResizeRequest:boolean;
   var resizeTimerId:number;
-  
+  export var stageSettings:p.stageSettings;
   function attachListeners() {
     ev.addPlaEventListener("initDom", init);
     ev.addPlaEventListener("gridCanvas", gridCanvas);
@@ -51,7 +50,8 @@ module main {
     loadPack(packName).then((obj) => {
       packModule = new pack.pPackModule(obj);
       ev.raiseEvent("packloaded", null);
-      skyBoxName = packModule.editor.defaultSkybox;
+      stageSettings = new p.stageSettings();
+      stageSettings.skybox = packModule.editor.defaultSkybox;
       ui.setSkybox(packModule.skyboxes.get(packModule.editor.defaultSkybox).data.filename);
       ui.initSelectElems();
       ev.raiseEvent("initedUI", null);

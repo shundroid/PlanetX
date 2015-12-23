@@ -57,6 +57,13 @@ var p;
         return prefabLite;
     })();
     p.prefabLite = prefabLite;
+    var stageSettings = (function () {
+        function stageSettings() {
+            this.skybox = "";
+        }
+        return stageSettings;
+    })();
+    p.stageSettings = stageSettings;
 })(p || (p = {}));
 var pack;
 (function (pack) {

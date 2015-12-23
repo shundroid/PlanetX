@@ -66,6 +66,7 @@ var planet;
     function exportText() {
         var result = [];
         result.push("//:csv");
+        // header
         if (planet.header.replace(/ /g, "").replace(/\n/g, "") !== "") {
             result.push("//:header");
             var hLines = planet.header.split("\n");
@@ -74,11 +75,15 @@ var planet;
             });
             result.push("//:/header");
         }
+        // effects
+        result.push(["*skybox", main.stageSettings.skybox].join(","));
+        // blocks
         var items = list.getAll();
         Object.keys(items).forEach(function (i) {
             var item = items[i];
             result.push([[item.blockName, item.gridX, item.gridY].join(","), i].join("="));
         });
+        // footer
         if (planet.footer.replace(/ /g, "").replace(/\n/g, "") !== "") {
             result.push("//:footer");
             var fLines = planet.footer.split("\n");
@@ -97,6 +102,7 @@ var planet;
         planet.header = centerLang.header;
         planet.footer = centerLang.footer;
         var clang = centerLang.prefabList.getAll();
+        var result = centerLang.effects;
         Object.keys(clang).forEach(function (i) {
             var item = centerLang.prefabList.get(i);
             if (main.packModule.objs.contains(item.blockName)) {
@@ -108,6 +114,7 @@ var planet;
                 add(getId(), { gridX: item.x, gridY: item.y, blockName: item.blockName, filename: blockData.data.filename, gridW: 2, gridH: 2 });
             }
         });
+        return result;
     }
     planet.importText = importText;
     init();

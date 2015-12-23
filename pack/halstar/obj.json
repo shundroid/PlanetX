@@ -1,0 +1,255 @@
+{
+  "dokan": {
+    "width": 100,
+    "height": 100,
+    "filename": "images/objs/dokan.png",
+    "name": "土管",
+    "type": "シーン移動"
+  },
+  "toride": {
+    "width": 150,
+    "height": 150,
+    "filename": "images/objs/toride.png",
+    "name": "とりで",
+    "type": "デコレーション"
+  },
+  "@goalobj": {
+    "width": 50,
+    "height": 200,
+    "filename": "images/objs/@goalobj.png",
+    "name": "ゴール",
+    "type": "シーンオブジェクト"
+  },
+  "@halstar": {
+    "width": 50,
+    "height": 100,
+    "filename": "images/objs/@halstar.png",
+    "name": "ハルスター",
+    "type": "シーンオブジェクト"
+  },
+  "gravityup": {
+    "width": 200,
+    "height": 100,
+    "filename": "images/objs/gravityup.png",
+    "name": "反重力",
+    "type": "ハルスターの状態"
+  },
+  "bossdoor": {
+    "width": 50,
+    "height": 100,
+    "filename": "images/objs/bossdoor.png",
+    "name": "ボス戦への扉",
+    "type": "シーン移動"
+  },
+  "tyuukan": {
+    "width": 50,
+    "height": 100,
+    "filename": "images/objs/tyuukan.png",
+    "name": "中間地点",
+    "type": "シーンオブジェクト"
+  },
+  "util/CameraLock_Left": {
+    "width": 50,
+    "height": 150,
+    "filename": "images/objs/util.slash.CameraLock_Left.png",
+    "name": "カメラロック・左",
+    "type": "カメラ"
+  },
+  "util/CameraLock_Right": {
+    "width": 50,
+    "height": 150,
+    "filename": "images/objs/util.slash.CameraLock_Right.png",
+    "name": "カメラロック・右",
+    "type": "カメラ"
+  },
+  "boyoyon": {
+    "width": 400,
+    "height": 100,
+    "filename": "images/objs/boyoyon.png",
+    "name": "ぼよよん雲",
+    "type": "その他"
+  },
+  "yashinoki": {
+    "width": 200,
+    "height": 200,
+    "filename": "images/objs/yashinoki.png",
+    "name": "ヤシの木",
+    "type": "デコレーション"
+  },
+  "calcium": {
+    "width": 150,
+    "height": 50,
+    "filename": "images/objs/calcium.png",
+    "name": "かるしゅうむ",
+    "type": "敵"
+  },
+  "calciumdokan": {
+    "width": 100,
+    "height": 100,
+    "filename": "images/objs/calciumdokan.png",
+    "name": "かるしゅうむ土管",
+    "type": "その他"
+  },
+  "water/waters2x2": {
+    "width": 100,
+    "height": 100,
+    "filename": "images/objs/water.slash.waters2x2.png",
+    "name": "水2x2",
+    "type": "水"
+  },
+  "water/waters4x4": {
+    "width": 200,
+    "height": 200,
+    "filename": "images/objs/water.slash.waters4x4.png",
+    "name": "水4x4",
+    "type": "水"
+  },
+  "water/waters12x12": {
+    "width": 600,
+    "height": 600,
+    "filename": "images/objs/water.slash.waters4x4.png",
+    "name": "水12x12",
+    "type": "水"
+  },
+  "yurari": {
+    "width": 100,
+    "height": 100,
+    "filename": "images/objs/yurari.png",
+    "name": "ゆらり",
+    "type": "敵"
+  },
+  "conveyers/conveyerleft": {
+    "width": 350,
+    "height": 50,
+    "filename": "images/objs/conveyerleft.png",
+    "name": "コンベア【右に流す】",
+    "type": "ベルトコンベア"
+  },
+  "conveyers/conveyerright": {
+    "width": 350,
+    "height": 50,
+    "filename": "images/objs/conveyerright.png",
+    "name": "コンベア【左に流す】",
+    "type": "ベルトコンベア"
+  },
+  "conveyers/conveyerll": {
+    "width": 350,
+    "height": 50,
+    "filename": "images/objs/conveyerll.png",
+    "name": "コンベア強【右に流す】",
+    "type": "ベルトコンベア"
+  },
+  "conveyers/conveyerrr": {
+    "width": 350,
+    "height": 50,
+    "filename": "images/objs/conveyerrr.png",
+    "name": "コンベア強【左に流す】",
+    "type": "ベルトコンベア"
+  },
+  "objectdokan": {
+    "width": 100,
+    "height": 100,
+    "filename": "images/objs/objectdokan.png",
+    "name": "貨物土管",
+    "type": "その他"
+  },
+  "conveyers/windzonel": {
+    "width": 200,
+    "height": 200,
+    "filename": "images/objs/windzonel.png",
+    "name": "ウィンドゾーン（左）",
+    "type": "ハルスターの状態"
+  },
+  "conveyers/windzoner": {
+    "width": 200,
+    "height": 200,
+    "filename": "images/objs/windzoner.png",
+    "name": "ウィンドゾーン（右）",
+    "type": "ハルスターの状態"
+  },
+  "suikadokan": {
+    "width": 100,
+    "height": 100,
+    "filename": "images/objs/suikadokan.png",
+    "name": "スイカ土管",
+    "type": "その他"
+  },
+  "w1/naname1": {
+    "width": 100,
+    "height": 50,
+    "filename": "images/objs/w1naname1.png",
+    "name": "左下へ向かうななめ",
+    "type": "地形"
+  },
+  "w1/naname2": {
+    "width": 100,
+    "height": 50,
+    "filename": "images/objs/w1naname2.png",
+    "name": "右下へ向かうななめ",
+    "type": "地形"
+  },
+  "w1/naname3": {
+    "width": 50,
+    "height": 100,
+    "filename": "images/objs/w1naname3.png",
+    "name": "右上へ向かうななめ",
+    "type": "地形"
+  },
+  "placreatepoint": {
+    "width": 100,
+    "height": 100,
+    "filename": "images/placreatezone.png",
+    "name": "作成ポイント",
+    "type": "Planet",
+    "hidden": true
+  },
+  "key/door": {
+    "width": 50,
+    "height": 150,
+    "filename": "images/objs/keydoor.png",
+    "name": "鍵ドア",
+    "type": "鍵"
+  },
+  "ShundroidX/SuperTV": {
+    "width": 150,
+    "height": 150,
+    "filename": "images/objs/supertv.png",
+    "name": "SuperTV",
+    "type": "ShundroidX Assets"
+  },
+  "woodblock": {
+    "width": 100,
+    "height": 50,
+    "filename": "images/objs/woodblock.png",
+    "name": "木",
+    "type": "木"
+  },
+  "w1/s8/rift": {
+    "width": 300,
+    "height": 50,
+    "filename": "images/objs/w1block2-2.png",
+    "name": "W1-8リフト",
+    "type": "ステージ別特殊パーツ"
+  },
+  "ShundroidX/cart": {
+    "width": 100,
+    "height": 50,
+    "filename": "images/objs/cart.png",
+    "name": "車っぽいやつ",
+    "type": "ShundroidX Assets"
+  },
+  "@outofarea": {
+    "width": 200,
+    "height": 50,
+    "filename": "images/objs/outofarea.png",
+    "name": "OUTOFAREA",
+    "type": "シーンオブジェクト"
+  },
+  "rail/hrift": {
+    "width": 200,
+    "height": 50,
+    "filename": "images/objs/hriftforpla.png",
+    "name": "HRift",
+    "type": "リフト"
+  }
+}

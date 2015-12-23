@@ -51,7 +51,7 @@
         <div class="ins-content">
           <ul>
             <li>
-              <button class="pla-btn">Stage Effect</button>
+              <button data-ins="stage-effect" class="pla-btn ins-show-btn">Stage Effect</button>
             </li>
             <li>
               <button data-ins="io" class="pla-btn ins-show-btn">Import / Export</button>
@@ -63,7 +63,7 @@
               <button data-ins="conv-old-file" class="pla-btn ins-show-btn">Convert old file</button>
             </li>
             <li>
-              <button class="pla-btn">Editor Preferences</button>
+              <button data-ins="preferences" class="pla-btn ins-show-btn">Editor Preferences</button>
             </li>
           </ul>
         </div>
@@ -84,6 +84,20 @@
           <textarea id="io-header" class="io-hf ta-no-resize"></textarea><span>Footer:</span><br>
           <textarea id="io-footer" class="io-hf ta-no-resize"></textarea>
         </div>
+      </div>
+      <div id="ins-stage-effect" class="ins-article">
+        <h1>Stage Effect</h1>
+        <div class="ins-content">
+          <ul>
+            <li><span>Skybox:</span>
+              <select id="stg-skybox" data-items="skyboxes" data-change="changeSkybox" class="pack-select"></select>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div id="ins-preferences" class="ins-article">
+        <h1>Editor Preferences</h1>
+        <div class="ins-content"></div>
       </div>
     </div>
     <footer class="pla-footer">

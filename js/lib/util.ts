@@ -40,4 +40,25 @@ module util {
       elems[i].addEventListener(event, listener);
     }
   }
+  export function pack2SelectElem(pack:Object):string {
+    var result = [];
+    Object.keys(pack).forEach(i => {
+      if (pack[i].constructor === {}.constructor) {
+        result.push('<optgroup label="' + i + '">');
+        result.push(pack2SelectElem(pack[i]));
+        result.push('</optgroup>');
+      } else {
+        result.push('<option value="' + pack[i] + '">' + i + '</option>');
+      }
+    });
+    return result.join("\n");
+  }
 }
+
+interface NodeList {
+  forEach(fn:(i:Node)=>void);
+}
+NodeList.prototype.forEach = function (fn:(i:Node)=>void) {
+  Array.prototype.forEach.call(this, fn);
+}
+

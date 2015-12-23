@@ -9,7 +9,6 @@ var Canvas;
     var canvas;
     var ctx;
     document.addEventListener("DOMContentLoaded", function () {
-        // pImageList = new p.List<pRect>();
         canvas = document.getElementById("pla-canvas");
         Canvas.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
         resizeCanvas();
@@ -23,7 +22,6 @@ var Canvas;
         canvas.height = window.innerHeight;
         Canvas.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
     }
-    // var pImageList:p.List<pRect>;
     /**
      * 指定された画像を描画します。
      * @param {HTMLImageElement} img - 描画する画像
@@ -34,12 +32,6 @@ var Canvas;
         ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
     }
     Canvas.render = render;
-    // export function clear(index:number) {
-    //   var rect = pImageList.get(index.toString());
-    //   var rect:pRect = p
-    //   ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
-    //   // pImageList.remove(index.toString());
-    // }
     function clearByRect(rect) {
         ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
     }

@@ -28,6 +28,9 @@ module p {
     contains(index:string):boolean {
       return this.data.hasOwnProperty(index);
     }
+    toSimple():Object {
+      return this.data;
+    }
   }
   export class Vector2 {
     constructor(public x:number, public y:number) { }
@@ -43,6 +46,8 @@ module pack {
     objs: p.List<pObjInfo>;
     descriptions: p.List<pDesInfo>;
     abilities:pAbilityInfo;
+    skyboxes:pSkyboxInfoList;
+    editor:pPackEditorInfo;
     constructor(data:Object) {
       this.pack = new pPackInfo(data["pack"]);
       this.blocks = new p.List<pBlockInfo>();
@@ -76,7 +81,15 @@ module pack {
         a3.push(i, data["abilities"]["keys"][i]);
       });
       this.abilities = new pAbilityInfo({selectelement: a1, keys: a2, types: a3});
+      this.skyboxes = new pSkyboxInfoList();
+      Object.keys(data["skyboxes"]).forEach(i => {
+        this.skyboxes.push(i, new pSkyboxInfo(data["skyboxes"][i]));
+      })
+      this.editor = new pPackEditorInfo(data["editor"]["defaultSkybox"]);
     }
+  }
+  export class pPackEditorInfo {
+    constructor(public defaultSkybox:string) {}
   }
   export class pPackInfo {
     pName:string;
@@ -121,6 +134,20 @@ module pack {
     types: p.List<string>;
   }
   export class pAbilityInfo extends pInfo<IpAblityInfo> { }
+  export interface IpSkyboxInfo {
+    filename: string;
+    label: string;
+  }
+  export class pSkyboxInfo extends pInfo<IpSkyboxInfo> {  }
+  export class pSkyboxInfoList extends p.List<pSkyboxInfo> {
+    toSimple():Object {
+      var result = {};
+      Object.keys(this.getAll()).forEach(i => {
+        result[this.get(i).data.label] = i;
+      });
+      return result;
+    }
+  }
 }
 module ev {
   var events:p.List<((ev: any) => any)[]> = new p.List<((ev: any) => any)[]>();

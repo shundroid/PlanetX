@@ -11,6 +11,13 @@
  */
 var main;
 (function (main) {
+    var scrollX = 0;
+    var scrollY = 0;
+    var scrollPrevX = -1;
+    var scrollPrevY = -1;
+    var selectedImage;
+    var isResizeRequest;
+    var resizeTimerId;
     function attachListeners() {
         ev.addPlaEventListener("initDom", init);
         ev.addPlaEventListener("gridCanvas", gridCanvas);
@@ -33,6 +40,10 @@ var main;
         loadPack(main.packName).then(function (obj) {
             main.packModule = new pack.pPackModule(obj);
             ev.raiseEvent("packloaded", null);
+            main.skyBoxName = main.packModule.editor.defaultSkybox;
+            ui.setSkybox(main.packModule.skyboxes.get(main.packModule.editor.defaultSkybox).data.filename);
+            ui.initSelectElems();
+            ev.raiseEvent("initedUI", null);
             ui.initTray().then(function () {
                 ui.initObjforTray();
             });
@@ -88,10 +99,6 @@ var main;
         return gridDetail;
     })();
     main.gridDetail = gridDetail;
-    var scrollX = 0;
-    var scrollY = 0;
-    var scrollPrevX = -1;
-    var scrollPrevY = -1;
     function gridCanvas(e) {
         var prefab = {
             gridX: e.gridPos.x,
@@ -183,7 +190,6 @@ var main;
         return TrayBlockDetails;
     })();
     main.TrayBlockDetails = TrayBlockDetails;
-    var selectedImage;
     function getCenterPos(center, size) {
         return center - ((size - main.defaultGridSize) / 2);
     }
@@ -227,8 +233,6 @@ var main;
         });
     }
     main.renderByPlanet = renderByPlanet;
-    var isResizeRequest;
-    var resizeTimerId;
     function resize() {
         if (isResizeRequest) {
             clearTimeout(resizeTimerId);

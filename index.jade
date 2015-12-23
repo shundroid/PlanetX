@@ -45,11 +45,11 @@ html(lang="ja")
         h1 Inspector
         .ins-content
           ul
-            li: button.pla-btn Stage Effect
+            li: button.pla-btn.ins-show-btn(data-ins="stage-effect") Stage Effect
             li: button.pla-btn.ins-show-btn(data-ins="io") Import / Export
             li: button.pla-btn.ins-show-btn(data-ins="header-footer") Header / Footer
             li: button.pla-btn.ins-show-btn(data-ins="conv-old-file") Convert old file
-            li: button.pla-btn Editor Preferences
+            li: button.pla-btn.ins-show-btn(data-ins="preferences") Editor Preferences
       .ins-article#ins-conv-old-file
         h1 Convert old file
         .ins-content
@@ -69,6 +69,16 @@ html(lang="ja")
           span Footer:
           br
           textarea.io-hf#io-footer.ta-no-resize
+      .ins-article#ins-stage-effect
+        h1 Stage Effect
+        .ins-content
+          ul
+            li
+              span Skybox:
+              select.pack-select#stg-skybox(data-items="skyboxes", data-change="changeSkybox")
+      .ins-article#ins-preferences
+        h1 Editor Preferences
+        .ins-content
     footer.pla-footer
       .tray
         button.pla-btn#tray-fullscreen ↑

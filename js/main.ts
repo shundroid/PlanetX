@@ -10,6 +10,25 @@
  * UIとは直接かかわりません。
  */
 module main {
+  export var isShowInspector;
+  export var skyBoxName:string;
+  export var packModule: pack.pPackModule;
+  export var packName: string;
+  export var trayIconURLs: p.List<string>;
+  var scrollX = 0;
+  var scrollY = 0;
+  var scrollPrevX = -1;
+  var scrollPrevY = -1;
+  export var selectedBlock:TrayBlockDetails;
+  var selectedImage:HTMLImageElement;
+  export var isActiveObj:boolean;
+  export var isFullscreen:boolean;
+  export var activeToolName:string;
+  export var defaultGridSize:number;
+  export var defaultBlockSize:number;
+  var isResizeRequest:boolean;
+  var resizeTimerId:number;
+  
   function attachListeners() {
     ev.addPlaEventListener("initDom", init);
     ev.addPlaEventListener("gridCanvas", gridCanvas);
@@ -32,6 +51,10 @@ module main {
     loadPack(packName).then((obj) => {
       packModule = new pack.pPackModule(obj);
       ev.raiseEvent("packloaded", null);
+      skyBoxName = packModule.editor.defaultSkybox;
+      ui.setSkybox(packModule.skyboxes.get(packModule.editor.defaultSkybox).data.filename);
+      ui.initSelectElems();
+      ev.raiseEvent("initedUI", null);
       ui.initTray().then(() => {
         ui.initObjforTray();
       });
@@ -83,10 +106,7 @@ module main {
   export class gridDetail {
     constructor(public gridPos:p.Vector2, public eventName:string, public mousePos:p.Vector2) {}
   }
-  var scrollX = 0;
-  var scrollY = 0;
-  var scrollPrevX = -1;
-  var scrollPrevY = -1;
+
   function gridCanvas(e:gridDetail) {
     var prefab:planet.Prefab = {
       gridX: e.gridPos.x,
@@ -141,9 +161,6 @@ module main {
       }
     }
   }
-  export var packModule: pack.pPackModule;
-  export var packName: string;
-  export var trayIconURLs: p.List<string>;
   export function updateSelectedBlock(blockName:string, fileName:string, showName:string) {
     selectedBlock = new TrayBlockDetails(blockName, fileName, showName, defaultBlockSize, defaultBlockSize);
     updateSelectedImage();
@@ -168,16 +185,7 @@ module main {
       public width:number,
       public height:number) {};
   }
-  export var selectedBlock:TrayBlockDetails;
-  var selectedImage:HTMLImageElement;
-  export var isActiveObj:boolean;
-  
-  export var isFullscreen:boolean;
-  
-  export var activeToolName:string;
-  
-  export var defaultGridSize:number;
-  export var defaultBlockSize:number;
+
   export function getCenterPos(center:number,size:number):number {
     return center - ((size - defaultGridSize) / 2);
   }
@@ -218,8 +226,6 @@ module main {
     });
   }
   
-  var isResizeRequest:boolean;
-  var resizeTimerId:number;
   function resize() {
     if (isResizeRequest) {
       clearTimeout(resizeTimerId);
@@ -240,7 +246,5 @@ module main {
   export function convertOldFile(oldFile:string):string {
     return compiler.old2CSV(oldFile);
   }
-  export var isShowInspector;
-  
   attachListeners();
 }

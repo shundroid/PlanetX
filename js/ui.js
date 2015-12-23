@@ -13,9 +13,9 @@ var ui;
         window.addEventListener("resize", resize);
         ev.addPlaEventListener("ui_clickTray", clickTray);
         ev.addPlaEventListener("ui_mousedownCanvas|ui_mousemoveanddownCanvas|ui_mouseupCanvas", mouseCanvas);
+        ev.addPlaEventListener("initedUI", initedUI);
     }
     function loadDOM() {
-        ev.raiseEvent("initDom", null);
         document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen);
         document.getElementById("ins-close").addEventListener("click", closeInspector);
         document.getElementById("io-export").addEventListener("click", clickExport);
@@ -36,7 +36,12 @@ var ui;
         var move_js = document.createElement("script");
         move_js.src = "bower_components/move.js/move.js";
         document.head.appendChild(move_js);
+        ev.raiseEvent("initDom", null);
     }
+    function initedUI() {
+        document.getElementById("stg-skybox").value = main.packModule.editor.defaultSkybox;
+    }
+    ui.initedUI = initedUI;
     function setupCanvas() {
         ui.canvas = document.getElementById("pla-canvas");
         ui.canvas.addEventListener("mousedown", function (e) {
@@ -246,5 +251,27 @@ var ui;
         }
     }
     ui.changeHeaderorFooterValue = changeHeaderorFooterValue;
+    function setSkybox(skyboxName) {
+        document.body.style.backgroundImage = "url('" + main.getPackPath(main.packName) + skyboxName + "')";
+    }
+    ui.setSkybox = setSkybox;
+    function initSelectElems() {
+        document.querySelectorAll(".pack-select").forEach(function (i) {
+            var elem = i;
+            elem.innerHTML = util.pack2SelectElem(main.packModule[elem.dataset["items"]].toSimple());
+            if (elem.dataset["change"]) {
+                elem.addEventListener("change", ui[elem.dataset["change"]]);
+            }
+            if (elem.dataset["default"]) {
+                elem.value = elem.dataset["default"];
+            }
+        });
+    }
+    ui.initSelectElems = initSelectElems;
+    function changeSkybox(e) {
+        main.skyBoxName = e.target.value;
+        setSkybox(main.packModule.skyboxes.get(main.skyBoxName).data.filename);
+    }
+    ui.changeSkybox = changeSkybox;
     init();
 })(ui || (ui = {}));

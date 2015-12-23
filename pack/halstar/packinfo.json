@@ -217,5 +217,17 @@
       "*custom,supertv,.name.,.value.": "number",
       "*custom,w1s8r,.name.,.value.": "number"
     }
+  },
+  "skyboxes": {
+    "sky-b": { "filename": "images/skybox/sky-b.png", "label": "地下" },
+    "sky-castle": { "filename": "images/skybox/sky-castle.png", "label": "城" },
+    "sky-night": { "filename": "images/skybox/sky-night.png", "label": "夜" },
+    "sky-w0": { "filename": "images/skybox/sky-w0.png", "label": "W0" },
+    "sky-w1": { "filename": "images/skybox/sky-w1.png", "label": "W1" },
+    "sky-w1-sunset": { "filename": "images/skybox/sky-w1-sunset.png", "label": "W1 夕方" },
+    "sky-w2": { "filename": "images/skybox/sky-w2.png", "label": "W2" }
+  },
+  "editor": {
+    "defaultSkybox": "sky-w1"
   }
 }

@@ -48,4 +48,22 @@ var util;
         }
     }
     util.addEventListenerforQuery = addEventListenerforQuery;
+    function pack2SelectElem(pack) {
+        var result = [];
+        Object.keys(pack).forEach(function (i) {
+            if (pack[i].constructor === {}.constructor) {
+                result.push('<optgroup label="' + i + '">');
+                result.push(pack2SelectElem(pack[i]));
+                result.push('</optgroup>');
+            }
+            else {
+                result.push('<option value="' + pack[i] + '">' + i + '</option>');
+            }
+        });
+        return result.join("\n");
+    }
+    util.pack2SelectElem = pack2SelectElem;
 })(util || (util = {}));
+NodeList.prototype.forEach = function (fn) {
+    Array.prototype.forEach.call(this, fn);
+};

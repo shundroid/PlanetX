@@ -9,7 +9,6 @@ module Canvas {
   var ctx:CanvasRenderingContext2D;
   export var canvasRect:pRect;
   document.addEventListener("DOMContentLoaded", () => {
-    // pImageList = new p.List<pRect>();
     canvas = <HTMLCanvasElement>document.getElementById("pla-canvas");
     canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
     resizeCanvas();
@@ -23,7 +22,6 @@ module Canvas {
     canvas.height = window.innerHeight;
     canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
   }
-  // var pImageList:p.List<pRect>;
   /**
    * 指定された画像を描画します。
    * @param {HTMLImageElement} img - 描画する画像
@@ -33,12 +31,6 @@ module Canvas {
   export function render(img:HTMLImageElement, rect:pRect):void {
     ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
   }
-  // export function clear(index:number) {
-  //   var rect = pImageList.get(index.toString());
-  //   var rect:pRect = p
-  //   ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
-  //   // pImageList.remove(index.toString());
-  // }
   export function clearByRect(rect:pRect) {
     ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
   }

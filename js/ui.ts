@@ -7,16 +7,17 @@
  * UIへのアクセスをします。
  */
 module ui {
+  export var canvas: HTMLCanvasElement;
+  
   function init() {
     document.addEventListener("DOMContentLoaded", loadDOM);
     window.addEventListener("resize", resize);
     ev.addPlaEventListener("ui_clickTray", clickTray);
     ev.addPlaEventListener("ui_mousedownCanvas|ui_mousemoveanddownCanvas|ui_mouseupCanvas", mouseCanvas);
+    ev.addPlaEventListener("initedUI", initedUI);
   }
-
-  export var canvas: HTMLCanvasElement;
+  
   function loadDOM() {
-    ev.raiseEvent("initDom", null);
     document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen);
     document.getElementById("ins-close").addEventListener("click", closeInspector);
     document.getElementById("io-export").addEventListener("click", clickExport);
@@ -37,6 +38,10 @@ module ui {
     var move_js = document.createElement("script");
     move_js.src = "bower_components/move.js/move.js";
     document.head.appendChild(move_js);
+    ev.raiseEvent("initDom", null);
+  }
+  export function initedUI() {
+    (<HTMLSelectElement>document.getElementById("stg-skybox")).value = main.packModule.editor.defaultSkybox;
   }
   export function setupCanvas() {
     canvas = <HTMLCanvasElement>document.getElementById("pla-canvas");
@@ -227,6 +232,25 @@ module ui {
     } else if (elem.id === "io-footer") {
       planet.footer = elem.value;
     }
+  }
+  export function setSkybox(skyboxName:string) {
+    document.body.style.backgroundImage = "url('" + main.getPackPath(main.packName) + skyboxName + "')";
+  }
+  export function initSelectElems() {
+    document.querySelectorAll(".pack-select").forEach(i => {
+      var elem = <HTMLSelectElement>i;
+      elem.innerHTML = util.pack2SelectElem((<p.List<any>>main.packModule[elem.dataset["items"]]).toSimple());
+      if (elem.dataset["change"]) {
+        elem.addEventListener("change", ui[elem.dataset["change"]]);
+      }
+      if (elem.dataset["default"]) {
+        elem.value = elem.dataset["default"];
+      }
+    });
+  }
+  export function changeSkybox(e:Event) {
+    main.skyBoxName = (<HTMLSelectElement>e.target).value;
+    setSkybox(main.packModule.skyboxes.get(main.skyBoxName).data.filename);
   }
   init();
 }

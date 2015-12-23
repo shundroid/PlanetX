@@ -33,6 +33,9 @@ var p;
         List.prototype.contains = function (index) {
             return this.data.hasOwnProperty(index);
         };
+        List.prototype.toSimple = function () {
+            return this.data;
+        };
         return List;
     })();
     p.List = List;
@@ -93,10 +96,22 @@ var pack;
                 a3.push(i, data["abilities"]["keys"][i]);
             });
             this.abilities = new pAbilityInfo({ selectelement: a1, keys: a2, types: a3 });
+            this.skyboxes = new pSkyboxInfoList();
+            Object.keys(data["skyboxes"]).forEach(function (i) {
+                _this.skyboxes.push(i, new pSkyboxInfo(data["skyboxes"][i]));
+            });
+            this.editor = new pPackEditorInfo(data["editor"]["defaultSkybox"]);
         }
         return pPackModule;
     })();
     pack.pPackModule = pPackModule;
+    var pPackEditorInfo = (function () {
+        function pPackEditorInfo(defaultSkybox) {
+            this.defaultSkybox = defaultSkybox;
+        }
+        return pPackEditorInfo;
+    })();
+    pack.pPackEditorInfo = pPackEditorInfo;
     var pPackInfo = (function () {
         function pPackInfo(data) {
             this.pName = data["name"];
@@ -146,6 +161,30 @@ var pack;
         return pAbilityInfo;
     })(pInfo);
     pack.pAbilityInfo = pAbilityInfo;
+    var pSkyboxInfo = (function (_super) {
+        __extends(pSkyboxInfo, _super);
+        function pSkyboxInfo() {
+            _super.apply(this, arguments);
+        }
+        return pSkyboxInfo;
+    })(pInfo);
+    pack.pSkyboxInfo = pSkyboxInfo;
+    var pSkyboxInfoList = (function (_super) {
+        __extends(pSkyboxInfoList, _super);
+        function pSkyboxInfoList() {
+            _super.apply(this, arguments);
+        }
+        pSkyboxInfoList.prototype.toSimple = function () {
+            var _this = this;
+            var result = {};
+            Object.keys(this.getAll()).forEach(function (i) {
+                result[_this.get(i).data.label] = i;
+            });
+            return result;
+        };
+        return pSkyboxInfoList;
+    })(p.List);
+    pack.pSkyboxInfoList = pSkyboxInfoList;
 })(pack || (pack = {}));
 var ev;
 (function (ev_1) {

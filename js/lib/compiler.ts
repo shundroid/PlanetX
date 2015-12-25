@@ -103,6 +103,8 @@ module compiler {
         if (i.substring(0, 1) === "*") {
           if (i.indexOf("*skybox,") !== -1) {
             result.push(i);
+          } else {
+            result.push(i); //TODO
           }
           return;
         }

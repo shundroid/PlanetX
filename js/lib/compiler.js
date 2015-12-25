@@ -136,6 +136,9 @@ var compiler;
                     if (i.indexOf("*skybox,") !== -1) {
                         result.push(i);
                     }
+                    else {
+                        result.push(i); //TODO
+                    }
                     return;
                 }
                 if (i.substring(0, 1) === ":")

@@ -29,8 +29,8 @@ module compiler {
   export function CSV2CenterLang(text:string) {
     var lines = text.replace(/;/g, "").split("\n");
     var result = new p.List<p.prefabLite>();
-    var header = [];
-    var footer = [];
+    var header:string[] = [];
+    var footer:string[] = [];
     var effects = new p.stageSettings();
     var mode = 0; // 0: normal, 1: header, 2: footer
     lines.forEach(i => {
@@ -64,7 +64,7 @@ module compiler {
   }
   export function old2CSV(old:string):string {
     var lines = old.split("\n");
-    var result = [];
+    var result:string[] = [];
     var id = 0;
     var mode = -1; // -1: system_header, 0: header, 1: normal, 2: footer, 3: return
     var count = 0;
@@ -103,6 +103,8 @@ module compiler {
         if (i.substring(0, 1) === "*") {
           if (i.indexOf("*skybox,") !== -1) {
             result.push(i);
+          } else {
+            result.push(i); //TODO
           }
           return;
         }

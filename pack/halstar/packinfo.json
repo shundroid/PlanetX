@@ -122,7 +122,8 @@
     "w1/s8/rift": { "width": 300, "height": 50, "filename": "images/objs/w1block2-2.png", "name": "W1-8リフト", "type": "ステージ別特殊パーツ" },
     "ShundroidX/cart": { "width": 100, "height": 50, "filename": "images/objs/cart.png", "name": "車っぽいやつ", "type": "ShundroidX Assets" },
     "@outofarea": { "width": 200, "height": 50, "filename": "images/objs/outofarea.png", "name": "OUTOFAREA", "type": "シーンオブジェクト" },
-    "rail/hrift": { "width": 200, "height": 50, "filename": "images/objs/hriftforpla.png", "name": "HRift", "type": "リフト" }
+    "rail/hrift": { "width": 200, "height": 50, "filename": "images/objs/hriftforpla.png", "name": "HRift", "type": "リフト" },
+    "heartdoor": { "width": 50, "height": 150, "filename": "images/objs/heartdoor.png", "name": "ハートドア", "type": "その他" }
   },
   "descriptions": {
     "w1/block2": { "description":"World1の平凡なステージをイメージしたブロックです。ごく普通のブロックです。", "type":"ごく普通のブロック" },

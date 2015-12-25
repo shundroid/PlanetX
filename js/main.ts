@@ -12,6 +12,7 @@ import grid = require("./modules/grid");
 import prefab = require("./modules/prefab");
 import Vector2 = require("./modules/vector2");
 import Rect = require("./modules/rect");
+import canvas = require("./modules/canvas");
 
 module main {
 
@@ -57,6 +58,11 @@ module main {
           if (e.eventName === "mousedown") {
             if (!detail.contains) {
               // begin to
+              // canvas....
+              stage.items.push(stage.getId(), pre);
+            } else {
+              stage.items.remove(detail.id);
+              // renderbyplanet()
             }
           }
       }

@@ -1,10 +1,8 @@
-import list = require("./list");
+import list = require("./../list");
 module pack {
   export function getPackPath(packName:string) {
     return "pack/" + packName + "/";
   }
-  
-  export var defaultPack:packModule;
   
   export class packModule {
     pack: packInfo;
@@ -106,6 +104,9 @@ module pack {
   }
   export class skyboxInfo extends packItem<ISkyboxInfo> {  }
   export class skyboxInfoList extends list<skyboxInfo> {
+    constructor() {
+      super();
+    }
     toSimple():Object {
       var result = {};
       Object.keys(this.getAll()).forEach(i => {

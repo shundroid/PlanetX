@@ -17,6 +17,29 @@ module ui {
       });
     }
   });
+  export function setSkybox(fileName:string) {
+    document.body.style.backgroundImage = `url('${fileName}')`; 
+  }
+  export function initUI() {
+    
+  }
+  export function initTrayBlock() {
+    return new Promise(() => {
+      
+    });
+  }
+  export function initTrayObj() {
+    return new Promise(() => {
+      
+    });
+  }
+  export function changeLoadingStatus(status:string) {
+    
+  }
+  
+  export function hideLoading() {
+    
+  }
   init();
 }
 export = ui;

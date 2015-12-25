@@ -1,6 +1,19 @@
 var browserify = require('browserify');
 var tsify = require('tsify');
-var source = require('vinyl-source-stream');
+var source = require("vinyl-source-stream");
+var uglify = require("gulp-uglify");
+var glob = require("glob");
+function find(pattern) {
+  var result = [];
+  glob(pattern, function (err, files) {
+    if (err) {
+      console.log(err);
+    }
+    console.log(pattern);
+    result = files;
+  });
+  return result;
+}
 
 var gulp = require("gulp");
 var ts = require("gulp-typescript");
@@ -33,4 +46,20 @@ gulp.task("browserify", function() {
     .plugin(tsify, { noImplicitAny: true, declaration: true })
     .bundle().on("error", (err) => { console.error(err.toString()); }).pipe(source("all.js"))
     .pipe(gulp.dest('js/'));
+});
+gulp.task("tsb", function() {
+  gulp.src("./js/**/*.ts").pipe(ts({
+    target: 'ES5',
+    module: 'commonjs'
+  })).js.pipe(gulp.dest("./js/"));
+  browserify({
+    entries: find("./js/**/*.js")
+  }).bundle().pipe(source("./js/all.js")).pipe(gulp.dest("./js/"));
+  
+  // var browserified = transform(function(filename) {
+  //   var b = browserify(filename);
+  //   b.add(filename);
+  //   return b.bundle();
+  // });
+  // gulp.src(["./js/**/*.js"]).pipe(browserified).pipe(uglify()).pipe(gulp.dest("./js/"));
 });

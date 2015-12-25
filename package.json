@@ -4,13 +4,14 @@
   "description": "",
   "main": "n/a",
   "dependencies": {
+    "browserify": "^12.0.1",
+    "glob": "^6.0.2",
     "gulp": "^3.9.0",
-    "gulp-typescript": "^2.10.0",
-    "typescript": "^1.7.3",
     "gulp-jade": "^1.1.0",
     "gulp-less": "^3.0.5",
+    "gulp-typescript": "^2.10.0",
     "tsify": "^0.13.1",
-    "browserify": "^12.0.1"
+    "typescript": "^1.7.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,6 +19,7 @@
   "author": "shundroid",
   "license": "ISC",
   "devDependencies": {
+    "gulp-uglify": "^1.5.1",
     "vinyl-source-stream": "^1.1.0"
   }
 }

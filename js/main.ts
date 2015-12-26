@@ -57,8 +57,7 @@ module main {
         case "pencil":
           if (e.eventName === "mousedown") {
             if (!detail.contains) {
-              // begin to
-              // canvas....
+              canvas.render(d.selectImage, rect);
               stage.items.push(stage.getId(), pre);
             } else {
               stage.items.remove(detail.id);

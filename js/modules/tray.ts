@@ -14,5 +14,8 @@ module tray {
     if (!height) height = d.defaultBlockSize;
     d.selectBlock = new TrayBlockDetails(blockName, fileName, label, width, height);
   }
+  export function updateSelectImage() {
+    //d.selectImage = 
+  }
 }
 export = tray;

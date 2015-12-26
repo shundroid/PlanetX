@@ -11,6 +11,7 @@ class data {
   static defaultBlockSize:number;
   static selectBlock:tray.TrayBlockDetails;
   static activeToolName:string;
+  static selectImage:HTMLImageElement;
   /**
    * alias (grid.scrollX)
    */
@@ -22,6 +23,12 @@ class data {
    */
   static get scrollY() {
     return grid.scrollY;
+  }
+  /**
+   * alias (tray.updateSelectImage)
+   */
+  static updateSelectImage() {
+    tray.updateSelectImage();
   }
 }
 export = data;

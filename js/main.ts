@@ -19,7 +19,7 @@ module main {
   function init() {
     d.trayItemDataURLs = new list<string>();
     d.defaultPackName = "halstar";
-    d.pack = new packManager.packModule({});
+    //d.pack = new packManager.packModule({});
     d.defaultGridSize = 25;
     d.defaultBlockSize = 50;
     d.activeToolName = "pencil";
@@ -38,8 +38,9 @@ module main {
       event.raiseEvent("initedPack", null);
       event.raiseEvent("initedUI", null);
       ui.initTrayBlock().then(() => {
-        ui.initTrayObj();
-        event.raiseEvent("initedTray", null);
+        ui.initTrayObj().then(() => {
+          event.raiseEvent("initedTray", null);
+        });
       });
     });
     event.addEventListener("initedTray", () => {

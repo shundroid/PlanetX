@@ -1,4 +1,5 @@
 /// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="../definitely/move.d.ts" />
 import initDOM = require("./initDOM");
 import event = require("./event");
 import oI = require("./objIndex");
@@ -239,7 +240,7 @@ module ui {
   
   export function hideLoading() {
     var elem = <HTMLElement>document.getElementsByClassName("loading")[0];
-    move("loading")
+    move(".loading")
       .set("opacity", 0)
       .duration("1s")
       .then()

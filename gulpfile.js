@@ -10,6 +10,8 @@ var less = require("gulp-less");
 var jade = require("gulp-jade");
 var buffer = require("vinyl-buffer");
 var minimist = require("minimist");
+var sourcemaps = require("gulp-sourcemaps");
+var buffer = require("vinyl-buffer");
 
 function find(pattern) {
   return new Promise(resolve => {
@@ -36,16 +38,20 @@ gulp.task("build", function() {
 });
 gulp.task("mountain", function() {
   var env = minimist(process.argv.slice(2));
-  find("./js/{main.ts,modules/*.ts}").then(files => {
+  find("./js/{main.ts,modules/**/*.ts}").then(files => {
     console.log(files);
     var f = browserify({
       entries: files
+    }, {
+      debug: true
     }).plugin(tsify, {
       noImplicitAny: true,
       target: "es5"
     }).bundle();
     if (env.dev) {
-      f.pipe(source("./all.js")).pipe(gulp.dest("./js/"))
+      f
+        .pipe(source("./all.js"))
+        .pipe(gulp.dest("./js/"))
     } else {
       f.pipe(source("./all.min.js")).pipe(buffer()).pipe(uglify()).pipe(gulp.dest("./js/"))
     }

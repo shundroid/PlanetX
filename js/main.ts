@@ -61,9 +61,48 @@ module main {
               stage.items.push(stage.getId(), pre);
             } else {
               stage.items.remove(detail.id);
-              // renderbyplanet()
+              stage.renderStage();
             }
           }
+          break;
+        case "choice":
+          if (e.eventName === "mousedown") {
+            // オブジェクトに対応させる
+            if (detail.prefab) {
+              var bData = d.pack.blocks.get(detail.prefab.blockName);
+              tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
+              ui.changeActiveBlock(detail.prefab.blockName);
+            }
+          }
+          break;
+        case "hand":
+          if (e.eventName === "mousemove") {
+            scrollX += e.mousePos.x - grid.scrollBeforeX;
+            scrollY += e.mousePos.y - grid.scrollBeforeY;
+            stage.renderStage();
+          }
+          if (e.eventName !== "mouseup") {
+            grid.scrollBeforeX = e.mousePos.x;
+            grid.scrollBeforeY = e.mousePos.y;
+          }
+          break;
+        default:
+          if (e.eventName === "mousemove" || e.eventName === "mousedown") {
+            if (d.activeToolName === "brush") {
+              if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
+                stage.items.remove(detail.id);
+                stage.renderStage();
+              }
+              if (!detail.contains) {
+                canvas.render(d.selectImage, rect);
+                stage.items.add(stage.getId(), pre);
+              }
+            } else if (d.activeToolName === "erase" && detail.contains) {
+              stage.items.remove(detail.id);
+              stage.renderStage();
+            }
+          }
+          break;
       }
     });
     event.addEventListener("packLoaded", () => {

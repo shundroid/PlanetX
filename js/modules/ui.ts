@@ -1,3 +1,4 @@
+/// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
 import initDOM = require("./initDOM");
 module ui {
   function init() {
@@ -38,6 +39,10 @@ module ui {
   }
   
   export function hideLoading() {
+    
+  }
+  
+  export function changeActiveBlock(blockName:string) {
     
   }
   init();

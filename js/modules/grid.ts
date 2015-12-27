@@ -15,6 +15,8 @@ module grid {
   }
   export var scrollX = 0;
   export var scrollY = 0;
+  export var scrollBeforeX = 0;
+  export var scrollBeforeY = 0;
   export function getGridPosFromMousePos(mousePos:Vector2) {
     var cX = mousePos.x - scrollX;
   }

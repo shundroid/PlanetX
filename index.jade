@@ -7,21 +7,7 @@ html(lang="ja")
     link(rel="stylesheet", href="bower_components/balloon/balloon.css")
     link(rel="stylesheet", href="lib/fontawesome/css/font-awesome.css")
     link(rel="stylesheet", href="css/ui.css")
-    // 
-      script
-      読み込む順番
-      1. js/lib/ 以下
-      2. js/ 以下
-      3. main.js
-    script(type='text/javascript', src='js/lib/classes.js')
-    script(type='text/javascript', src='js/lib/util.js')
-    script(type='text/javascript', src='js/lib/canvas.js')
-    script(type='text/javascript', src='js/lib/compiler.js')
-    script(type='text/javascript', src='js/ui.js')
-    script(type='text/javascript', src='js/planet.js')
-    
-    // 一番最後に
-    script(type='text/javascript', src='js/main.js')
+    script(type='text/javascript', src='js/all.js')
   body
     .loading
     canvas#pla-canvas(width='300', height='200')

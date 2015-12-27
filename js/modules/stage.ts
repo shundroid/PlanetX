@@ -5,6 +5,7 @@ import grid = require("./grid");
 import image = require("./image");
 import d = require("./data");
 import rect = require("./rect");
+import event = require("./event");
 
 module stage {
   export class StageEffects {
@@ -67,5 +68,18 @@ module stage {
       }
     });
   }
+  
+  var isResizeRequest = false;
+  var resizeTimerId:number;
+  event.addEventListener("resize", () => {
+    if (isResizeRequest) {
+      clearTimeout(resizeTimerId);
+    }
+    isResizeRequest = true;
+    resizeTimerId = setTimeout(() => {
+      isResizeRequest = false;
+      renderStage();
+    }, 100);
+  });
 }
 export = stage;

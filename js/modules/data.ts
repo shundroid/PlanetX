@@ -12,6 +12,10 @@ class data {
   static selectBlock:tray.TrayBlockDetails;
   static activeToolName:string;
   static selectImage:HTMLImageElement;
+  static isObjMode:boolean;
+  static isFullscreenTray:boolean;
+  static isShowInspector:boolean;
+  
   /**
    * alias (grid.scrollX)
    */

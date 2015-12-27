@@ -18,7 +18,12 @@ module grid {
   export var scrollBeforeX = 0;
   export var scrollBeforeY = 0;
   export function getGridPosFromMousePos(mousePos:Vector2) {
-    var cX = mousePos.x - scrollX;
+    var cX = mousePos.x - scrollX; var cY = mousePos.y - scrollY;
+    var eX = cX - (cX % d.defaultGridSize);
+    var eY = cY - (cY % d.defaultGridSize);
+    var gridX = eX / d.defaultGridSize;
+    var gridY = eY / d.defaultGridSize;
+    return new Vector2(gridX, gridY);
   }
   export class getPrefabFromGridDetails {
     constructor(

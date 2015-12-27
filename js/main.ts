@@ -23,6 +23,9 @@ module main {
     d.defaultGridSize = 25;
     d.defaultBlockSize = 50;
     d.activeToolName = "pencil";
+    d.isObjMode = false;
+    d.isFullscreenTray = false;
+    d.isShowInspector = false;
   }
   init();
   
@@ -32,7 +35,7 @@ module main {
       event.raiseEvent("packLoaded", null);
       stage.stageEffects.skybox = d.pack.editor.defaultSkybox;
       ui.setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(d.pack.editor.defaultSkybox).data.filename);
-      ui.initUI();
+      event.raiseEvent("initedPack", null);
       event.raiseEvent("initedUI", null);
       ui.initTrayBlock().then(() => {
         ui.initTrayObj();
@@ -105,16 +108,6 @@ module main {
           break;
       }
     });
-    event.addEventListener("packLoaded", () => {
-      
-    });
-    event.addEventListener("resize", () => {
-      
-    });
-    event.addEventListener("clickTrayToolbtn", () => {
-      
-    });
   });
-
 }
 export = main;

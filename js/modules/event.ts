@@ -2,10 +2,16 @@ import list = require("./list");
 module event {
   var eventHandlers = new list<Array<(e:any)=>void>>();
   export function addEventListener(eventName:string, fn:(e:any)=>void) {
-    if (eventHandlers.contains(eventName)) {
-      eventHandlers.get(eventName).push(fn);
+    if (eventName.indexOf("|") !== -1) {
+      eventName.split("|").forEach(i => {
+        addEventListener(i, fn);
+      });
     } else {
-      eventHandlers.push(eventName, [fn]);
+      if (eventHandlers.contains(eventName)) {
+        eventHandlers.get(eventName).push(fn);
+      } else {
+        eventHandlers.push(eventName, [fn]);
+      }
     }
   }
   export function raiseEvent(eventName:string, params:any) {

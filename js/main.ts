@@ -30,6 +30,7 @@ module main {
   init();
   
   initDOM(() => {
+    ui.setupCanvas();
     packLoader(d.defaultPackName).then(i => {
       d.pack = new packManager.packModule(i);
       event.raiseEvent("packLoaded", null);
@@ -46,6 +47,7 @@ module main {
     event.addEventListener("initedTray", () => {
       ui.changeLoadingStatus("making DataURL");
       d.trayItemDataURLs = makeDataUrl();
+      console.log(d.defaultBlockSize);
       tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック");
       ui.changeLoadingStatus("Are you ready?");
       event.raiseEvent("ready", null);

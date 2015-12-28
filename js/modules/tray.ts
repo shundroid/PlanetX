@@ -12,9 +12,11 @@ module tray {
     ) { }
   }
   export function updateActiveBlock(blockName:string, fileName:string, label:string, width?:number, height?:number) {
-    if (!width) width = d.defaultBlockSize;
-    if (!height) height = d.defaultBlockSize;
-    d.selectBlock = new TrayBlockDetails(blockName, fileName, label, width, height);
+    console.log(d);
+    var w = width || d.defaultBlockSize;
+    var h = height || d.defaultBlockSize;
+    d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
+    console.log(d.defaultBlockSize);
   }
   export function updateSelectImage() {
     //d.selectImage = 

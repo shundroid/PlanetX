@@ -36,14 +36,14 @@ gulp.task("build", function() {
   gulp.watch("./css/*.less", ["less"]);
   gulp.watch("./*.jade", ["jade"]);
 });
-gulp.task("mountain", function() {
+gulp.task("mountain", function(callback) {
   var env = minimist(process.argv.slice(2));
   find("./js/{main.ts,modules/**/*.ts}").then(files => {
     console.log(files);
     var f = browserify({
       entries: files
     }, {
-      debug: true
+      // debug: true
     }).plugin(tsify, {
       noImplicitAny: true,
       target: "es5"
@@ -55,7 +55,7 @@ gulp.task("mountain", function() {
     } else {
       f.pipe(source("./all.min.js")).pipe(buffer()).pipe(uglify()).pipe(gulp.dest("./js/"))
     }
-    console.log("fuga");
+    callback();
   });
 });
 gulp.task("deljs", function() {

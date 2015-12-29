@@ -314,10 +314,10 @@
 	    function changeHeaderorFooterValue(e) {
 	        var elem = e.target;
 	        if (elem.id === "io-header") {
-	            planet.header = elem.value;
+	            stage.header = elem.value;
 	        }
 	        else if (elem.id === "io-footer") {
-	            planet.footer = elem.value;
+	            stage.footer = elem.value;
 	        }
 	    }
 	    ui.changeHeaderorFooterValue = changeHeaderorFooterValue;
@@ -878,7 +878,35 @@
 	var planet;
 	(function (planet) {
 	    function exportText() {
-	        return "";
+	        var result = [];
+	        result.push("//:csv");
+	        // header
+	        if (stage.header.replace(/ /g, "").replace(/\n/g, "") !== "") {
+	            result.push("//:header");
+	            var hLines = stage.header.split("\n");
+	            hLines.forEach(function (i) {
+	                result.push(i);
+	            });
+	            result.push("//:/header");
+	        }
+	        // effects
+	        result.push(["*skybox", stage.stageEffects.skybox].join(","));
+	        // blocks
+	        var items = stage.items.getAll();
+	        Object.keys(items).forEach(function (i) {
+	            var item = stage.items.get(parseInt(i));
+	            result.push([[item.blockName, item.gridX, item.gridY].join(","), i].join("="));
+	        });
+	        // footer
+	        if (stage.footer.replace(/ /g, "").replace(/\n/g, "") !== "") {
+	            result.push("//:footer");
+	            var fLines = stage.footer.split("\n");
+	            fLines.forEach(function (i) {
+	                result.push(i);
+	            });
+	            result.push("//:/footer");
+	        }
+	        return result.join("\n");
 	    }
 	    planet.exportText = exportText;
 	    function importText(file) {
@@ -942,6 +970,8 @@
 	    var maxId;
 	    function init() {
 	        prefabList = new list();
+	        stage.header = "";
+	        stage.footer = "";
 	        maxId = 0;
 	    }
 	    init();

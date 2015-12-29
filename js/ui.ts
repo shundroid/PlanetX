@@ -147,9 +147,9 @@ module ui {
   export function changeHeaderorFooterValue(e:MouseEvent) {
     var elem = <HTMLTextAreaElement>e.target;
     if (elem.id === "io-header") {
-      planet.header = elem.value;
+      stage.header = elem.value;
     } else if (elem.id === "io-footer") {
-      planet.footer = elem.value;
+      stage.footer = elem.value;
     }
   }
   

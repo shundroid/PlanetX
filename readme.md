@@ -14,23 +14,29 @@ npm i
 bower i
 ```
   
-## APIなどについて
-
-使用するもの
-- Array.prototype.forEach
-- DOMContentLoaded Event
-- try-catch 文
-- display: flex;
+## ブラウザについて
+次の構文などが対応しているブラウザに対応しています。  
+Firefox 45.0で確認しています。
+- `Array.prototype.forEach()`
+- `DOMContentLoaded` Event
+- `try-catch` 文
+- CSS flexible box
+- `Object.defineProperty()`
+- Promise
   
-## tsのルール
-- main.ts, planet.ts, ui.tsの3つをPlaSourcesという。
-- document.addEventListener, document.getElementById はui.ts以外のPlaSourcesには書かない。
-- lib/ 以下のファイルから、PlaSourcesは参照しない。
+## Gulp
+Browserify、Watchifyに対応。
 
-## MVCについて
-- model: planet.ts
-- view: ui.ts
-- controller: main.ts
+### 普通に実行する
+```bash
+gulp browserify --dev
+```
 
-  ルール
-- UIイベントはui.tsへ直接送られ、そこからmain.tsへ行くようにする。
+`--dev`は、つけるとall.jsを圧縮しない。
+
+### watchify
+```bash
+gulp w-browserify --dev
+```
+
+`--dev`は、普通に実行したときと同じ。

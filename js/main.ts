@@ -1,4 +1,4 @@
-import ui = require("./modules/ui");
+import ui = require("./ui");
 import initDOM = require("./modules/initDOM");
 import packLoader = require("./modules/packUtil/packLoader");
 import packManager = require("./modules/packUtil/packManager");

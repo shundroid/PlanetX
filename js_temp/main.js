@@ -1,4 +1,4 @@
-var ui = require("./modules/ui");
+var ui = require("./ui");
 var initDOM = require("./modules/initDOM");
 var packLoader = require("./modules/packUtil/packLoader");
 var packManager = require("./modules/packUtil/packManager");

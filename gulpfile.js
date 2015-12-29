@@ -23,7 +23,7 @@ gulp.task("build", function() {
   gulp.watch("./*.jade", ["jade"]);
 });
 gulp.task("wpack", function() {
-  gulp.src("./js/{main.ts,modules/**/*.ts}")
+  gulp.src("./js/{main.ts,ui.ts,modules/**/*.ts}")
     .pipe(ts(tsConfig.compilerOptions))
     .js.pipe(gulp.dest("./js_temp"));
   gulp.src("./js_temp/**/*.js")

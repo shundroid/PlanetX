@@ -261,13 +261,7 @@ module ui {
     ui.showInspector(btnName2InspectorName[name]);
   });
   
-  export function startUIWaitMode() {
-    document.getElementById("pla-canvas").style.cursor = "wait";
-  }
-  export function endUIWaitMode() {
-    document.getElementById("pla-canvas").style.cursor = "crosshair";
-  }
-  
+
   export function changeSkybox(e:Event) {
     stage.stageEffects.skybox = (<HTMLSelectElement>e.target).value;
     setSkybox(d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);

@@ -79,12 +79,13 @@ module ui {
     });
   }
   export function togglefullScreen(e:MouseEvent) {
+    console.log(d.isFullscreenTray);
     if (!d.isFullscreenTray) {
       closeInspector();
-      anim.hideTrayFull();
+      anim.showTrayFull();
       (<HTMLElement>e.target).textContent = "↓";
     } else {
-      anim.showTrayFull();
+      anim.hideTrayFull();
       (<HTMLElement>e.target).textContent = "↑";
     }
     d.isFullscreenTray = !d.isFullscreenTray;
@@ -146,62 +147,26 @@ module ui {
   
   export function initTrayBlock() {
     return new Promise((resolve) => {
-      var blocks = d.pack.blocks.getAll();
-      var ul = document.getElementsByClassName("tray-items")[0];
-      var list = Object.keys(blocks);
-      var async = (i: number) => {
-        var item = list[i];
-        var li = document.createElement("div");
-        li.classList.add("tray-list", "tray-list-block");
-        li.addEventListener("click", (e) => { event.raiseEvent("ui_clickTray", e); });
-        var img = document.createElement("img");
-        img.src = packManager.getPackPath(d.defaultPackName) + d.pack.blocks.get(item).data.filename;
-        img.onload = () => {
-          img.alt = d.pack.blocks.get(item).data.bName;
-          img.dataset["block"] = item;
-          li.appendChild(img);
-          ul.appendChild(li);
-          if (i === list.length - 1) {
-            resolve();
-          } else {
-            changeLoadingStatus("loading tray : " + i.toString() + " / " + (list.length - 1).toString());
-            async(i + 1);
-          }
-        };
-      }
-      async(0);
+      tray.initTrayBlock((numerator, denominator) => {
+        changeLoadingStatus(`loading tray-block : ${numerator.toString()} / ${denominator.toString()}`);
+      }).then((ul) => {
+        (<Array<HTMLDivElement>>ul).forEach(i => {
+          document.getElementsByClassName("tray-items")[0].appendChild(i);
+        });
+        resolve();
+      });
     });
   }
   export function initTrayObj() {
     return new Promise((resolve) => {
-      var objs = d.pack.objs.getAll();
-      var ul = document.getElementsByClassName("tray-items")[0];
-      var list = Object.keys(objs);
-      var async = (i: number) => {
-        var item = list[i];
-        var li = document.createElement("div");
-        li.classList.add("tray-list", "tray-list-obj");
-        li.addEventListener("click", (e) => { event.raiseEvent("ui_clickTray", e); });
-        var img = document.createElement("img");
-        img.src = packManager.getPackPath(d.defaultPackName) + d.pack.objs.get(item).data.filename;
-        img.onload = () => {
-          img.alt = d.pack.objs.get(item).data.oName;
-          img.dataset["block"] = item;
-          li.style.width = img.style.width =
-            d.pack.objs.get(item).data.width / (d.pack.objs.get(item).data.height / 50) + "px";
-          li.style.height = img.style.height = "50px";
-          li.appendChild(img);
-          ul.appendChild(li);
-          if (i === list.length - 1) {
-            //ev.raiseEvent("initedTray", null);
-            resolve();
-          } else {
-            changeLoadingStatus("loading tray-obj : " + i.toString() + " / " + (list.length - 1).toString());
-            async(i + 1);
-          }
-        }
-      }
-      async(0);
+      tray.initTrayObj((numerator, denominator) => {
+        changeLoadingStatus(`loading tray-obj : ${numerator.toString()} / ${denominator.toString()}`);
+      }).then((ul) => {
+        (<Array<HTMLDivElement>>ul).forEach(i => {
+          document.getElementsByClassName("tray-items")[0].appendChild(i);
+        });
+        resolve();
+      });
     });
   }
   

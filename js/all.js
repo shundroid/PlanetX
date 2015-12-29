@@ -956,6 +956,13 @@ var image = require("./image");
 var TrayBlockDetails = require("./classes/trayBlockDetails");
 var d = require("./data");
 var uiWaitMode = require("./uiWaitMode");
+var event = require("./event");
+var packManager = require("./packUtil/packManager");
+/**
+ * pla:module
+ * | [x] ui
+ * | [x] controller
+ */
 var tray;
 (function (tray) {
     function updateActiveBlock(blockName, fileName, label, width, height) {
@@ -973,9 +980,70 @@ var tray;
         };
     }
     tray.updateSelectImage = updateSelectImage;
+    function initTrayBlock(finishedOne) {
+        return new Promise(function (resolve) {
+            var list = Object.keys(d.pack.blocks.getAll());
+            var result = [];
+            var async = function (i) {
+                var item = list[i];
+                var li = document.createElement("div");
+                li.classList.add("tray-list", "tray-list-block");
+                li.addEventListener("click", function (e) { event.raiseEvent("ui_clickTray", e); });
+                var img = document.createElement("img");
+                img.src = packManager.getPackPath(d.defaultPackName) + d.pack.blocks.get(item).data.filename;
+                img.onload = function () {
+                    img.alt = d.pack.blocks.get(item).data.bName;
+                    img.dataset["block"] = item;
+                    li.appendChild(img);
+                    result.push(li);
+                    if (i === list.length - 1) {
+                        resolve(result);
+                    }
+                    else {
+                        finishedOne(i, list.length - 1);
+                        async(i + 1);
+                    }
+                };
+            };
+            async(0);
+        });
+    }
+    tray.initTrayBlock = initTrayBlock;
+    function initTrayObj(finishedOne) {
+        return new Promise(function (resolve) {
+            var list = Object.keys(d.pack.objs.getAll());
+            var result = [];
+            var async = function (i) {
+                var item = list[i];
+                var li = document.createElement("div");
+                li.classList.add("tray-list", "tray-list-obj");
+                li.addEventListener("click", function (e) { event.raiseEvent("ui_clickTray", e); });
+                var img = document.createElement("img");
+                img.src = packManager.getPackPath(d.defaultPackName) + d.pack.objs.get(item).data.filename;
+                img.onload = function () {
+                    img.alt = d.pack.objs.get(item).data.oName;
+                    img.dataset["block"] = item;
+                    li.style.width = img.style.width =
+                        d.pack.objs.get(item).data.width / (d.pack.objs.get(item).data.height / 50) + "px";
+                    li.style.height = img.style.height = "50px";
+                    li.appendChild(img);
+                    result.push(li);
+                    if (i === list.length - 1) {
+                        resolve(result);
+                    }
+                    else {
+                        finishedOne(i, list.length - 1);
+                        async(i + 1);
+                    }
+                };
+            };
+            async(0);
+        });
+    }
+    tray.initTrayObj = initTrayObj;
 })(tray || (tray = {}));
 module.exports = tray;
-},{"./classes/trayBlockDetails":6,"./data":9,"./image":13,"./uiWaitMode":24}],24:[function(require,module,exports){
+},{"./classes/trayBlockDetails":6,"./data":9,"./event":12,"./image":13,"./packUtil/packManager":19,"./uiWaitMode":24}],24:[function(require,module,exports){
 var uiWaitMode;
 (function (uiWaitMode) {
     function start() {
@@ -1133,13 +1201,14 @@ var ui;
     }
     ui.setupCanvas = setupCanvas;
     function togglefullScreen(e) {
+        console.log(d.isFullscreenTray);
         if (!d.isFullscreenTray) {
             closeInspector();
-            anim.hideTrayFull();
+            anim.showTrayFull();
             e.target.textContent = "↓";
         }
         else {
-            anim.showTrayFull();
+            anim.hideTrayFull();
             e.target.textContent = "↑";
         }
         d.isFullscreenTray = !d.isFullscreenTray;
@@ -1206,65 +1275,27 @@ var ui;
     ui.setSkybox = setSkybox;
     function initTrayBlock() {
         return new Promise(function (resolve) {
-            var blocks = d.pack.blocks.getAll();
-            var ul = document.getElementsByClassName("tray-items")[0];
-            var list = Object.keys(blocks);
-            var async = function (i) {
-                var item = list[i];
-                var li = document.createElement("div");
-                li.classList.add("tray-list", "tray-list-block");
-                li.addEventListener("click", function (e) { event.raiseEvent("ui_clickTray", e); });
-                var img = document.createElement("img");
-                img.src = packManager.getPackPath(d.defaultPackName) + d.pack.blocks.get(item).data.filename;
-                img.onload = function () {
-                    img.alt = d.pack.blocks.get(item).data.bName;
-                    img.dataset["block"] = item;
-                    li.appendChild(img);
-                    ul.appendChild(li);
-                    if (i === list.length - 1) {
-                        resolve();
-                    }
-                    else {
-                        changeLoadingStatus("loading tray : " + i.toString() + " / " + (list.length - 1).toString());
-                        async(i + 1);
-                    }
-                };
-            };
-            async(0);
+            tray.initTrayBlock(function (numerator, denominator) {
+                changeLoadingStatus("loading tray-block : " + numerator.toString() + " / " + denominator.toString());
+            }).then(function (ul) {
+                ul.forEach(function (i) {
+                    document.getElementsByClassName("tray-items")[0].appendChild(i);
+                });
+                resolve();
+            });
         });
     }
     ui.initTrayBlock = initTrayBlock;
     function initTrayObj() {
         return new Promise(function (resolve) {
-            var objs = d.pack.objs.getAll();
-            var ul = document.getElementsByClassName("tray-items")[0];
-            var list = Object.keys(objs);
-            var async = function (i) {
-                var item = list[i];
-                var li = document.createElement("div");
-                li.classList.add("tray-list", "tray-list-obj");
-                li.addEventListener("click", function (e) { event.raiseEvent("ui_clickTray", e); });
-                var img = document.createElement("img");
-                img.src = packManager.getPackPath(d.defaultPackName) + d.pack.objs.get(item).data.filename;
-                img.onload = function () {
-                    img.alt = d.pack.objs.get(item).data.oName;
-                    img.dataset["block"] = item;
-                    li.style.width = img.style.width =
-                        d.pack.objs.get(item).data.width / (d.pack.objs.get(item).data.height / 50) + "px";
-                    li.style.height = img.style.height = "50px";
-                    li.appendChild(img);
-                    ul.appendChild(li);
-                    if (i === list.length - 1) {
-                        //ev.raiseEvent("initedTray", null);
-                        resolve();
-                    }
-                    else {
-                        changeLoadingStatus("loading tray-obj : " + i.toString() + " / " + (list.length - 1).toString());
-                        async(i + 1);
-                    }
-                };
-            };
-            async(0);
+            tray.initTrayObj(function (numerator, denominator) {
+                changeLoadingStatus("loading tray-obj : " + numerator.toString() + " / " + denominator.toString());
+            }).then(function (ul) {
+                ul.forEach(function (i) {
+                    document.getElementsByClassName("tray-items")[0].appendChild(i);
+                });
+                resolve();
+            });
         });
     }
     ui.initTrayObj = initTrayObj;

@@ -113,7 +113,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/list":3,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":9,"./modules/event":11,"./modules/initDOM":14,"./modules/makePrefabDataUrls":15,"./modules/packUtil/packLoader":17,"./modules/packUtil/packManager":18,"./modules/prefab":20,"./modules/stage":21,"./modules/tray":22,"./ui":25}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/list":3,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":9,"./modules/event":11,"./modules/initDOM":14,"./modules/makePrefabDataUrls":15,"./modules/packUtil/packLoader":17,"./modules/packUtil/packManager":18,"./modules/prefab":20,"./modules/stage":21,"./modules/tray":22,"./ui":26}],2:[function(require,module,exports){
 var initDOM = require("./initDOM");
 var canvas;
 (function (canvas_1) {
@@ -985,6 +985,13 @@ var util;
 })(util || (util = {}));
 module.exports = util;
 },{}],25:[function(require,module,exports){
+var version;
+(function (version_1) {
+    version_1.version = "v1.0";
+    version_1.author = "shundroid";
+})(version || (version = {}));
+module.exports = version;
+},{}],26:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
@@ -999,6 +1006,7 @@ var tray = require("./modules/tray");
 var packManager = require("./modules/packUtil/packManager");
 var planet = require("./modules/planet");
 var stage = require("./modules/stage");
+var v = require("./modules/version");
 var ui;
 (function (ui) {
     function init() {
@@ -1042,6 +1050,7 @@ var ui;
     //   onBtnClickhandlerList.push(fn);
     // }
     initDOM(function () {
+        document.getElementById("pla-ver").innerHTML = "Planet " + v.version + " by " + v.author;
         document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen);
         document.getElementById("ins-close").addEventListener("click", closeInspector);
         document.getElementById("io-export").addEventListener("click", clickExport);
@@ -1259,4 +1268,4 @@ var ui;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":7,"./modules/compiler":8,"./modules/data":9,"./modules/elem":10,"./modules/event":11,"./modules/importJS":13,"./modules/initDOM":14,"./modules/packUtil/packManager":18,"./modules/planet":19,"./modules/stage":21,"./modules/tray":22,"./modules/util":24}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]);
+},{"./modules/classes/vector2":7,"./modules/compiler":8,"./modules/data":9,"./modules/elem":10,"./modules/event":11,"./modules/importJS":13,"./modules/initDOM":14,"./modules/packUtil/packManager":18,"./modules/planet":19,"./modules/stage":21,"./modules/tray":22,"./modules/util":24,"./modules/version":25}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]);

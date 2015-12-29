@@ -14,6 +14,7 @@ import tray = require("./modules/tray");
 import packManager = require("./modules/packUtil/packManager");
 import planet = require("./modules/planet");
 import stage = require("./modules/stage");
+import v = require("./modules/version");
 
 module ui {
   export var canvas: HTMLCanvasElement; 
@@ -57,6 +58,7 @@ module ui {
   //   onBtnClickhandlerList.push(fn);
   // }
   initDOM(() => {
+    document.getElementById("pla-ver").innerHTML = `Planet ${v.version} by ${v.author}`;
     document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen);
     document.getElementById("ins-close").addEventListener("click", closeInspector);
     document.getElementById("io-export").addEventListener("click", clickExport);

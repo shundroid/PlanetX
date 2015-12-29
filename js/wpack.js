@@ -45,20 +45,19 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var ui = __webpack_require__(1);
-	var initDOM = __webpack_require__(9);
+	var initDOM = __webpack_require__(3);
 	var packLoader = __webpack_require__(19);
-	var packManager = __webpack_require__(17);
-	var event = __webpack_require__(12);
-	var list = __webpack_require__(7);
-	var stage = __webpack_require__(6);
+	var packManager = __webpack_require__(13);
+	var event = __webpack_require__(4);
+	var list = __webpack_require__(5);
+	var stage = __webpack_require__(15);
 	var d = __webpack_require__(2);
 	var makeDataUrl = __webpack_require__(20);
-	var tray = __webpack_require__(3);
-	var grid = __webpack_require__(4);
+	var tray = __webpack_require__(11);
 	var prefab = __webpack_require__(21);
-	var Vector2 = __webpack_require__(5);
-	var Rect = __webpack_require__(11);
-	var canvas = __webpack_require__(8);
+	var Vector2 = __webpack_require__(10);
+	var Rect = __webpack_require__(18);
+	var canvas = __webpack_require__(16);
 	var main;
 	(function (main) {
 	    function init() {
@@ -92,7 +91,7 @@
 	            ui.changeLoadingStatus("making DataURL");
 	            d.trayItemDataURLs = makeDataUrl();
 	            console.log(d.defaultBlockSize);
-	            d.selectBlock = tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック", d.defaultBlockSize, d.defaultBlockSize);
+	            tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック");
 	            ui.changeLoadingStatus("Are you ready?");
 	            event.raiseEvent("ready", null);
 	        });
@@ -100,9 +99,9 @@
 	            ui.hideLoading();
 	        });
 	        event.addEventListener("gridCanvas", function (e) {
-	            var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, grid.toGridPos(d.selectBlock.width), grid.toGridPos(d.selectBlock.height));
-	            var detail = grid.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY));
-	            var rect = grid.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
+	            var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
+	            var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY));
+	            var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
 	            switch (d.activeToolName) {
 	                case "pencil":
 	                    if (e.eventName === "mousedown") {
@@ -121,20 +120,20 @@
 	                        // オブジェクトに対応させる
 	                        if (detail.prefab) {
 	                            var bData = d.pack.blocks.get(detail.prefab.blockName);
-	                            d.selectBlock = tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename, d.defaultBlockSize, d.defaultBlockSize);
+	                            tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
 	                            ui.changeActiveBlock(detail.prefab.blockName);
 	                        }
 	                    }
 	                    break;
 	                case "hand":
 	                    if (e.eventName === "mousemove") {
-	                        scrollX += e.mousePos.x - grid.scrollBeforeX;
-	                        scrollY += e.mousePos.y - grid.scrollBeforeY;
+	                        scrollX += e.mousePos.x - stage.scrollBeforeX;
+	                        scrollY += e.mousePos.y - stage.scrollBeforeY;
 	                        stage.renderStage();
 	                    }
 	                    if (e.eventName !== "mouseup") {
-	                        grid.scrollBeforeX = e.mousePos.x;
-	                        grid.scrollBeforeY = e.mousePos.y;
+	                        stage.scrollBeforeX = e.mousePos.x;
+	                        stage.scrollBeforeY = e.mousePos.y;
 	                    }
 	                    break;
 	                default:
@@ -169,18 +168,17 @@
 	/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 	/// <reference path="definitely/move.d.ts" />
 	var d = __webpack_require__(2);
-	var initDOM = __webpack_require__(9);
-	var event = __webpack_require__(12);
-	var el = __webpack_require__(13);
-	var compiler = __webpack_require__(14);
-	var importJS = __webpack_require__(15);
-	var u = __webpack_require__(16);
-	var grid = __webpack_require__(4);
-	var Vector2 = __webpack_require__(5);
-	var tray = __webpack_require__(3);
-	var packManager = __webpack_require__(17);
-	var planet = __webpack_require__(18);
-	var stage = __webpack_require__(6);
+	var initDOM = __webpack_require__(3);
+	var event = __webpack_require__(4);
+	var el = __webpack_require__(6);
+	var compiler = __webpack_require__(7);
+	var importJS = __webpack_require__(8);
+	var u = __webpack_require__(9);
+	var Vector2 = __webpack_require__(10);
+	var tray = __webpack_require__(11);
+	var packManager = __webpack_require__(13);
+	var planet = __webpack_require__(14);
+	var stage = __webpack_require__(15);
 	var ui;
 	(function (ui) {
 	    function init() {
@@ -192,17 +190,17 @@
 	            d.isObjMode = target.parentElement.classList.contains("tray-list-obj");
 	            if (!d.isObjMode) {
 	                var item = d.pack.blocks.get(target.dataset["block"]).data;
-	                d.selectBlock = tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName, d.defaultBlockSize, d.defaultBlockSize);
+	                tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName);
 	            }
 	            else {
 	                var item = d.pack.objs.get(target.dataset["block"]).data;
-	                d.selectBlock = tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
+	                tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName);
 	            }
 	            changeActiveBlock(target.dataset["block"]);
 	        });
 	        event.addEventListener("ui_mousedownCanvas|ui_mousemoveanddownCanvas|ui_mouseupCanvas", function (e) {
-	            var g = grid.getGridPosFromMousePos(new Vector2(e.clientX, e.clientY));
-	            event.raiseEvent("gridCanvas", new grid.gridDetail(g, e.type, new Vector2(e.clientX, e.clientY)));
+	            var g = stage.getGridPosFromMousePos(new Vector2(e.clientX, e.clientY));
+	            event.raiseEvent("gridCanvas", new stage.gridDetail(g, e.type, new Vector2(e.clientX, e.clientY)));
 	        });
 	        event.addEventListener("initedPack", function () {
 	            document.getElementById("stg-skybox").value = d.pack.editor.defaultSkybox;
@@ -454,10 +452,8 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var tray = __webpack_require__(3);
-	var grid = __webpack_require__(4);
 	var data = (function () {
 	    function data() {
 	    }
@@ -571,36 +567,6 @@
 	        enumerable: true,
 	        configurable: true
 	    });
-	    Object.defineProperty(data, "scrollX", {
-	        /**
-	         * alias (grid.scrollX)
-	         */
-	        get: function () {
-	            console.log("this is alias");
-	            return grid.scrollX;
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    Object.defineProperty(data, "scrollY", {
-	        /**
-	         * alias (grid.scrollY)
-	         */
-	        get: function () {
-	            console.log("this is alias");
-	            return grid.scrollY;
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    /**
-	     * alias (tray.updateSelectImage)
-	     */
-	    data.updateSelectImage = function () {
-	        console.log("this is alias");
-	        tray.updateSelectImage();
-	    };
-	    data.hogehogeho = "hoge";
 	    data.datas = {};
 	    return data;
 	})();
@@ -611,241 +577,56 @@
 /* 3 */
 /***/ function(module, exports) {
 
-	var tray;
-	(function (tray) {
-	    var TrayBlockDetails = (function () {
-	        function TrayBlockDetails(blockName, fileName, label, // 表示するときのブロック名
-	            width, height) {
-	            this.blockName = blockName;
-	            this.fileName = fileName;
-	            this.label = label;
-	            this.width = width;
-	            this.height = height;
-	        }
-	        return TrayBlockDetails;
-	    })();
-	    tray.TrayBlockDetails = TrayBlockDetails;
-	    function updateActiveBlock(blockName, fileName, label, width, height) {
-	        return new TrayBlockDetails(blockName, fileName, label, width, height);
-	    }
-	    tray.updateActiveBlock = updateActiveBlock;
-	    function updateSelectImage() {
-	        //d.selectImage = 
-	    }
-	    tray.updateSelectImage = updateSelectImage;
-	})(tray || (tray = {}));
-	module.exports = tray;
+	var handlerList = new Array();
+	function add(fn) {
+	    handlerList.push(fn);
+	}
+	document.addEventListener('DOMContentLoaded', function () {
+	    handlerList.forEach(function (i) {
+	        i();
+	    });
+	});
+	module.exports = add;
 
 
 /***/ },
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Vector2 = __webpack_require__(5);
-	var d = __webpack_require__(2);
-	var stage = __webpack_require__(6);
-	var rect = __webpack_require__(11);
-	/**
-	 * 座標系。ひえーー
-	 */
-	var grid;
-	(function (grid_1) {
-	    var gridDetail = (function () {
-	        function gridDetail(gridPos, eventName, mousePos) {
-	            this.gridPos = gridPos;
-	            this.eventName = eventName;
-	            this.mousePos = mousePos;
-	        }
-	        return gridDetail;
-	    })();
-	    grid_1.gridDetail = gridDetail;
-	    function getMousePosFromCenterAndSize(center, size) {
-	        return center - ((size - d.defaultGridSize) / 2);
-	    }
-	    grid_1.getMousePosFromCenterAndSize = getMousePosFromCenterAndSize;
-	    grid_1.scrollX = 0;
-	    grid_1.scrollY = 0;
-	    grid_1.scrollBeforeX = 0;
-	    grid_1.scrollBeforeY = 0;
-	    function getGridPosFromMousePos(mousePos) {
-	        var cX = mousePos.x - grid_1.scrollX;
-	        var cY = mousePos.y - grid_1.scrollY;
-	        var eX = cX - (cX % d.defaultGridSize);
-	        var eY = cY - (cY % d.defaultGridSize);
-	        var gridX = eX / d.defaultGridSize;
-	        var gridY = eY / d.defaultGridSize;
-	        return new Vector2(gridX, gridY);
-	    }
-	    grid_1.getGridPosFromMousePos = getGridPosFromMousePos;
-	    var getPrefabFromGridDetails = (function () {
-	        function getPrefabFromGridDetails(contains, id, prefab) {
-	            this.contains = contains;
-	            this.id = id;
-	            this.prefab = prefab;
-	        }
-	        return getPrefabFromGridDetails;
-	    })();
-	    grid_1.getPrefabFromGridDetails = getPrefabFromGridDetails;
-	    function getPrefabFromGrid(grid) {
-	        var result = new getPrefabFromGridDetails(false, -1, null);
-	        var breakException = {};
-	        // breakするため
-	        try {
-	            Object.keys(stage.items.getAll()).forEach(function (i) {
-	                var item = stage.items.get(parseInt(i));
-	                if (grid.x >= item.gridX && grid.x < item.gridX + item.gridW &&
-	                    grid.y >= item.gridY && grid.y < item.gridY + item.gridH) {
-	                    result = new getPrefabFromGridDetails(true, parseInt(i), item);
-	                    throw breakException;
-	                }
+	var list = __webpack_require__(5);
+	var event;
+	(function (event) {
+	    var eventHandlers = new list();
+	    function addEventListener(eventName, fn) {
+	        if (eventName.indexOf("|") !== -1) {
+	            eventName.split("|").forEach(function (i) {
+	                addEventListener(i, fn);
 	            });
 	        }
-	        catch (e) {
-	            if (e !== breakException)
-	                throw e;
+	        else {
+	            if (eventHandlers.contains(eventName)) {
+	                eventHandlers.get(eventName).push(fn);
+	            }
+	            else {
+	                eventHandlers.push(eventName, [fn]);
+	            }
 	        }
-	        return result;
 	    }
-	    grid_1.getPrefabFromGrid = getPrefabFromGrid;
-	    function toMousePos(gridPos) {
-	        return gridPos * d.defaultGridSize;
+	    event.addEventListener = addEventListener;
+	    function raiseEvent(eventName, params) {
+	        if (eventHandlers.contains(eventName)) {
+	            eventHandlers.get(eventName).forEach(function (i) {
+	                i(params);
+	            });
+	        }
 	    }
-	    grid_1.toMousePos = toMousePos;
-	    function toGridPos(mousePos) {
-	        return (mousePos - (mousePos % d.defaultGridSize)) / d.defaultGridSize;
-	    }
-	    grid_1.toGridPos = toGridPos;
-	    /**
-	     * すべてgridPosで指定された4点のrectを、描画領域に変換します。
-	     */
-	    function toDrawRect(gridRect) {
-	        return new rect(grid_1.scrollX + getMousePosFromCenterAndSize(toMousePos(gridRect.x), toMousePos(gridRect.width)), grid_1.scrollY + getMousePosFromCenterAndSize(toMousePos(gridRect.y), toMousePos(gridRect.height)), toMousePos(gridRect.width), toMousePos(gridRect.height));
-	    }
-	    grid_1.toDrawRect = toDrawRect;
-	})(grid || (grid = {}));
-	module.exports = grid;
+	    event.raiseEvent = raiseEvent;
+	})(event || (event = {}));
+	module.exports = event;
 
 
 /***/ },
 /* 5 */
-/***/ function(module, exports) {
-
-	var Vector2 = (function () {
-	    function Vector2(x, y) {
-	        this.x = x;
-	        this.y = y;
-	    }
-	    ;
-	    Object.defineProperty(Vector2, "zero", {
-	        get: function () {
-	            return new Vector2(0, 0);
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    return Vector2;
-	})();
-	module.exports = Vector2;
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var list = __webpack_require__(7);
-	var canvas = __webpack_require__(8);
-	var grid = __webpack_require__(4);
-	var image = __webpack_require__(10);
-	var d = __webpack_require__(2);
-	var rect = __webpack_require__(11);
-	var event = __webpack_require__(12);
-	var stage;
-	(function (stage) {
-	    var StageEffects = (function () {
-	        function StageEffects() {
-	            this.skybox = "";
-	        }
-	        return StageEffects;
-	    })();
-	    stage.StageEffects = StageEffects;
-	    stage.stageEffects = new StageEffects();
-	    var prefabList;
-	    var items;
-	    (function (items) {
-	        /**
-	         * alias (push)
-	         */
-	        function add(id, p) { push(id, p); }
-	        items.add = add;
-	        function push(id, p) {
-	            prefabList.push(id.toString(), p);
-	        }
-	        items.push = push;
-	        function getAll() {
-	            return prefabList.getAll();
-	        }
-	        items.getAll = getAll;
-	        function remove(id) {
-	            return prefabList.remove(id.toString());
-	        }
-	        items.remove = remove;
-	        function clear() {
-	            prefabList.clear();
-	        }
-	        items.clear = clear;
-	        function get(id) {
-	            return prefabList.get(id.toString());
-	        }
-	        items.get = get;
-	    })(items = stage.items || (stage.items = {}));
-	    var maxId;
-	    function init() {
-	        prefabList = new list();
-	        maxId = 0;
-	    }
-	    init();
-	    function getId() {
-	        return maxId++;
-	    }
-	    stage.getId = getId;
-	    function resetId() {
-	        maxId = 0;
-	    }
-	    function renderStage() {
-	        canvas.clear();
-	        var l = items.getAll();
-	        Object.keys(l).forEach(function (i) {
-	            var item = items.get(parseInt(i));
-	            var x = grid.scrollX + grid.getMousePosFromCenterAndSize(grid.toMousePos(item.gridX), grid.toMousePos(item.gridW));
-	            var y = grid.scrollY + grid.getMousePosFromCenterAndSize(grid.toMousePos(item.gridY), grid.toMousePos(item.gridH));
-	            var width = grid.toMousePos(item.gridW);
-	            var height = grid.toMousePos(item.gridH);
-	            // 画面内に入っているか
-	            if (x + width >= 0 && x <= canvas.canvasRect.width &&
-	                y + height >= 0 && x <= canvas.canvasRect.height) {
-	                canvas.render(image(d.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
-	            }
-	        });
-	    }
-	    stage.renderStage = renderStage;
-	    var isResizeRequest = false;
-	    var resizeTimerId;
-	    event.addEventListener("resize", function () {
-	        if (isResizeRequest) {
-	            clearTimeout(resizeTimerId);
-	        }
-	        isResizeRequest = true;
-	        resizeTimerId = setTimeout(function () {
-	            isResizeRequest = false;
-	            renderStage();
-	        }, 100);
-	    });
-	})(stage || (stage = {}));
-	module.exports = stage;
-
-
-/***/ },
-/* 7 */
 /***/ function(module, exports) {
 
 	var List = (function () {
@@ -882,146 +663,7 @@
 
 
 /***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var initDOM = __webpack_require__(9);
-	var canvas;
-	(function (canvas_1) {
-	    var canvas;
-	    var ctx;
-	    initDOM(function () {
-	        canvas = document.getElementById("pla-canvas");
-	        canvas_1.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
-	        resizeCanvas();
-	        if (canvas && canvas.getContext) {
-	            ctx = canvas.getContext("2d");
-	        }
-	    });
-	    window.addEventListener("resize", resizeCanvas);
-	    function resizeCanvas() {
-	        canvas.width = window.innerWidth;
-	        canvas.height = window.innerHeight;
-	        canvas_1.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
-	    }
-	    /**
-	     * 指定された画像を描画します。
-	     * @param {HTMLImageElement} img - 描画する画像
-	     * @param {pRect} rect - 描画する部分(x, y, width, height)
-	     * @return {number} 画像を消すなどするときに、判別するID
-	     */
-	    function render(img, rect) {
-	        ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
-	    }
-	    canvas_1.render = render;
-	    function clearByRect(rect) {
-	        ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
-	    }
-	    canvas_1.clearByRect = clearByRect;
-	    function clear() {
-	        ctx.clearRect(0, 0, canvas.width, canvas.height);
-	    }
-	    canvas_1.clear = clear;
-	})(canvas || (canvas = {}));
-	module.exports = canvas;
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	var handlerList = new Array();
-	function add(fn) {
-	    handlerList.push(fn);
-	}
-	document.addEventListener('DOMContentLoaded', function () {
-	    handlerList.forEach(function (i) {
-	        i();
-	    });
-	});
-	module.exports = add;
-
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	function image(url, isNoJaggy, size) {
-	    var a = new Image();
-	    a.src = url;
-	    if (isNoJaggy) {
-	        var width = (a.width + size.x) / 2;
-	        var height = (a.height + size.y) / 2;
-	        var newC, ctx;
-	        var saveURL;
-	        newC = document.createElement("canvas");
-	        newC.width = width;
-	        newC.height = height;
-	        ctx = newC.getContext("2d");
-	        ctx.drawImage(a, 0, 0, width, height);
-	        return image(newC.toDataURL("image/png"));
-	    }
-	    else {
-	        return a;
-	    }
-	}
-	module.exports = image;
-
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	var rect = (function () {
-	    function rect(x, y, width, height) {
-	        this.x = x;
-	        this.y = y;
-	        this.width = width;
-	        this.height = height;
-	    }
-	    return rect;
-	})();
-	module.exports = rect;
-
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var list = __webpack_require__(7);
-	var event;
-	(function (event) {
-	    var eventHandlers = new list();
-	    function addEventListener(eventName, fn) {
-	        if (eventName.indexOf("|") !== -1) {
-	            eventName.split("|").forEach(function (i) {
-	                addEventListener(i, fn);
-	            });
-	        }
-	        else {
-	            if (eventHandlers.contains(eventName)) {
-	                eventHandlers.get(eventName).push(fn);
-	            }
-	            else {
-	                eventHandlers.push(eventName, [fn]);
-	            }
-	        }
-	    }
-	    event.addEventListener = addEventListener;
-	    function raiseEvent(eventName, params) {
-	        if (eventHandlers.contains(eventName)) {
-	            eventHandlers.get(eventName).forEach(function (i) {
-	                i(params);
-	            });
-	        }
-	    }
-	    event.raiseEvent = raiseEvent;
-	})(event || (event = {}));
-	module.exports = event;
-
-
-/***/ },
-/* 13 */
+/* 6 */
 /***/ function(module, exports) {
 
 	var elem;
@@ -1041,7 +683,7 @@
 
 
 /***/ },
-/* 14 */
+/* 7 */
 /***/ function(module, exports) {
 
 	var compiler;
@@ -1055,7 +697,7 @@
 
 
 /***/ },
-/* 15 */
+/* 8 */
 /***/ function(module, exports) {
 
 	function importJS(src) {
@@ -1067,7 +709,7 @@
 
 
 /***/ },
-/* 16 */
+/* 9 */
 /***/ function(module, exports) {
 
 	var util;
@@ -1092,7 +734,71 @@
 
 
 /***/ },
-/* 17 */
+/* 10 */
+/***/ function(module, exports) {
+
+	var Vector2 = (function () {
+	    function Vector2(x, y) {
+	        this.x = x;
+	        this.y = y;
+	    }
+	    ;
+	    Object.defineProperty(Vector2, "zero", {
+	        get: function () {
+	            return new Vector2(0, 0);
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    return Vector2;
+	})();
+	module.exports = Vector2;
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var TrayBlockDetails = __webpack_require__(12);
+	var d = __webpack_require__(2);
+	var tray;
+	(function (tray) {
+	    function updateActiveBlock(blockName, fileName, label, width, height) {
+	        console.log(d);
+	        var w = width || d.defaultBlockSize;
+	        var h = height || d.defaultBlockSize;
+	        d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
+	        console.log(d.defaultBlockSize);
+	    }
+	    tray.updateActiveBlock = updateActiveBlock;
+	    function updateSelectImage() {
+	        //d.selectImage = 
+	    }
+	    tray.updateSelectImage = updateSelectImage;
+	})(tray || (tray = {}));
+	module.exports = tray;
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	var TrayBlockDetails = (function () {
+	    function TrayBlockDetails(blockName, fileName, label, // 表示するときのブロック名
+	        width, height) {
+	        this.blockName = blockName;
+	        this.fileName = fileName;
+	        this.label = label;
+	        this.width = width;
+	        this.height = height;
+	    }
+	    return TrayBlockDetails;
+	})();
+	module.exports = TrayBlockDetails;
+
+
+/***/ },
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __extends = (this && this.__extends) || function (d, b) {
@@ -1100,7 +806,7 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var list = __webpack_require__(7);
+	var list = __webpack_require__(5);
 	var pack;
 	(function (pack) {
 	    function getPackPath(packName) {
@@ -1237,10 +943,10 @@
 
 
 /***/ },
-/* 18 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var stage = __webpack_require__(6);
+	var stage = __webpack_require__(15);
 	var planet;
 	(function (planet) {
 	    function exportText() {
@@ -1256,11 +962,266 @@
 
 
 /***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var list = __webpack_require__(5);
+	var canvas = __webpack_require__(16);
+	var image = __webpack_require__(17);
+	var d = __webpack_require__(2);
+	var rect = __webpack_require__(18);
+	var event = __webpack_require__(4);
+	var Vector2 = __webpack_require__(10);
+	var stage;
+	(function (stage) {
+	    var StageEffects = (function () {
+	        function StageEffects() {
+	            this.skybox = "";
+	        }
+	        return StageEffects;
+	    })();
+	    stage.StageEffects = StageEffects;
+	    stage.stageEffects = new StageEffects();
+	    var prefabList;
+	    var items;
+	    (function (items) {
+	        /**
+	         * alias (push)
+	         */
+	        function add(id, p) { push(id, p); }
+	        items.add = add;
+	        function push(id, p) {
+	            prefabList.push(id.toString(), p);
+	        }
+	        items.push = push;
+	        function getAll() {
+	            return prefabList.getAll();
+	        }
+	        items.getAll = getAll;
+	        function remove(id) {
+	            return prefabList.remove(id.toString());
+	        }
+	        items.remove = remove;
+	        function clear() {
+	            prefabList.clear();
+	        }
+	        items.clear = clear;
+	        function get(id) {
+	            return prefabList.get(id.toString());
+	        }
+	        items.get = get;
+	    })(items = stage.items || (stage.items = {}));
+	    var maxId;
+	    function init() {
+	        prefabList = new list();
+	        maxId = 0;
+	    }
+	    init();
+	    function getId() {
+	        return maxId++;
+	    }
+	    stage.getId = getId;
+	    function resetId() {
+	        maxId = 0;
+	    }
+	    function renderStage() {
+	        canvas.clear();
+	        var l = items.getAll();
+	        Object.keys(l).forEach(function (i) {
+	            var item = items.get(parseInt(i));
+	            var x = stage.scrollX + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridX), stage.toMousePos(item.gridW));
+	            var y = stage.scrollY + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridY), stage.toMousePos(item.gridH));
+	            var width = stage.toMousePos(item.gridW);
+	            var height = stage.toMousePos(item.gridH);
+	            // 画面内に入っているか
+	            if (x + width >= 0 && x <= canvas.canvasRect.width &&
+	                y + height >= 0 && x <= canvas.canvasRect.height) {
+	                canvas.render(image(d.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
+	            }
+	        });
+	    }
+	    stage.renderStage = renderStage;
+	    var isResizeRequest = false;
+	    var resizeTimerId;
+	    event.addEventListener("resize", function () {
+	        if (isResizeRequest) {
+	            clearTimeout(resizeTimerId);
+	        }
+	        isResizeRequest = true;
+	        resizeTimerId = setTimeout(function () {
+	            isResizeRequest = false;
+	            renderStage();
+	        }, 100);
+	    });
+	    var gridDetail = (function () {
+	        function gridDetail(gridPos, eventName, mousePos) {
+	            this.gridPos = gridPos;
+	            this.eventName = eventName;
+	            this.mousePos = mousePos;
+	        }
+	        return gridDetail;
+	    })();
+	    stage.gridDetail = gridDetail;
+	    function getMousePosFromCenterAndSize(center, size) {
+	        return center - ((size - d.defaultGridSize) / 2);
+	    }
+	    stage.getMousePosFromCenterAndSize = getMousePosFromCenterAndSize;
+	    stage.scrollX = 0;
+	    stage.scrollY = 0;
+	    stage.scrollBeforeX = 0;
+	    stage.scrollBeforeY = 0;
+	    function getGridPosFromMousePos(mousePos) {
+	        var cX = mousePos.x - stage.scrollX;
+	        var cY = mousePos.y - stage.scrollY;
+	        var eX = cX - (cX % d.defaultGridSize);
+	        var eY = cY - (cY % d.defaultGridSize);
+	        var gridX = eX / d.defaultGridSize;
+	        var gridY = eY / d.defaultGridSize;
+	        return new Vector2(gridX, gridY);
+	    }
+	    stage.getGridPosFromMousePos = getGridPosFromMousePos;
+	    var getPrefabFromGridDetails = (function () {
+	        function getPrefabFromGridDetails(contains, id, prefab) {
+	            this.contains = contains;
+	            this.id = id;
+	            this.prefab = prefab;
+	        }
+	        return getPrefabFromGridDetails;
+	    })();
+	    stage.getPrefabFromGridDetails = getPrefabFromGridDetails;
+	    function getPrefabFromGrid(grid) {
+	        var result = new getPrefabFromGridDetails(false, -1, null);
+	        var breakException = {};
+	        // breakするため
+	        try {
+	            Object.keys(items.getAll()).forEach(function (i) {
+	                var item = items.get(parseInt(i));
+	                if (grid.x >= item.gridX && grid.x < item.gridX + item.gridW &&
+	                    grid.y >= item.gridY && grid.y < item.gridY + item.gridH) {
+	                    result = new getPrefabFromGridDetails(true, parseInt(i), item);
+	                    throw breakException;
+	                }
+	            });
+	        }
+	        catch (e) {
+	            if (e !== breakException)
+	                throw e;
+	        }
+	        return result;
+	    }
+	    stage.getPrefabFromGrid = getPrefabFromGrid;
+	    function toMousePos(gridPos) {
+	        return gridPos * d.defaultGridSize;
+	    }
+	    stage.toMousePos = toMousePos;
+	    function toGridPos(mousePos) {
+	        return (mousePos - (mousePos % d.defaultGridSize)) / d.defaultGridSize;
+	    }
+	    stage.toGridPos = toGridPos;
+	    /**
+	     * すべてgridPosで指定された4点のrectを、描画領域に変換します。
+	     */
+	    function toDrawRect(gridRect) {
+	        return new rect(stage.scrollX + getMousePosFromCenterAndSize(toMousePos(gridRect.x), toMousePos(gridRect.width)), stage.scrollY + getMousePosFromCenterAndSize(toMousePos(gridRect.y), toMousePos(gridRect.height)), toMousePos(gridRect.width), toMousePos(gridRect.height));
+	    }
+	    stage.toDrawRect = toDrawRect;
+	})(stage || (stage = {}));
+	module.exports = stage;
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var initDOM = __webpack_require__(3);
+	var canvas;
+	(function (canvas_1) {
+	    var canvas;
+	    var ctx;
+	    initDOM(function () {
+	        canvas = document.getElementById("pla-canvas");
+	        canvas_1.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
+	        resizeCanvas();
+	        if (canvas && canvas.getContext) {
+	            ctx = canvas.getContext("2d");
+	        }
+	    });
+	    window.addEventListener("resize", resizeCanvas);
+	    function resizeCanvas() {
+	        canvas.width = window.innerWidth;
+	        canvas.height = window.innerHeight;
+	        canvas_1.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
+	    }
+	    /**
+	     * 指定された画像を描画します。
+	     * @param {HTMLImageElement} img - 描画する画像
+	     * @param {pRect} rect - 描画する部分(x, y, width, height)
+	     * @return {number} 画像を消すなどするときに、判別するID
+	     */
+	    function render(img, rect) {
+	        ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
+	    }
+	    canvas_1.render = render;
+	    function clearByRect(rect) {
+	        ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
+	    }
+	    canvas_1.clearByRect = clearByRect;
+	    function clear() {
+	        ctx.clearRect(0, 0, canvas.width, canvas.height);
+	    }
+	    canvas_1.clear = clear;
+	})(canvas || (canvas = {}));
+	module.exports = canvas;
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	function image(url, isNoJaggy, size) {
+	    var a = new Image();
+	    a.src = url;
+	    if (isNoJaggy) {
+	        var width = (a.width + size.x) / 2;
+	        var height = (a.height + size.y) / 2;
+	        var newC, ctx;
+	        var saveURL;
+	        newC = document.createElement("canvas");
+	        newC.width = width;
+	        newC.height = height;
+	        ctx = newC.getContext("2d");
+	        ctx.drawImage(a, 0, 0, width, height);
+	        return image(newC.toDataURL("image/png"));
+	    }
+	    else {
+	        return a;
+	    }
+	}
+	module.exports = image;
+
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	var rect = (function () {
+	    function rect(x, y, width, height) {
+	        this.x = x;
+	        this.y = y;
+	        this.width = width;
+	        this.height = height;
+	    }
+	    return rect;
+	})();
+	module.exports = rect;
+
+
+/***/ },
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
-	var packManager = __webpack_require__(17);
+	var packManager = __webpack_require__(13);
 	function load(packName) {
 	    return new Promise(function (resolve) {
 	        var xhr = new XMLHttpRequest();
@@ -1281,10 +1242,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var d = __webpack_require__(2);
-	var list = __webpack_require__(7);
-	var packManager = __webpack_require__(17);
-	var Vector2 = __webpack_require__(5);
-	var image = __webpack_require__(10);
+	var list = __webpack_require__(5);
+	var packManager = __webpack_require__(13);
+	var Vector2 = __webpack_require__(10);
+	var image = __webpack_require__(17);
 	function makeDataUrl() {
 	    var result = new list();
 	    var blockList = d.pack.blocks.getAll();

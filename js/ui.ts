@@ -9,7 +9,6 @@ import compiler = require("./modules/compiler");
 import importJS = require("./modules/importJS");
 import u = require("./modules/util");
 import list = require("./modules/classes/list");
-import grid = require("./modules/grid");
 import Vector2 = require("./modules/classes/vector2");
 import tray = require("./modules/tray");
 import packManager = require("./modules/packUtil/packManager");
@@ -35,8 +34,8 @@ module ui {
       changeActiveBlock(target.dataset["block"]);
     });
     event.addEventListener("ui_mousedownCanvas|ui_mousemoveanddownCanvas|ui_mouseupCanvas", (e:MouseEvent) => {
-      var g = grid.getGridPosFromMousePos(new Vector2(e.clientX, e.clientY));
-      event.raiseEvent("gridCanvas", new grid.gridDetail(g, e.type, new Vector2(e.clientX, e.clientY)));
+      var g = stage.getGridPosFromMousePos(new Vector2(e.clientX, e.clientY));
+      event.raiseEvent("gridCanvas", new stage.gridDetail(g, e.type, new Vector2(e.clientX, e.clientY)));
     });
     event.addEventListener("initedPack", () => {
       (<HTMLSelectElement>document.getElementById("stg-skybox")).value = d.pack.editor.defaultSkybox;

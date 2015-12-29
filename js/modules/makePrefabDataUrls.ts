@@ -1,7 +1,7 @@
 import d = require("./data");
-import list = require("./list");
+import list = require("./classes/list");
 import packManager = require("./packUtil/packManager");
-import Vector2 = require("./vector2");
+import Vector2 = require("./classes/vector2");
 import image = require("./image");
 function makeDataUrl() {
   var result = new list<string>();

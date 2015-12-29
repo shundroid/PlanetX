@@ -1,14 +1,26 @@
+var browserify = require('browserify');
+var source = require("vinyl-source-stream");
 var uglify = require("gulp-uglify");
 var glob = require("glob");
+var del = require("del");
+var tsify = require("tsify");
 var gulp = require("gulp");
 var ts = require("gulp-typescript");
 var less = require("gulp-less");
 var jade = require("gulp-jade");
+var buffer = require("vinyl-buffer");
 var minimist = require("minimist");
-var find = require("gulp-find-glob");
-var webpack = require("gulp-webpack");
-var tsConfig = require("./js/tsconfig.json");
 
+function find(pattern) {
+  return new Promise(resolve => {
+    glob(pattern, function (err, files) {
+      if (err) {
+        console.log(err);
+      }
+      resolve(files);
+    });
+  });
+}
 gulp.task("less", function() {
   gulp.src('css/*.less').pipe(less()).pipe(gulp.dest('./css/'));
 });
@@ -22,22 +34,24 @@ gulp.task("build", function() {
   gulp.watch("./css/*.less", ["less"]);
   gulp.watch("./*.jade", ["jade"]);
 });
-gulp.task("wpack", function() {
-  gulp.src("./js/{main.ts,ui.ts,modules/**/*.ts}")
-    .pipe(ts(tsConfig.compilerOptions))
-    .js.pipe(gulp.dest("./js_temp"));
-  gulp.src("./js_temp/**/*.js")
-    .pipe(webpack({
-      entry: "./js_temp/main.js",
-      output: {
-        filename: "wpack.js"
-      },
-      resolve: {
-        extensions: [ "", ".js" ]
-      }
-    }))
-    .pipe(gulp.dest("./js"));
+gulp.task("mountain", function() {
+  var env = minimist(process.argv.slice(2));
+  find("./js/{main.ts,ui.ts,modules/**/*.ts}").then(files => {
+    console.log(files);
+    var f = browserify({
+      entries: files
+    }).plugin(tsify, {
+      noImplicitAny: true,
+      target: "es5"
+    }).bundle();
+    if (env.dev) {
+      f.pipe(source("./all.js")).pipe(gulp.dest("./js/"))
+    } else {
+      f.pipe(source("./all.min.js")).pipe(buffer()).pipe(uglify()).pipe(gulp.dest("./js/"))
+    }
+    console.log("fuga");
+  });
 });
-// gulp.task("deljs", function() {
-//   del(["./js/{main.js,modules/*.js}"]);
-// });
+gulp.task("deljs", function() {
+  del(["./js/{main.js,modules/*.js}"]);
+});

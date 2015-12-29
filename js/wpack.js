@@ -46,18 +46,18 @@
 
 	var ui = __webpack_require__(1);
 	var initDOM = __webpack_require__(3);
-	var packLoader = __webpack_require__(20);
-	var packManager = __webpack_require__(15);
+	var packLoader = __webpack_require__(22);
+	var packManager = __webpack_require__(19);
 	var event = __webpack_require__(4);
 	var list = __webpack_require__(5);
-	var stage = __webpack_require__(17);
+	var stage = __webpack_require__(9);
 	var d = __webpack_require__(2);
-	var makeDataUrl = __webpack_require__(21);
-	var tray = __webpack_require__(11);
-	var prefab = __webpack_require__(22);
-	var Vector2 = __webpack_require__(10);
-	var Rect = __webpack_require__(19);
-	var canvas = __webpack_require__(18);
+	var makeDataUrl = __webpack_require__(23);
+	var tray = __webpack_require__(16);
+	var prefab = __webpack_require__(21);
+	var Vector2 = __webpack_require__(13);
+	var Rect = __webpack_require__(12);
+	var canvas = __webpack_require__(10);
 	var main;
 	(function (main) {
 	    function init() {
@@ -171,13 +171,13 @@
 	var event = __webpack_require__(4);
 	var el = __webpack_require__(6);
 	var compiler = __webpack_require__(7);
-	var importJS = __webpack_require__(8);
-	var u = __webpack_require__(9);
-	var Vector2 = __webpack_require__(10);
-	var tray = __webpack_require__(11);
-	var packManager = __webpack_require__(15);
-	var planet = __webpack_require__(16);
-	var stage = __webpack_require__(17);
+	var importJS = __webpack_require__(14);
+	var u = __webpack_require__(15);
+	var Vector2 = __webpack_require__(13);
+	var tray = __webpack_require__(16);
+	var packManager = __webpack_require__(19);
+	var planet = __webpack_require__(20);
+	var stage = __webpack_require__(9);
 	var ui;
 	(function (ui) {
 	    function init() {
@@ -231,7 +231,7 @@
 	        document.getElementById("conv-old").value = "";
 	        document.getElementById("conv").addEventListener("click", function () {
 	            document.getElementById("conv-new").value =
-	                compiler.convertOldFile(document.getElementById("conv-old").value);
+	                compiler.old2CSV(document.getElementById("conv-old").value);
 	        });
 	        document.getElementById("pla-io").value = "";
 	        el.addEventListenerforQuery(".tray-list-tool", "click", clickTrayTool);
@@ -303,7 +303,7 @@
 	    function clickImport() {
 	        var effects = planet.importText(document.getElementById("pla-io").value);
 	        stage.stageEffects = effects;
-	        setSkybox(d.pack.skyboxes.get(effects.skybox).data.filename);
+	        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox).data.filename);
 	        stage.renderStage();
 	    }
 	    ui.clickImport = clickImport;
@@ -563,14 +563,183 @@
 
 /***/ },
 /* 7 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
+	var list = __webpack_require__(5);
+	var prefabMini = __webpack_require__(8);
+	var stage = __webpack_require__(9);
 	var compiler;
 	(function (compiler) {
-	    function convertOldFile(oldFile) {
-	        return "";
+	    function getLangAuto(oneLine) {
+	        switch (oneLine) {
+	            case "//:csv":
+	                return compileLangs.CSV;
+	                break;
+	        }
+	        return compileLangs.unknown;
 	    }
-	    compiler.convertOldFile = convertOldFile;
+	    compiler.getLangAuto = getLangAuto;
+	    (function (compileLangs) {
+	        compileLangs[compileLangs["CSV"] = 0] = "CSV";
+	        compileLangs[compileLangs["JsWithPla"] = 1] = "JsWithPla";
+	        compileLangs[compileLangs["yaml"] = 2] = "yaml";
+	        compileLangs[compileLangs["unknown"] = 3] = "unknown";
+	        compileLangs[compileLangs["auto"] = 4] = "auto";
+	    })(compiler.compileLangs || (compiler.compileLangs = {}));
+	    var compileLangs = compiler.compileLangs;
+	    var centerLang = (function () {
+	        function centerLang(prefabList, header, footer, effects) {
+	            this.prefabList = prefabList;
+	            this.header = header;
+	            this.footer = footer;
+	            this.effects = effects;
+	        }
+	        ;
+	        return centerLang;
+	    })();
+	    compiler.centerLang = centerLang;
+	    function toCenterLang(mode, text) {
+	        switch (mode) {
+	            case compileLangs.CSV:
+	                return CSV2CenterLang(text);
+	                break;
+	        }
+	        return null;
+	    }
+	    compiler.toCenterLang = toCenterLang;
+	    function CSV2CenterLang(text) {
+	        var lines = text.replace(/;/g, "").split("\n");
+	        var result = new list();
+	        var header = [];
+	        var footer = [];
+	        var effects = new stage.StageEffects();
+	        var mode = 0; // 0: normal, 1: header, 2: footer
+	        lines.forEach(function (i) {
+	            if (mode === 0) {
+	                if (i === "//:header") {
+	                    mode = 1;
+	                }
+	                else if (i === "//:footer") {
+	                    mode = 2;
+	                }
+	                else {
+	                    i = i.replace(/ /g, "");
+	                    if (i === "")
+	                        return;
+	                    if (i.substring(0, 2) === "//")
+	                        return;
+	                    var items = i.split(",");
+	                    if (items[0].substring(0, 1) === "*") {
+	                        if (items[0] === "*skybox") {
+	                            effects.skybox = items[1];
+	                        }
+	                        return;
+	                    }
+	                    result.push(i, new prefabMini(parseInt(items[1]), parseInt(items[2]), items[0]));
+	                }
+	            }
+	            else if (mode === 1) {
+	                if (i === "//:/header") {
+	                    mode = 0;
+	                    return;
+	                }
+	                header.push(i);
+	            }
+	            else if (mode === 2) {
+	                if (i === "//:/footer") {
+	                    mode = 0;
+	                    return;
+	                }
+	                footer.push(i);
+	            }
+	        });
+	        return new centerLang(result, header.join("\n"), footer.join("\n"), effects);
+	    }
+	    compiler.CSV2CenterLang = CSV2CenterLang;
+	    function old2CSV(old) {
+	        var lines = old.split("\n");
+	        var result = [];
+	        var id = 0;
+	        var mode = -1; // -1: system_header, 0: header, 1: normal, 2: footer, 3: return
+	        var count = 0;
+	        result.push("//:csv");
+	        lines.forEach(function (i) {
+	            if (i === "")
+	                return;
+	            if (mode === -1) {
+	                count++;
+	                if (count === 5) {
+	                    mode++;
+	                }
+	            }
+	            else if (mode === 0) {
+	                if (count === 5 && i === "// stageCTRL::edit not_header") {
+	                    mode++;
+	                }
+	                else if (count === 5) {
+	                    result.push("//:header");
+	                    result.push(i);
+	                    count++;
+	                }
+	                else {
+	                    if (i === "// stageCTRL::edit /header") {
+	                        result.push("//:/header");
+	                        mode++;
+	                    }
+	                    else {
+	                        result.push(i);
+	                    }
+	                }
+	            }
+	            else if (mode === 1) {
+	                if (i === "// stageCTRL::edit footer") {
+	                    mode++;
+	                    count = 10;
+	                    return;
+	                }
+	                else if (i === "// stageCTRL::edit not_footer") {
+	                    mode += 2;
+	                    return;
+	                }
+	                if (i.substring(0, 1) === "*") {
+	                    if (i.indexOf("*skybox,") !== -1) {
+	                        result.push(i);
+	                    }
+	                    else {
+	                        result.push(i); //TODO
+	                    }
+	                    return;
+	                }
+	                if (i.substring(0, 1) === ":")
+	                    return;
+	                i = i.replace(/ /g, "");
+	                if (i.substring(0, 2) === "//")
+	                    return;
+	                i = i.split("=")[0];
+	                var items = i.split(",");
+	                items[2] = (-parseInt(items[2])).toString();
+	                result.push([[items[0], items[1], items[2]].join(","), id++].join("="));
+	            }
+	            else if (mode === 2) {
+	                if (count === 10) {
+	                    count++;
+	                    result.push("//:footer");
+	                    result.push(i);
+	                }
+	                else {
+	                    if (i === "// stageCTRL::edit /footer") {
+	                        result.push("//:/footer");
+	                        mode++;
+	                    }
+	                    else {
+	                        result.push(i);
+	                    }
+	                }
+	            }
+	        });
+	        return result.join("\n");
+	    }
+	    compiler.old2CSV = old2CSV;
 	})(compiler || (compiler = {}));
 	module.exports = compiler;
 
@@ -579,92 +748,236 @@
 /* 8 */
 /***/ function(module, exports) {
 
-	function importJS(src) {
-	    var elem = document.createElement("script");
-	    elem.src = src;
-	    return elem;
-	}
-	module.exports = importJS;
+	var prefabMini = (function () {
+	    function prefabMini(x, y, blockName) {
+	        this.x = x;
+	        this.y = y;
+	        this.blockName = blockName;
+	    }
+	    ;
+	    return prefabMini;
+	})();
+	module.exports = prefabMini;
 
 
 /***/ },
 /* 9 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	var util;
-	(function (util) {
-	    function obj2SelectElem(obj) {
-	        var result = [];
-	        Object.keys(obj).forEach(function (i) {
-	            if (obj[i].constructor === {}.constructor) {
-	                result.push('<optgroup label="' + i + '">');
-	                result.push(obj2SelectElem(obj[i]));
-	                result.push('</optgroup>');
-	            }
-	            else {
-	                result.push('<option value="' + obj[i] + '">' + i + '</option>');
+	var list = __webpack_require__(5);
+	var canvas = __webpack_require__(10);
+	var image = __webpack_require__(11);
+	var d = __webpack_require__(2);
+	var rect = __webpack_require__(12);
+	var event = __webpack_require__(4);
+	var Vector2 = __webpack_require__(13);
+	var stage;
+	(function (stage) {
+	    var StageEffects = (function () {
+	        function StageEffects() {
+	            this.skybox = "";
+	        }
+	        return StageEffects;
+	    })();
+	    stage.StageEffects = StageEffects;
+	    stage.stageEffects = new StageEffects();
+	    var prefabList;
+	    var items;
+	    (function (items) {
+	        /**
+	         * alias (push)
+	         */
+	        function add(id, p) { push(id, p); }
+	        items.add = add;
+	        function push(id, p) {
+	            prefabList.push(id.toString(), p);
+	        }
+	        items.push = push;
+	        function getAll() {
+	            return prefabList.getAll();
+	        }
+	        items.getAll = getAll;
+	        function remove(id) {
+	            return prefabList.remove(id.toString());
+	        }
+	        items.remove = remove;
+	        function clear() {
+	            prefabList.clear();
+	        }
+	        items.clear = clear;
+	        function get(id) {
+	            return prefabList.get(id.toString());
+	        }
+	        items.get = get;
+	    })(items = stage.items || (stage.items = {}));
+	    var maxId;
+	    function init() {
+	        prefabList = new list();
+	        stage.header = "";
+	        stage.footer = "";
+	        maxId = 0;
+	    }
+	    init();
+	    function getId() {
+	        return maxId++;
+	    }
+	    stage.getId = getId;
+	    function resetId() {
+	        maxId = 0;
+	    }
+	    stage.resetId = resetId;
+	    function renderStage() {
+	        canvas.clear();
+	        var l = items.getAll();
+	        Object.keys(l).forEach(function (i) {
+	            var item = items.get(parseInt(i));
+	            var x = stage.scrollX + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridX), stage.toMousePos(item.gridW));
+	            var y = stage.scrollY + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridY), stage.toMousePos(item.gridH));
+	            var width = stage.toMousePos(item.gridW);
+	            var height = stage.toMousePos(item.gridH);
+	            // 画面内に入っているか
+	            if (x + width >= 0 && x <= canvas.canvasRect.width &&
+	                y + height >= 0 && y <= canvas.canvasRect.height) {
+	                canvas.render(image(d.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
 	            }
 	        });
-	        return result.join("\n");
 	    }
-	    util.obj2SelectElem = obj2SelectElem;
-	})(util || (util = {}));
-	module.exports = util;
+	    stage.renderStage = renderStage;
+	    var isResizeRequest = false;
+	    var resizeTimerId;
+	    event.addEventListener("resize", function () {
+	        if (isResizeRequest) {
+	            clearTimeout(resizeTimerId);
+	        }
+	        isResizeRequest = true;
+	        resizeTimerId = setTimeout(function () {
+	            isResizeRequest = false;
+	            renderStage();
+	        }, 100);
+	    });
+	    var gridDetail = (function () {
+	        function gridDetail(gridPos, eventName, mousePos) {
+	            this.gridPos = gridPos;
+	            this.eventName = eventName;
+	            this.mousePos = mousePos;
+	        }
+	        return gridDetail;
+	    })();
+	    stage.gridDetail = gridDetail;
+	    function getMousePosFromCenterAndSize(center, size) {
+	        return center - ((size - d.defaultGridSize) / 2);
+	    }
+	    stage.getMousePosFromCenterAndSize = getMousePosFromCenterAndSize;
+	    stage.scrollX = 0;
+	    stage.scrollY = 0;
+	    stage.scrollBeforeX = 0;
+	    stage.scrollBeforeY = 0;
+	    function getGridPosFromMousePos(mousePos) {
+	        var cX = mousePos.x - stage.scrollX;
+	        var cY = mousePos.y - stage.scrollY;
+	        var eX = cX - (cX % d.defaultGridSize);
+	        var eY = cY - (cY % d.defaultGridSize);
+	        var gridX = eX / d.defaultGridSize;
+	        var gridY = eY / d.defaultGridSize;
+	        return new Vector2(gridX, gridY);
+	    }
+	    stage.getGridPosFromMousePos = getGridPosFromMousePos;
+	    var getPrefabFromGridDetails = (function () {
+	        function getPrefabFromGridDetails(contains, id, prefab) {
+	            this.contains = contains;
+	            this.id = id;
+	            this.prefab = prefab;
+	        }
+	        return getPrefabFromGridDetails;
+	    })();
+	    stage.getPrefabFromGridDetails = getPrefabFromGridDetails;
+	    function getPrefabFromGrid(grid) {
+	        var result = new getPrefabFromGridDetails(false, -1, null);
+	        var breakException = {};
+	        // breakするため
+	        try {
+	            Object.keys(items.getAll()).forEach(function (i) {
+	                var item = items.get(parseInt(i));
+	                if (grid.x >= item.gridX && grid.x < item.gridX + item.gridW &&
+	                    grid.y >= item.gridY && grid.y < item.gridY + item.gridH) {
+	                    result = new getPrefabFromGridDetails(true, parseInt(i), item);
+	                    throw breakException;
+	                }
+	            });
+	        }
+	        catch (e) {
+	            if (e !== breakException)
+	                throw e;
+	        }
+	        return result;
+	    }
+	    stage.getPrefabFromGrid = getPrefabFromGrid;
+	    function toMousePos(gridPos) {
+	        return gridPos * d.defaultGridSize;
+	    }
+	    stage.toMousePos = toMousePos;
+	    function toGridPos(mousePos) {
+	        return (mousePos - (mousePos % d.defaultGridSize)) / d.defaultGridSize;
+	    }
+	    stage.toGridPos = toGridPos;
+	    /**
+	     * すべてgridPosで指定された4点のrectを、描画領域に変換します。
+	     */
+	    function toDrawRect(gridRect) {
+	        return new rect(stage.scrollX + getMousePosFromCenterAndSize(toMousePos(gridRect.x), toMousePos(gridRect.width)), stage.scrollY + getMousePosFromCenterAndSize(toMousePos(gridRect.y), toMousePos(gridRect.height)), toMousePos(gridRect.width), toMousePos(gridRect.height));
+	    }
+	    stage.toDrawRect = toDrawRect;
+	})(stage || (stage = {}));
+	module.exports = stage;
 
 
 /***/ },
 /* 10 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	var Vector2 = (function () {
-	    function Vector2(x, y) {
-	        this.x = x;
-	        this.y = y;
-	    }
-	    ;
-	    Object.defineProperty(Vector2, "zero", {
-	        get: function () {
-	            return new Vector2(0, 0);
-	        },
-	        enumerable: true,
-	        configurable: true
+	var initDOM = __webpack_require__(3);
+	var canvas;
+	(function (canvas_1) {
+	    var canvas;
+	    var ctx;
+	    initDOM(function () {
+	        canvas = document.getElementById("pla-canvas");
+	        canvas_1.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
+	        resizeCanvas();
+	        if (canvas && canvas.getContext) {
+	            ctx = canvas.getContext("2d");
+	        }
 	    });
-	    return Vector2;
-	})();
-	module.exports = Vector2;
+	    window.addEventListener("resize", resizeCanvas);
+	    function resizeCanvas() {
+	        canvas.width = window.innerWidth;
+	        canvas.height = window.innerHeight;
+	        canvas_1.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
+	    }
+	    /**
+	     * 指定された画像を描画します。
+	     * @param {HTMLImageElement} img - 描画する画像
+	     * @param {pRect} rect - 描画する部分(x, y, width, height)
+	     * @return {number} 画像を消すなどするときに、判別するID
+	     */
+	    function render(img, rect) {
+	        ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
+	    }
+	    canvas_1.render = render;
+	    function clearByRect(rect) {
+	        ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
+	    }
+	    canvas_1.clearByRect = clearByRect;
+	    function clear() {
+	        ctx.clearRect(0, 0, canvas.width, canvas.height);
+	    }
+	    canvas_1.clear = clear;
+	})(canvas || (canvas = {}));
+	module.exports = canvas;
 
 
 /***/ },
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var image = __webpack_require__(12);
-	var TrayBlockDetails = __webpack_require__(13);
-	var d = __webpack_require__(2);
-	var uiWaitMode = __webpack_require__(14);
-	var tray;
-	(function (tray) {
-	    function updateActiveBlock(blockName, fileName, label, width, height) {
-	        var w = width || d.defaultBlockSize;
-	        var h = height || d.defaultBlockSize;
-	        d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
-	        updateSelectImage();
-	    }
-	    tray.updateActiveBlock = updateActiveBlock;
-	    function updateSelectImage() {
-	        d.selectImage = image(d.trayItemDataURLs.get(d.selectBlock.blockName));
-	        uiWaitMode.start();
-	        d.selectImage.onload = function () {
-	            uiWaitMode.end();
-	        };
-	    }
-	    tray.updateSelectImage = updateSelectImage;
-	})(tray || (tray = {}));
-	module.exports = tray;
-
-
-/***/ },
-/* 12 */
 /***/ function(module, exports) {
 
 	function image(url, isNoJaggy, size) {
@@ -690,7 +1003,111 @@
 
 
 /***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	var rect = (function () {
+	    function rect(x, y, width, height) {
+	        this.x = x;
+	        this.y = y;
+	        this.width = width;
+	        this.height = height;
+	    }
+	    return rect;
+	})();
+	module.exports = rect;
+
+
+/***/ },
 /* 13 */
+/***/ function(module, exports) {
+
+	var Vector2 = (function () {
+	    function Vector2(x, y) {
+	        this.x = x;
+	        this.y = y;
+	    }
+	    ;
+	    Object.defineProperty(Vector2, "zero", {
+	        get: function () {
+	            return new Vector2(0, 0);
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    return Vector2;
+	})();
+	module.exports = Vector2;
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	function importJS(src) {
+	    var elem = document.createElement("script");
+	    elem.src = src;
+	    return elem;
+	}
+	module.exports = importJS;
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	var util;
+	(function (util) {
+	    function obj2SelectElem(obj) {
+	        var result = [];
+	        Object.keys(obj).forEach(function (i) {
+	            if (obj[i].constructor === {}.constructor) {
+	                result.push('<optgroup label="' + i + '">');
+	                result.push(obj2SelectElem(obj[i]));
+	                result.push('</optgroup>');
+	            }
+	            else {
+	                result.push('<option value="' + obj[i] + '">' + i + '</option>');
+	            }
+	        });
+	        return result.join("\n");
+	    }
+	    util.obj2SelectElem = obj2SelectElem;
+	})(util || (util = {}));
+	module.exports = util;
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var image = __webpack_require__(11);
+	var TrayBlockDetails = __webpack_require__(17);
+	var d = __webpack_require__(2);
+	var uiWaitMode = __webpack_require__(18);
+	var tray;
+	(function (tray) {
+	    function updateActiveBlock(blockName, fileName, label, width, height) {
+	        var w = width || d.defaultBlockSize;
+	        var h = height || d.defaultBlockSize;
+	        d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
+	        updateSelectImage();
+	    }
+	    tray.updateActiveBlock = updateActiveBlock;
+	    function updateSelectImage() {
+	        d.selectImage = image(d.trayItemDataURLs.get(d.selectBlock.blockName));
+	        uiWaitMode.start();
+	        d.selectImage.onload = function () {
+	            uiWaitMode.end();
+	        };
+	    }
+	    tray.updateSelectImage = updateSelectImage;
+	})(tray || (tray = {}));
+	module.exports = tray;
+
+
+/***/ },
+/* 17 */
 /***/ function(module, exports) {
 
 	var TrayBlockDetails = (function () {
@@ -708,7 +1125,7 @@
 
 
 /***/ },
-/* 14 */
+/* 18 */
 /***/ function(module, exports) {
 
 	var uiWaitMode;
@@ -726,7 +1143,7 @@
 
 
 /***/ },
-/* 15 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __extends = (this && this.__extends) || function (d, b) {
@@ -871,10 +1288,13 @@
 
 
 /***/ },
-/* 16 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var stage = __webpack_require__(17);
+	var stage = __webpack_require__(9);
+	var prefab = __webpack_require__(21);
+	var compiler = __webpack_require__(7);
+	var d = __webpack_require__(2);
 	var planet;
 	(function (planet) {
 	    function exportText() {
@@ -910,7 +1330,25 @@
 	    }
 	    planet.exportText = exportText;
 	    function importText(file) {
-	        return new stage.StageEffects();
+	        stage.items.clear();
+	        stage.resetId();
+	        var centerLang = compiler.toCenterLang(compiler.getLangAuto(file.split("\n")[0]), file);
+	        stage.header = centerLang.header;
+	        stage.footer = centerLang.footer;
+	        var clang = centerLang.prefabList.getAll();
+	        var result = centerLang.effects;
+	        Object.keys(clang).forEach(function (i) {
+	            var item = centerLang.prefabList.get(i);
+	            if (d.pack.objs.contains(item.blockName)) {
+	                var objData = d.pack.objs.get(item.blockName);
+	                stage.items.push(stage.getId(), new prefab(item.x, item.y, objData.data.filename, item.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)));
+	            }
+	            else {
+	                var blockData = d.pack.blocks.get(item.blockName);
+	                stage.items.push(stage.getId(), new prefab(item.x, item.y, blockData.data.filename, item.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)));
+	            }
+	        });
+	        return result;
 	    }
 	    planet.importText = importText;
 	})(planet || (planet = {}));
@@ -918,242 +1356,29 @@
 
 
 /***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var list = __webpack_require__(5);
-	var canvas = __webpack_require__(18);
-	var image = __webpack_require__(12);
-	var d = __webpack_require__(2);
-	var rect = __webpack_require__(19);
-	var event = __webpack_require__(4);
-	var Vector2 = __webpack_require__(10);
-	var stage;
-	(function (stage) {
-	    var StageEffects = (function () {
-	        function StageEffects() {
-	            this.skybox = "";
-	        }
-	        return StageEffects;
-	    })();
-	    stage.StageEffects = StageEffects;
-	    stage.stageEffects = new StageEffects();
-	    var prefabList;
-	    var items;
-	    (function (items) {
-	        /**
-	         * alias (push)
-	         */
-	        function add(id, p) { push(id, p); }
-	        items.add = add;
-	        function push(id, p) {
-	            prefabList.push(id.toString(), p);
-	        }
-	        items.push = push;
-	        function getAll() {
-	            return prefabList.getAll();
-	        }
-	        items.getAll = getAll;
-	        function remove(id) {
-	            return prefabList.remove(id.toString());
-	        }
-	        items.remove = remove;
-	        function clear() {
-	            prefabList.clear();
-	        }
-	        items.clear = clear;
-	        function get(id) {
-	            return prefabList.get(id.toString());
-	        }
-	        items.get = get;
-	    })(items = stage.items || (stage.items = {}));
-	    var maxId;
-	    function init() {
-	        prefabList = new list();
-	        stage.header = "";
-	        stage.footer = "";
-	        maxId = 0;
-	    }
-	    init();
-	    function getId() {
-	        return maxId++;
-	    }
-	    stage.getId = getId;
-	    function resetId() {
-	        maxId = 0;
-	    }
-	    function renderStage() {
-	        canvas.clear();
-	        var l = items.getAll();
-	        Object.keys(l).forEach(function (i) {
-	            var item = items.get(parseInt(i));
-	            var x = stage.scrollX + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridX), stage.toMousePos(item.gridW));
-	            var y = stage.scrollY + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridY), stage.toMousePos(item.gridH));
-	            var width = stage.toMousePos(item.gridW);
-	            var height = stage.toMousePos(item.gridH);
-	            // 画面内に入っているか
-	            if (x + width >= 0 && x <= canvas.canvasRect.width &&
-	                y + height >= 0 && y <= canvas.canvasRect.height) {
-	                canvas.render(image(d.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
-	            }
-	        });
-	    }
-	    stage.renderStage = renderStage;
-	    var isResizeRequest = false;
-	    var resizeTimerId;
-	    event.addEventListener("resize", function () {
-	        if (isResizeRequest) {
-	            clearTimeout(resizeTimerId);
-	        }
-	        isResizeRequest = true;
-	        resizeTimerId = setTimeout(function () {
-	            isResizeRequest = false;
-	            renderStage();
-	        }, 100);
-	    });
-	    var gridDetail = (function () {
-	        function gridDetail(gridPos, eventName, mousePos) {
-	            this.gridPos = gridPos;
-	            this.eventName = eventName;
-	            this.mousePos = mousePos;
-	        }
-	        return gridDetail;
-	    })();
-	    stage.gridDetail = gridDetail;
-	    function getMousePosFromCenterAndSize(center, size) {
-	        return center - ((size - d.defaultGridSize) / 2);
-	    }
-	    stage.getMousePosFromCenterAndSize = getMousePosFromCenterAndSize;
-	    stage.scrollX = 0;
-	    stage.scrollY = 0;
-	    stage.scrollBeforeX = 0;
-	    stage.scrollBeforeY = 0;
-	    function getGridPosFromMousePos(mousePos) {
-	        var cX = mousePos.x - stage.scrollX;
-	        var cY = mousePos.y - stage.scrollY;
-	        var eX = cX - (cX % d.defaultGridSize);
-	        var eY = cY - (cY % d.defaultGridSize);
-	        var gridX = eX / d.defaultGridSize;
-	        var gridY = eY / d.defaultGridSize;
-	        return new Vector2(gridX, gridY);
-	    }
-	    stage.getGridPosFromMousePos = getGridPosFromMousePos;
-	    var getPrefabFromGridDetails = (function () {
-	        function getPrefabFromGridDetails(contains, id, prefab) {
-	            this.contains = contains;
-	            this.id = id;
-	            this.prefab = prefab;
-	        }
-	        return getPrefabFromGridDetails;
-	    })();
-	    stage.getPrefabFromGridDetails = getPrefabFromGridDetails;
-	    function getPrefabFromGrid(grid) {
-	        var result = new getPrefabFromGridDetails(false, -1, null);
-	        var breakException = {};
-	        // breakするため
-	        try {
-	            Object.keys(items.getAll()).forEach(function (i) {
-	                var item = items.get(parseInt(i));
-	                if (grid.x >= item.gridX && grid.x < item.gridX + item.gridW &&
-	                    grid.y >= item.gridY && grid.y < item.gridY + item.gridH) {
-	                    result = new getPrefabFromGridDetails(true, parseInt(i), item);
-	                    throw breakException;
-	                }
-	            });
-	        }
-	        catch (e) {
-	            if (e !== breakException)
-	                throw e;
-	        }
-	        return result;
-	    }
-	    stage.getPrefabFromGrid = getPrefabFromGrid;
-	    function toMousePos(gridPos) {
-	        return gridPos * d.defaultGridSize;
-	    }
-	    stage.toMousePos = toMousePos;
-	    function toGridPos(mousePos) {
-	        return (mousePos - (mousePos % d.defaultGridSize)) / d.defaultGridSize;
-	    }
-	    stage.toGridPos = toGridPos;
-	    /**
-	     * すべてgridPosで指定された4点のrectを、描画領域に変換します。
-	     */
-	    function toDrawRect(gridRect) {
-	        return new rect(stage.scrollX + getMousePosFromCenterAndSize(toMousePos(gridRect.x), toMousePos(gridRect.width)), stage.scrollY + getMousePosFromCenterAndSize(toMousePos(gridRect.y), toMousePos(gridRect.height)), toMousePos(gridRect.width), toMousePos(gridRect.height));
-	    }
-	    stage.toDrawRect = toDrawRect;
-	})(stage || (stage = {}));
-	module.exports = stage;
-
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var initDOM = __webpack_require__(3);
-	var canvas;
-	(function (canvas_1) {
-	    var canvas;
-	    var ctx;
-	    initDOM(function () {
-	        canvas = document.getElementById("pla-canvas");
-	        canvas_1.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
-	        resizeCanvas();
-	        if (canvas && canvas.getContext) {
-	            ctx = canvas.getContext("2d");
-	        }
-	    });
-	    window.addEventListener("resize", resizeCanvas);
-	    function resizeCanvas() {
-	        canvas.width = window.innerWidth;
-	        canvas.height = window.innerHeight;
-	        canvas_1.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
-	    }
-	    /**
-	     * 指定された画像を描画します。
-	     * @param {HTMLImageElement} img - 描画する画像
-	     * @param {pRect} rect - 描画する部分(x, y, width, height)
-	     * @return {number} 画像を消すなどするときに、判別するID
-	     */
-	    function render(img, rect) {
-	        ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
-	    }
-	    canvas_1.render = render;
-	    function clearByRect(rect) {
-	        ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
-	    }
-	    canvas_1.clearByRect = clearByRect;
-	    function clear() {
-	        ctx.clearRect(0, 0, canvas.width, canvas.height);
-	    }
-	    canvas_1.clear = clear;
-	})(canvas || (canvas = {}));
-	module.exports = canvas;
-
-
-/***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports) {
 
-	var rect = (function () {
-	    function rect(x, y, width, height) {
-	        this.x = x;
-	        this.y = y;
-	        this.width = width;
-	        this.height = height;
+	var prefab = (function () {
+	    function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
+	        this.gridX = gridX;
+	        this.gridY = gridY;
+	        this.fileName = fileName;
+	        this.blockName = blockName;
+	        this.gridW = gridW;
+	        this.gridH = gridH;
 	    }
-	    return rect;
+	    return prefab;
 	})();
-	module.exports = rect;
+	module.exports = prefab;
 
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
-	var packManager = __webpack_require__(15);
+	var packManager = __webpack_require__(19);
 	function load(packName) {
 	    return new Promise(function (resolve) {
 	        var xhr = new XMLHttpRequest();
@@ -1170,14 +1395,14 @@
 
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var d = __webpack_require__(2);
 	var list = __webpack_require__(5);
-	var packManager = __webpack_require__(15);
-	var Vector2 = __webpack_require__(10);
-	var image = __webpack_require__(12);
+	var packManager = __webpack_require__(19);
+	var Vector2 = __webpack_require__(13);
+	var image = __webpack_require__(11);
 	function makeDataUrl() {
 	    var result = new list();
 	    var blockList = d.pack.blocks.getAll();
@@ -1192,24 +1417,6 @@
 	    return result;
 	}
 	module.exports = makeDataUrl;
-
-
-/***/ },
-/* 22 */
-/***/ function(module, exports) {
-
-	var prefab = (function () {
-	    function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
-	        this.gridX = gridX;
-	        this.gridY = gridY;
-	        this.fileName = fileName;
-	        this.blockName = blockName;
-	        this.gridW = gridW;
-	        this.gridH = gridH;
-	    }
-	    return prefab;
-	})();
-	module.exports = prefab;
 
 
 /***/ }

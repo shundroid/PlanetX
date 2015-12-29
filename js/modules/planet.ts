@@ -1,5 +1,7 @@
 import stage = require("./stage");
 import prefab = require("./prefab");
+import compiler = require("./compiler");
+import d = require("./data");
 
 module planet {
   export function exportText():string {
@@ -36,7 +38,24 @@ module planet {
     return result.join("\n");
   }
   export function importText(file:string) {
-    return new stage.StageEffects();
+    stage.items.clear();
+    stage.resetId();
+    var centerLang = compiler.toCenterLang(compiler.getLangAuto(file.split("\n")[0]), file);
+    stage.header = centerLang.header;
+    stage.footer = centerLang.footer;
+    var clang = centerLang.prefabList.getAll();
+    var result = centerLang.effects;
+    Object.keys(clang).forEach(i => {
+      var item = centerLang.prefabList.get(i);
+      if (d.pack.objs.contains(item.blockName)) {
+        let objData = d.pack.objs.get(item.blockName);
+        stage.items.push(stage.getId(), new prefab(item.x, item.y, objData.data.filename, item.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)));
+      } else {
+        let blockData = d.pack.blocks.get(item.blockName);
+        stage.items.push(stage.getId(), new prefab(item.x, item.y, blockData.data.filename, item.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)));
+      }
+    });
+    return result;
   }
 }
 export = planet;

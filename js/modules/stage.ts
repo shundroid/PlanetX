@@ -52,7 +52,7 @@ module stage {
   export function getId() {
     return maxId++;
   }
-  function resetId() {
+  export function resetId() {
     maxId = 0;
   }
   

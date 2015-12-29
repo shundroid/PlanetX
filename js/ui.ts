@@ -67,7 +67,7 @@ module ui {
     (<HTMLTextAreaElement>document.getElementById("conv-old")).value = "";
     document.getElementById("conv").addEventListener("click", () => {
       (<HTMLTextAreaElement>document.getElementById("conv-new")).value = 
-        compiler.convertOldFile((<HTMLTextAreaElement>document.getElementById("conv-old")).value);
+        compiler.old2CSV((<HTMLTextAreaElement>document.getElementById("conv-old")).value);
     });
     (<HTMLTextAreaElement>document.getElementById("pla-io")).value = "";
     el.addEventListenerforQuery(".tray-list-tool", "click", clickTrayTool);
@@ -136,7 +136,7 @@ module ui {
   export function clickImport() {
     var effects = planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
     stage.stageEffects = effects;
-    setSkybox(d.pack.skyboxes.get(effects.skybox).data.filename);
+    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox).data.filename);
     stage.renderStage();
   }
   

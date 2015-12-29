@@ -11,12 +11,8 @@ module tray {
       public height:number
     ) { }
   }
-  export function updateActiveBlock(blockName:string, fileName:string, label:string, width?:number, height?:number) {
-    console.log(d);
-    var w = width || d.defaultBlockSize;
-    var h = height || d.defaultBlockSize;
-    d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
-    console.log(d.defaultBlockSize);
+  export function updateActiveBlock(blockName:string, fileName:string, label:string, width:number, height:number) {
+    return new TrayBlockDetails(blockName, fileName, label, width, height);
   }
   export function updateSelectImage() {
     //d.selectImage = 

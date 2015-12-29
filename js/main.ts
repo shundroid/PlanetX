@@ -48,7 +48,7 @@ module main {
       ui.changeLoadingStatus("making DataURL");
       d.trayItemDataURLs = makeDataUrl();
       console.log(d.defaultBlockSize);
-      tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック");
+      d.selectBlock = tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック", d.defaultBlockSize, d.defaultBlockSize);
       ui.changeLoadingStatus("Are you ready?");
       event.raiseEvent("ready", null);
     });
@@ -76,7 +76,7 @@ module main {
             // オブジェクトに対応させる
             if (detail.prefab) {
               var bData = d.pack.blocks.get(detail.prefab.blockName);
-              tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
+              d.selectBlock = tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename, d.defaultBlockSize, d.defaultBlockSize);
               ui.changeActiveBlock(detail.prefab.blockName);
             }
           }

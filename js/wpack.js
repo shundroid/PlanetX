@@ -92,7 +92,7 @@
 	            ui.changeLoadingStatus("making DataURL");
 	            d.trayItemDataURLs = makeDataUrl();
 	            console.log(d.defaultBlockSize);
-	            tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック");
+	            d.selectBlock = tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック", d.defaultBlockSize, d.defaultBlockSize);
 	            ui.changeLoadingStatus("Are you ready?");
 	            event.raiseEvent("ready", null);
 	        });
@@ -121,7 +121,7 @@
 	                        // オブジェクトに対応させる
 	                        if (detail.prefab) {
 	                            var bData = d.pack.blocks.get(detail.prefab.blockName);
-	                            tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
+	                            d.selectBlock = tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename, d.defaultBlockSize, d.defaultBlockSize);
 	                            ui.changeActiveBlock(detail.prefab.blockName);
 	                        }
 	                    }
@@ -166,8 +166,8 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
-	/// <reference path="../definitely/move.d.ts" />
+	/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
+	/// <reference path="definitely/move.d.ts" />
 	var d = __webpack_require__(2);
 	var initDOM = __webpack_require__(9);
 	var event = __webpack_require__(12);
@@ -192,11 +192,11 @@
 	            d.isObjMode = target.parentElement.classList.contains("tray-list-obj");
 	            if (!d.isObjMode) {
 	                var item = d.pack.blocks.get(target.dataset["block"]).data;
-	                tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName);
+	                d.selectBlock = tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName, d.defaultBlockSize, d.defaultBlockSize);
 	            }
 	            else {
 	                var item = d.pack.objs.get(target.dataset["block"]).data;
-	                tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
+	                d.selectBlock = tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
 	            }
 	            changeActiveBlock(target.dataset["block"]);
 	        });
@@ -609,9 +609,8 @@
 
 /***/ },
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	var d = __webpack_require__(2);
 	var tray;
 	(function (tray) {
 	    var TrayBlockDetails = (function () {
@@ -627,11 +626,7 @@
 	    })();
 	    tray.TrayBlockDetails = TrayBlockDetails;
 	    function updateActiveBlock(blockName, fileName, label, width, height) {
-	        console.log(d);
-	        var w = width || d.defaultBlockSize;
-	        var h = height || d.defaultBlockSize;
-	        d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
-	        console.log(d.defaultBlockSize);
+	        return new TrayBlockDetails(blockName, fileName, label, width, height);
 	    }
 	    tray.updateActiveBlock = updateActiveBlock;
 	    function updateSelectImage() {

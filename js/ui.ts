@@ -27,10 +27,10 @@ module ui {
       d.isObjMode = target.parentElement.classList.contains("tray-list-obj");
       if (!d.isObjMode) {
         let item = d.pack.blocks.get(target.dataset["block"]).data;
-        tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName);
+        d.selectBlock = tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName, d.defaultBlockSize, d.defaultBlockSize);
       } else {
         let item = d.pack.objs.get(target.dataset["block"]).data;
-        tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
+        d.selectBlock = tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
       }
       changeActiveBlock(target.dataset["block"]);
     });

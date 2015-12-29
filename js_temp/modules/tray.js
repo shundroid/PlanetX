@@ -1,4 +1,3 @@
-var d = require("./data");
 var tray;
 (function (tray) {
     var TrayBlockDetails = (function () {
@@ -14,11 +13,7 @@ var tray;
     })();
     tray.TrayBlockDetails = TrayBlockDetails;
     function updateActiveBlock(blockName, fileName, label, width, height) {
-        console.log(d);
-        var w = width || d.defaultBlockSize;
-        var h = height || d.defaultBlockSize;
-        d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
-        console.log(d.defaultBlockSize);
+        return new TrayBlockDetails(blockName, fileName, label, width, height);
     }
     tray.updateActiveBlock = updateActiveBlock;
     function updateSelectImage() {

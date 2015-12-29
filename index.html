@@ -13,7 +13,7 @@
     <div class="loading"></div>
     <canvas id="pla-canvas" width="300" height="200"></canvas>
     <div class="pla-inspector">
-      <button id="ins-close" class="pla-btn">&times;</button>
+      <button id="ins-close" data-listener="closeInspector" class="pla-btn ev-btn">&times;</button>
       <div id="ins-io" class="ins-article">
         <h1>Import / Export</h1>
         <div class="ins-content">
@@ -24,10 +24,10 @@
             <option value="yaml">yaml</option>
             <option value="in:auto">Auto (Import Only)</option>
           </select>
-          <textarea id="pla-io"></textarea>
+          <textarea id="pla-io" data-default="" class="ev-input"></textarea>
           <div class="pla-btngroup">
-            <button id="io-export" data-bl="Export" class="pla-btn bl bl-top"><i class="fa fa-upload"></i></button>
-            <button id="io-import" data-bl="Import" class="pla-btn bl bl-top"><i class="fa fa-download"></i></button>
+            <button id="io-export" data-bl="Export" data-listener="clickExport" class="pla-btn bl bl-top ev-btn"><i class="fa fa-upload"></i></button>
+            <button id="io-import" data-bl="Import" data-listener="clickImport" class="pla-btn bl bl-top ev-btn"><i class="fa fa-download"></i></button>
           </div>
         </div>
       </div>
@@ -56,18 +56,18 @@
       <div id="ins-conv-old-file" class="ins-article">
         <h1>Convert old file</h1>
         <div class="ins-content"><span>Old:</span><br>
-          <textarea id="conv-old" class="ta-no-resize"></textarea><span>New:</span><br>
-          <textarea id="conv-new" readonly class="ta-no-resize"></textarea>
+          <textarea id="conv-old" data-default="" class="ta-no-resize ev-input"></textarea><span>New:</span><br>
+          <textarea id="conv-new" readonly data-default="" class="ta-no-resize ev-input"></textarea>
           <div>
-            <button id="conv" data-bl="convert" class="pla-btn bl bl-top"><i class="fa fa-exchange"></i></button>
+            <button id="conv" data-bl="convert" data-listener="clickConvertOldFile" class="pla-btn bl bl-top ev-btn"><i class="fa fa-exchange"></i></button>
           </div>
         </div>
       </div>
       <div id="ins-header-footer" class="ins-article">
         <h1>Header / Footer</h1>
         <div class="ins-content"><span>Header:</span><br>
-          <textarea id="io-header" class="io-hf ta-no-resize"></textarea><span>Footer:</span><br>
-          <textarea id="io-footer" class="io-hf ta-no-resize"></textarea>
+          <textarea id="io-header" data-default="" class="io-hf ta-no-resize ev-input"></textarea><span>Footer:</span><br>
+          <textarea id="io-footer" data-default="" class="io-hf ta-no-resize ev-input"></textarea>
         </div>
       </div>
       <div id="ins-stage-effect" class="ins-article">

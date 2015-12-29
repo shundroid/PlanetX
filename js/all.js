@@ -119,7 +119,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/list":3,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":9,"./modules/event":11,"./modules/initDOM":14,"./modules/makePrefabDataUrls":15,"./modules/packUtil/packLoader":17,"./modules/packUtil/packManager":18,"./modules/prefab":20,"./modules/stage":21,"./modules/tray":22,"./ui":26}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/list":3,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":9,"./modules/event":12,"./modules/initDOM":15,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":18,"./modules/packUtil/packManager":19,"./modules/prefab":21,"./modules/stage":22,"./modules/tray":23,"./ui":27}],2:[function(require,module,exports){
 var initDOM = require("./initDOM");
 var canvas;
 (function (canvas_1) {
@@ -159,7 +159,7 @@ var canvas;
     canvas_1.clear = clear;
 })(canvas || (canvas = {}));
 module.exports = canvas;
-},{"./initDOM":14}],3:[function(require,module,exports){
+},{"./initDOM":15}],3:[function(require,module,exports){
 var List = (function () {
     function List() {
         this.data = {};
@@ -421,7 +421,7 @@ var compiler;
     compiler.old2CSV = old2CSV;
 })(compiler || (compiler = {}));
 module.exports = compiler;
-},{"./classes/list":3,"./classes/prefabMini":4,"./stage":21}],9:[function(require,module,exports){
+},{"./classes/list":3,"./classes/prefabMini":4,"./stage":22}],9:[function(require,module,exports){
 var data = (function () {
     function data() {
     }
@@ -444,6 +444,24 @@ var elem;
 })(elem || (elem = {}));
 module.exports = elem;
 },{}],11:[function(require,module,exports){
+var initDOM = require("./initDOM");
+var el = require("./elem");
+var ui = require("./../ui");
+var evElems;
+(function (evElems) {
+    initDOM(function () {
+        el.forEachforQuery(".ev-btn", function (i) {
+            i.addEventListener("click", ui[i.dataset["listener"]]);
+        });
+        el.forEachforQuery(".ev-input", function (i) {
+            var elem = i;
+            if (typeof elem.dataset["default"] !== "undefined") {
+                elem.value = elem.dataset["default"];
+            }
+        });
+    });
+})(evElems || (evElems = {}));
+},{"./../ui":27,"./elem":10,"./initDOM":15}],12:[function(require,module,exports){
 var list = require("./classes/list");
 var event;
 (function (event) {
@@ -474,7 +492,7 @@ var event;
     event.raiseEvent = raiseEvent;
 })(event || (event = {}));
 module.exports = event;
-},{"./classes/list":3}],12:[function(require,module,exports){
+},{"./classes/list":3}],13:[function(require,module,exports){
 function image(url, isNoJaggy, size) {
     var a = new Image();
     a.src = url;
@@ -495,14 +513,14 @@ function image(url, isNoJaggy, size) {
     }
 }
 module.exports = image;
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 function importJS(src) {
     var elem = document.createElement("script");
     elem.src = src;
     return elem;
 }
 module.exports = importJS;
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var handlerList = new Array();
 function add(fn) {
     handlerList.push(fn);
@@ -513,7 +531,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 module.exports = add;
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var d = require("./data");
 var list = require("./classes/list");
 var packManager = require("./packUtil/packManager");
@@ -533,9 +551,9 @@ function makeDataUrl() {
     return result;
 }
 module.exports = makeDataUrl;
-},{"./classes/list":3,"./classes/vector2":7,"./data":9,"./image":12,"./packUtil/packManager":18}],16:[function(require,module,exports){
+},{"./classes/list":3,"./classes/vector2":7,"./data":9,"./image":13,"./packUtil/packManager":19}],17:[function(require,module,exports){
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
 var packManager = require("./packManager");
 function load(packName) {
@@ -551,7 +569,7 @@ function load(packName) {
     });
 }
 module.exports = load;
-},{"./packManager":18}],18:[function(require,module,exports){
+},{"./packManager":19}],19:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -691,7 +709,7 @@ var pack;
     pack.skyboxInfoList = skyboxInfoList;
 })(pack || (pack = {}));
 module.exports = pack;
-},{"./../classes/list":3}],19:[function(require,module,exports){
+},{"./../classes/list":3}],20:[function(require,module,exports){
 var stage = require("./stage");
 var prefab = require("./prefab");
 var compiler = require("./compiler");
@@ -754,7 +772,7 @@ var planet;
     planet.importText = importText;
 })(planet || (planet = {}));
 module.exports = planet;
-},{"./compiler":8,"./data":9,"./prefab":20,"./stage":21}],20:[function(require,module,exports){
+},{"./compiler":8,"./data":9,"./prefab":21,"./stage":22}],21:[function(require,module,exports){
 var prefab = (function () {
     function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
         this.gridX = gridX;
@@ -767,7 +785,7 @@ var prefab = (function () {
     return prefab;
 })();
 module.exports = prefab;
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var list = require("./classes/list");
 var canvas = require("./canvas");
 var image = require("./image");
@@ -933,7 +951,7 @@ var stage;
     stage.toDrawRect = toDrawRect;
 })(stage || (stage = {}));
 module.exports = stage;
-},{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":9,"./event":11,"./image":12}],22:[function(require,module,exports){
+},{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":9,"./event":12,"./image":13}],23:[function(require,module,exports){
 var image = require("./image");
 var TrayBlockDetails = require("./classes/trayBlockDetails");
 var d = require("./data");
@@ -957,7 +975,7 @@ var tray;
     tray.updateSelectImage = updateSelectImage;
 })(tray || (tray = {}));
 module.exports = tray;
-},{"./classes/trayBlockDetails":6,"./data":9,"./image":12,"./uiWaitMode":23}],23:[function(require,module,exports){
+},{"./classes/trayBlockDetails":6,"./data":9,"./image":13,"./uiWaitMode":24}],24:[function(require,module,exports){
 var uiWaitMode;
 (function (uiWaitMode) {
     function start() {
@@ -970,7 +988,7 @@ var uiWaitMode;
     uiWaitMode.end = end;
 })(uiWaitMode || (uiWaitMode = {}));
 module.exports = uiWaitMode;
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var util;
 (function (util) {
     function obj2SelectElem(obj) {
@@ -990,14 +1008,14 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var version;
 (function (version_1) {
     version_1.version = "v1.0";
     version_1.author = "shundroid";
 })(version || (version = {}));
 module.exports = version;
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
@@ -1049,38 +1067,18 @@ var ui;
             });
             document.getElementById("stg-skybox").value = d.pack.editor.defaultSkybox;
         });
-        // onBtnClickhandlerList = new Array<(target:Node,e:MouseEvent)=>void>();
     }
-    // var onBtnClickhandlerList:Array<(target:Node,e:MouseEvent)=>void>;
-    // export function onBtnClick(fn:(target:Node,e:MouseEvent)=>void) {
-    //   onBtnClickhandlerList.push(fn);
-    // }
     initDOM(function () {
         document.getElementById("pla-ver").innerHTML = "Planet " + v.version + " by " + v.author;
         document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen);
-        document.getElementById("ins-close").addEventListener("click", closeInspector);
-        document.getElementById("io-export").addEventListener("click", clickExport);
-        document.getElementById("io-import").addEventListener("click", clickImport);
         el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
         el.addEventListenerforQuery(".io-hf", "change", changeHeaderorFooterValue);
-        document.getElementById("conv-new").value = "";
-        document.getElementById("conv-old").value = "";
-        document.getElementById("conv").addEventListener("click", function () {
-            document.getElementById("conv-new").value =
-                compiler.old2CSV(document.getElementById("conv-old").value);
-        });
-        document.getElementById("pla-io").value = "";
+        // (<HTMLTextAreaElement>document.getElementById("conv-new")).value = "";
+        // (<HTMLTextAreaElement>document.getElementById("conv-old")).value = "";
+        // (<HTMLTextAreaElement>document.getElementById("pla-io")).value = "";
         el.addEventListenerforQuery(".tray-list-tool", "click", clickTrayTool);
         document.head.appendChild(importJS("bower_components/move.js/move.js"));
         event.raiseEvent("initDom", null);
-        // var elems = document.querySelectorAll(".ui-btn");
-        // for (var i = 0; i < elems.length; i++) {
-        //   (<Node>elems.item(i)).addEventListener("click", (e:MouseEvent) => {
-        //     onBtnClickhandlerList.forEach(j => {
-        //       j(elems.item(i), e);
-        //     });
-        //   });
-        // }
     });
     function setupCanvas() {
         ui.canvas = document.getElementById("pla-canvas");
@@ -1266,6 +1264,11 @@ var ui;
         };
         ui.showInspector(btnName2InspectorName[name]);
     });
+    function clickConvertOldFile() {
+        document.getElementById("conv-new").value =
+            compiler.old2CSV(document.getElementById("conv-old").value);
+    }
+    ui.clickConvertOldFile = clickConvertOldFile;
     function changeSkybox(e) {
         stage.stageEffects.skybox = e.target.value;
         setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
@@ -1274,4 +1277,4 @@ var ui;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":7,"./modules/compiler":8,"./modules/data":9,"./modules/elem":10,"./modules/event":11,"./modules/importJS":13,"./modules/initDOM":14,"./modules/packUtil/packManager":18,"./modules/planet":19,"./modules/stage":21,"./modules/tray":22,"./modules/util":24,"./modules/version":25}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]);
+},{"./modules/classes/vector2":7,"./modules/compiler":8,"./modules/data":9,"./modules/elem":10,"./modules/event":12,"./modules/importJS":14,"./modules/initDOM":15,"./modules/packUtil/packManager":19,"./modules/planet":20,"./modules/stage":22,"./modules/tray":23,"./modules/util":25,"./modules/version":26}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]);

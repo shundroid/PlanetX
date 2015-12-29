@@ -12,7 +12,7 @@ html(lang="ja")
     .loading
     canvas#pla-canvas(width='300', height='200')
     .pla-inspector
-      button#ins-close.pla-btn &times;
+      button#ins-close.pla-btn.ev-btn(data-listener="closeInspector") &times;
       .ins-article#ins-io
         h1 Import / Export
         .ins-content
@@ -22,10 +22,10 @@ html(lang="ja")
             option(value="jsPla") jsWithPlaLib
             option(value="yaml") yaml
             option(value="in:auto") Auto (Import Only)
-          textarea#pla-io
+          textarea#pla-io.ev-input(data-default="")
           .pla-btngroup
-            button.pla-btn.bl.bl-top#io-export(data-bl="Export"): i.fa.fa-upload
-            button.pla-btn.bl.bl-top#io-import(data-bl="Import"): i.fa.fa-download
+            button.pla-btn.bl.bl-top.ev-btn#io-export(data-bl="Export", data-listener="clickExport"): i.fa.fa-upload
+            button.pla-btn.bl.bl-top.ev-btn#io-import(data-bl="Import", data-listener="clickImport"): i.fa.fa-download
       .ins-article#ins-inspector
         h1 Inspector
         .ins-content
@@ -41,20 +41,20 @@ html(lang="ja")
         .ins-content
           span Old:
           br
-          textarea#conv-old.ta-no-resize
+          textarea#conv-old.ta-no-resize.ev-input(data-default="")
           span New:
           br
-          textarea#conv-new.ta-no-resize(readonly)
-          div: button.pla-btn.bl.bl-top#conv(data-bl="convert"): i.fa.fa-exchange
+          textarea#conv-new.ta-no-resize.ev-input(readonly, data-default="")
+          div: button.pla-btn.bl.bl-top.ev-btn#conv(data-bl="convert", data-listener="clickConvertOldFile"): i.fa.fa-exchange
       .ins-article#ins-header-footer
         h1 Header / Footer
         .ins-content
           span Header:
           br
-          textarea.io-hf#io-header.ta-no-resize
+          textarea.io-hf#io-header.ta-no-resize.ev-input(data-default="")
           span Footer:
           br
-          textarea.io-hf#io-footer.ta-no-resize
+          textarea.io-hf#io-footer.ta-no-resize.ev-input(data-default="")
       .ins-article#ins-stage-effect
         h1 Stage Effect
         .ins-content

@@ -15,6 +15,7 @@ import packManager = require("./modules/packUtil/packManager");
 import planet = require("./modules/planet");
 import stage = require("./modules/stage");
 import v = require("./modules/version");
+import evElems = require("./modules/evElems");
 
 module ui {
   export var canvas: HTMLCanvasElement; 
@@ -51,40 +52,18 @@ module ui {
       });
       (<HTMLSelectElement>document.getElementById("stg-skybox")).value = d.pack.editor.defaultSkybox;
     });
-    // onBtnClickhandlerList = new Array<(target:Node,e:MouseEvent)=>void>();
   }
-  // var onBtnClickhandlerList:Array<(target:Node,e:MouseEvent)=>void>;
-  // export function onBtnClick(fn:(target:Node,e:MouseEvent)=>void) {
-  //   onBtnClickhandlerList.push(fn);
-  // }
   initDOM(() => {
     document.getElementById("pla-ver").innerHTML = `Planet ${v.version} by ${v.author}`;
-    document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen);
-    document.getElementById("ins-close").addEventListener("click", closeInspector);
-    document.getElementById("io-export").addEventListener("click", clickExport);
-    document.getElementById("io-import").addEventListener("click", clickImport);
+    document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen)
     el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
     el.addEventListenerforQuery(".io-hf", "change", changeHeaderorFooterValue);
-    (<HTMLTextAreaElement>document.getElementById("conv-new")).value = "";
-    (<HTMLTextAreaElement>document.getElementById("conv-old")).value = "";
-    document.getElementById("conv").addEventListener("click", () => {
-      (<HTMLTextAreaElement>document.getElementById("conv-new")).value = 
-        compiler.old2CSV((<HTMLTextAreaElement>document.getElementById("conv-old")).value);
-    });
-    (<HTMLTextAreaElement>document.getElementById("pla-io")).value = "";
+    // (<HTMLTextAreaElement>document.getElementById("conv-new")).value = "";
+    // (<HTMLTextAreaElement>document.getElementById("conv-old")).value = "";
+    // (<HTMLTextAreaElement>document.getElementById("pla-io")).value = "";
     el.addEventListenerforQuery(".tray-list-tool", "click", clickTrayTool);
-    
     document.head.appendChild(importJS("bower_components/move.js/move.js"));
-    
     event.raiseEvent("initDom", null);
-    // var elems = document.querySelectorAll(".ui-btn");
-    // for (var i = 0; i < elems.length; i++) {
-    //   (<Node>elems.item(i)).addEventListener("click", (e:MouseEvent) => {
-    //     onBtnClickhandlerList.forEach(j => {
-    //       j(elems.item(i), e);
-    //     });
-    //   });
-    // }
   });
   
   export function setupCanvas() {
@@ -262,7 +241,11 @@ module ui {
     ui.showInspector(btnName2InspectorName[name]);
   });
   
-
+  export function clickConvertOldFile() {
+    (<HTMLTextAreaElement>document.getElementById("conv-new")).value = 
+      compiler.old2CSV((<HTMLTextAreaElement>document.getElementById("conv-old")).value);
+  }
+  
   export function changeSkybox(e:Event) {
     stage.stageEffects.skybox = (<HTMLSelectElement>e.target).value;
     setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);

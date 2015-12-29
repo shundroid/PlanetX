@@ -119,7 +119,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/list":3,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":9,"./modules/event":12,"./modules/initDOM":15,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":18,"./modules/packUtil/packManager":19,"./modules/prefab":21,"./modules/stage":22,"./modules/tray":23,"./ui":27}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/list":3,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":9,"./modules/event":12,"./modules/initDOM":15,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":18,"./modules/packUtil/packManager":19,"./modules/prefab":21,"./modules/stage":22,"./modules/tray":23,"./ui":28}],2:[function(require,module,exports){
 var initDOM = require("./initDOM");
 var canvas;
 (function (canvas_1) {
@@ -444,14 +444,12 @@ var elem;
 })(elem || (elem = {}));
 module.exports = elem;
 },{}],11:[function(require,module,exports){
-var initDOM = require("./initDOM");
 var el = require("./elem");
-var ui = require("./../ui");
 var evElems;
 (function (evElems) {
-    initDOM(function () {
+    function set(listenerNamespace) {
         el.forEachforQuery(".ev-btn", function (i) {
-            i.addEventListener("click", ui[i.dataset["listener"]]);
+            i.addEventListener("click", listenerNamespace[i.dataset["listener"]]);
         });
         el.forEachforQuery(".ev-input", function (i) {
             var elem = i;
@@ -459,9 +457,11 @@ var evElems;
                 elem.value = elem.dataset["default"];
             }
         });
-    });
+    }
+    evElems.set = set;
 })(evElems || (evElems = {}));
-},{"./../ui":27,"./elem":10,"./initDOM":15}],12:[function(require,module,exports){
+module.exports = evElems;
+},{"./elem":10}],12:[function(require,module,exports){
 var list = require("./classes/list");
 var event;
 (function (event) {
@@ -956,6 +956,13 @@ var image = require("./image");
 var TrayBlockDetails = require("./classes/trayBlockDetails");
 var d = require("./data");
 var uiWaitMode = require("./uiWaitMode");
+var event = require("./event");
+var packManager = require("./packUtil/packManager");
+/**
+ * pla:module
+ * | [x] ui
+ * | [x] controller
+ */
 var tray;
 (function (tray) {
     function updateActiveBlock(blockName, fileName, label, width, height) {
@@ -973,9 +980,70 @@ var tray;
         };
     }
     tray.updateSelectImage = updateSelectImage;
+    function initTrayBlock(finishedOne) {
+        return new Promise(function (resolve) {
+            var list = Object.keys(d.pack.blocks.getAll());
+            var result = [];
+            var async = function (i) {
+                var item = list[i];
+                var li = document.createElement("div");
+                li.classList.add("tray-list", "tray-list-block");
+                li.addEventListener("click", function (e) { event.raiseEvent("ui_clickTray", e); });
+                var img = document.createElement("img");
+                img.src = packManager.getPackPath(d.defaultPackName) + d.pack.blocks.get(item).data.filename;
+                img.onload = function () {
+                    img.alt = d.pack.blocks.get(item).data.bName;
+                    img.dataset["block"] = item;
+                    li.appendChild(img);
+                    result.push(li);
+                    if (i === list.length - 1) {
+                        resolve(result);
+                    }
+                    else {
+                        finishedOne(i, list.length - 1);
+                        async(i + 1);
+                    }
+                };
+            };
+            async(0);
+        });
+    }
+    tray.initTrayBlock = initTrayBlock;
+    function initTrayObj(finishedOne) {
+        return new Promise(function (resolve) {
+            var list = Object.keys(d.pack.objs.getAll());
+            var result = [];
+            var async = function (i) {
+                var item = list[i];
+                var li = document.createElement("div");
+                li.classList.add("tray-list", "tray-list-obj");
+                li.addEventListener("click", function (e) { event.raiseEvent("ui_clickTray", e); });
+                var img = document.createElement("img");
+                img.src = packManager.getPackPath(d.defaultPackName) + d.pack.objs.get(item).data.filename;
+                img.onload = function () {
+                    img.alt = d.pack.objs.get(item).data.oName;
+                    img.dataset["block"] = item;
+                    li.style.width = img.style.width =
+                        d.pack.objs.get(item).data.width / (d.pack.objs.get(item).data.height / 50) + "px";
+                    li.style.height = img.style.height = "50px";
+                    li.appendChild(img);
+                    result.push(li);
+                    if (i === list.length - 1) {
+                        resolve(result);
+                    }
+                    else {
+                        finishedOne(i, list.length - 1);
+                        async(i + 1);
+                    }
+                };
+            };
+            async(0);
+        });
+    }
+    tray.initTrayObj = initTrayObj;
 })(tray || (tray = {}));
 module.exports = tray;
-},{"./classes/trayBlockDetails":6,"./data":9,"./image":13,"./uiWaitMode":24}],24:[function(require,module,exports){
+},{"./classes/trayBlockDetails":6,"./data":9,"./event":12,"./image":13,"./packUtil/packManager":19,"./uiWaitMode":24}],24:[function(require,module,exports){
 var uiWaitMode;
 (function (uiWaitMode) {
     function start() {
@@ -989,6 +1057,44 @@ var uiWaitMode;
 })(uiWaitMode || (uiWaitMode = {}));
 module.exports = uiWaitMode;
 },{}],25:[function(require,module,exports){
+/// <reference path="../../definitely/move.d.ts" />
+var anim;
+(function (anim) {
+    function showTrayFull() {
+        move(".pla-footer").set("height", "100%").duration("0.5s").end();
+    }
+    anim.showTrayFull = showTrayFull;
+    function hideTrayFull() {
+        move(".pla-footer").set("height", "50px").duration("0.5s").end();
+    }
+    anim.hideTrayFull = hideTrayFull;
+    function showInspector() {
+        move(".pla-inspector")
+            .set("left", "80%")
+            .duration("0.5s")
+            .end();
+    }
+    anim.showInspector = showInspector;
+    function hideInspector() {
+        move(".pla-inspector")
+            .set("left", "100%")
+            .duration("0.5s")
+            .end();
+    }
+    anim.hideInspector = hideInspector;
+    function hideLoading() {
+        move(".loading")
+            .set("opacity", 0)
+            .duration("1s")
+            .then()
+            .set("display", "none")
+            .pop()
+            .end();
+    }
+    anim.hideLoading = hideLoading;
+})(anim || (anim = {}));
+module.exports = anim;
+},{}],26:[function(require,module,exports){
 var util;
 (function (util) {
     function obj2SelectElem(obj) {
@@ -1008,14 +1114,14 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var version;
 (function (version_1) {
     version_1.version = "v1.0";
     version_1.author = "shundroid";
 })(version || (version = {}));
 module.exports = version;
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
@@ -1031,6 +1137,8 @@ var packManager = require("./modules/packUtil/packManager");
 var planet = require("./modules/planet");
 var stage = require("./modules/stage");
 var v = require("./modules/version");
+var evElems = require("./modules/evElems");
+var anim = require("./modules/ui/anim");
 var ui;
 (function (ui) {
     function init() {
@@ -1069,13 +1177,10 @@ var ui;
         });
     }
     initDOM(function () {
+        evElems.set(ui);
         document.getElementById("pla-ver").innerHTML = "Planet " + v.version + " by " + v.author;
-        document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen);
         el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
         el.addEventListenerforQuery(".io-hf", "change", changeHeaderorFooterValue);
-        // (<HTMLTextAreaElement>document.getElementById("conv-new")).value = "";
-        // (<HTMLTextAreaElement>document.getElementById("conv-old")).value = "";
-        // (<HTMLTextAreaElement>document.getElementById("pla-io")).value = "";
         el.addEventListenerforQuery(".tray-list-tool", "click", clickTrayTool);
         document.head.appendChild(importJS("bower_components/move.js/move.js"));
         event.raiseEvent("initDom", null);
@@ -1096,13 +1201,14 @@ var ui;
     }
     ui.setupCanvas = setupCanvas;
     function togglefullScreen(e) {
+        console.log(d.isFullscreenTray);
         if (!d.isFullscreenTray) {
             closeInspector();
-            move(".pla-footer").set("height", "100%").duration("0.5s").end();
+            anim.showTrayFull();
             e.target.textContent = "↓";
         }
         else {
-            move(".pla-footer").set("height", "50px").duration("0.5s").end();
+            anim.hideTrayFull();
             e.target.textContent = "↑";
         }
         d.isFullscreenTray = !d.isFullscreenTray;
@@ -1112,10 +1218,7 @@ var ui;
         if (!d.isShowInspector)
             return;
         d.isShowInspector = false;
-        move(".pla-inspector")
-            .set("left", "100%")
-            .duration("0.5s")
-            .end();
+        anim.hideInspector();
     }
     ui.closeInspector = closeInspector;
     function showInspector(inspectorName) {
@@ -1124,10 +1227,7 @@ var ui;
         if (d.isShowInspector)
             return;
         d.isShowInspector = true;
-        move(".pla-inspector")
-            .set("left", "80%")
-            .duration("0.5s")
-            .end();
+        anim.showInspector();
     }
     ui.showInspector = showInspector;
     function clickExport() {
@@ -1175,65 +1275,27 @@ var ui;
     ui.setSkybox = setSkybox;
     function initTrayBlock() {
         return new Promise(function (resolve) {
-            var blocks = d.pack.blocks.getAll();
-            var ul = document.getElementsByClassName("tray-items")[0];
-            var list = Object.keys(blocks);
-            var async = function (i) {
-                var item = list[i];
-                var li = document.createElement("div");
-                li.classList.add("tray-list", "tray-list-block");
-                li.addEventListener("click", function (e) { event.raiseEvent("ui_clickTray", e); });
-                var img = document.createElement("img");
-                img.src = packManager.getPackPath(d.defaultPackName) + d.pack.blocks.get(item).data.filename;
-                img.onload = function () {
-                    img.alt = d.pack.blocks.get(item).data.bName;
-                    img.dataset["block"] = item;
-                    li.appendChild(img);
-                    ul.appendChild(li);
-                    if (i === list.length - 1) {
-                        resolve();
-                    }
-                    else {
-                        changeLoadingStatus("loading tray : " + i.toString() + " / " + (list.length - 1).toString());
-                        async(i + 1);
-                    }
-                };
-            };
-            async(0);
+            tray.initTrayBlock(function (numerator, denominator) {
+                changeLoadingStatus("loading tray-block : " + numerator.toString() + " / " + denominator.toString());
+            }).then(function (ul) {
+                ul.forEach(function (i) {
+                    document.getElementsByClassName("tray-items")[0].appendChild(i);
+                });
+                resolve();
+            });
         });
     }
     ui.initTrayBlock = initTrayBlock;
     function initTrayObj() {
         return new Promise(function (resolve) {
-            var objs = d.pack.objs.getAll();
-            var ul = document.getElementsByClassName("tray-items")[0];
-            var list = Object.keys(objs);
-            var async = function (i) {
-                var item = list[i];
-                var li = document.createElement("div");
-                li.classList.add("tray-list", "tray-list-obj");
-                li.addEventListener("click", function (e) { event.raiseEvent("ui_clickTray", e); });
-                var img = document.createElement("img");
-                img.src = packManager.getPackPath(d.defaultPackName) + d.pack.objs.get(item).data.filename;
-                img.onload = function () {
-                    img.alt = d.pack.objs.get(item).data.oName;
-                    img.dataset["block"] = item;
-                    li.style.width = img.style.width =
-                        d.pack.objs.get(item).data.width / (d.pack.objs.get(item).data.height / 50) + "px";
-                    li.style.height = img.style.height = "50px";
-                    li.appendChild(img);
-                    ul.appendChild(li);
-                    if (i === list.length - 1) {
-                        //ev.raiseEvent("initedTray", null);
-                        resolve();
-                    }
-                    else {
-                        changeLoadingStatus("loading tray-obj : " + i.toString() + " / " + (list.length - 1).toString());
-                        async(i + 1);
-                    }
-                };
-            };
-            async(0);
+            tray.initTrayObj(function (numerator, denominator) {
+                changeLoadingStatus("loading tray-obj : " + numerator.toString() + " / " + denominator.toString());
+            }).then(function (ul) {
+                ul.forEach(function (i) {
+                    document.getElementsByClassName("tray-items")[0].appendChild(i);
+                });
+                resolve();
+            });
         });
     }
     ui.initTrayObj = initTrayObj;
@@ -1243,13 +1305,7 @@ var ui;
     ui.changeLoadingStatus = changeLoadingStatus;
     function hideLoading() {
         var elem = document.getElementsByClassName("loading")[0];
-        move(".loading")
-            .set("opacity", 0)
-            .duration("1s")
-            .then()
-            .set("display", "none")
-            .pop()
-            .end();
+        anim.hideLoading();
     }
     ui.hideLoading = hideLoading;
     function changeActiveBlock(blockName) {
@@ -1277,4 +1333,4 @@ var ui;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":7,"./modules/compiler":8,"./modules/data":9,"./modules/elem":10,"./modules/event":12,"./modules/importJS":14,"./modules/initDOM":15,"./modules/packUtil/packManager":19,"./modules/planet":20,"./modules/stage":22,"./modules/tray":23,"./modules/util":25,"./modules/version":26}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]);
+},{"./modules/classes/vector2":7,"./modules/compiler":8,"./modules/data":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/importJS":14,"./modules/initDOM":15,"./modules/packUtil/packManager":19,"./modules/planet":20,"./modules/stage":22,"./modules/tray":23,"./modules/ui/anim":25,"./modules/util":26,"./modules/version":27}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,25,24,26,27,28]);

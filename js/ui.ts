@@ -16,6 +16,7 @@ import planet = require("./modules/planet");
 import stage = require("./modules/stage");
 import v = require("./modules/version");
 import evElems = require("./modules/evElems");
+import anim = require("./modules/ui/anim");
 
 module ui {
   export var canvas: HTMLCanvasElement; 
@@ -54,13 +55,10 @@ module ui {
     });
   }
   initDOM(() => {
+    evElems.set(ui);
     document.getElementById("pla-ver").innerHTML = `Planet ${v.version} by ${v.author}`;
-    document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen)
     el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
     el.addEventListenerforQuery(".io-hf", "change", changeHeaderorFooterValue);
-    // (<HTMLTextAreaElement>document.getElementById("conv-new")).value = "";
-    // (<HTMLTextAreaElement>document.getElementById("conv-old")).value = "";
-    // (<HTMLTextAreaElement>document.getElementById("pla-io")).value = "";
     el.addEventListenerforQuery(".tray-list-tool", "click", clickTrayTool);
     document.head.appendChild(importJS("bower_components/move.js/move.js"));
     event.raiseEvent("initDom", null);
@@ -81,12 +79,13 @@ module ui {
     });
   }
   export function togglefullScreen(e:MouseEvent) {
+    console.log(d.isFullscreenTray);
     if (!d.isFullscreenTray) {
       closeInspector();
-      move(".pla-footer").set("height", "100%").duration("0.5s").end();
+      anim.showTrayFull();
       (<HTMLElement>e.target).textContent = "↓";
     } else {
-      move(".pla-footer").set("height", "50px").duration("0.5s").end();
+      anim.hideTrayFull();
       (<HTMLElement>e.target).textContent = "↑";
     }
     d.isFullscreenTray = !d.isFullscreenTray;
@@ -95,20 +94,14 @@ module ui {
   export function closeInspector() {
     if (!d.isShowInspector) return;
     d.isShowInspector = false;
-    move(".pla-inspector")
-      .set("left", "100%")
-      .duration("0.5s")
-      .end();
+    anim.hideInspector();
   }
   export function showInspector(inspectorName:string) {
     document.querySelector(".ins-article-active") && document.querySelector(".ins-article-active").classList.remove("ins-article-active");
     document.getElementById("ins-" + inspectorName).classList.add("ins-article-active");
     if (d.isShowInspector) return;
     d.isShowInspector = true;
-    move(".pla-inspector")
-      .set("left", "80%")
-      .duration("0.5s")
-      .end();
+    anim.showInspector();
   }
   
   export function clickExport() {
@@ -154,62 +147,26 @@ module ui {
   
   export function initTrayBlock() {
     return new Promise((resolve) => {
-      var blocks = d.pack.blocks.getAll();
-      var ul = document.getElementsByClassName("tray-items")[0];
-      var list = Object.keys(blocks);
-      var async = (i: number) => {
-        var item = list[i];
-        var li = document.createElement("div");
-        li.classList.add("tray-list", "tray-list-block");
-        li.addEventListener("click", (e) => { event.raiseEvent("ui_clickTray", e); });
-        var img = document.createElement("img");
-        img.src = packManager.getPackPath(d.defaultPackName) + d.pack.blocks.get(item).data.filename;
-        img.onload = () => {
-          img.alt = d.pack.blocks.get(item).data.bName;
-          img.dataset["block"] = item;
-          li.appendChild(img);
-          ul.appendChild(li);
-          if (i === list.length - 1) {
-            resolve();
-          } else {
-            changeLoadingStatus("loading tray : " + i.toString() + " / " + (list.length - 1).toString());
-            async(i + 1);
-          }
-        };
-      }
-      async(0);
+      tray.initTrayBlock((numerator, denominator) => {
+        changeLoadingStatus(`loading tray-block : ${numerator.toString()} / ${denominator.toString()}`);
+      }).then((ul) => {
+        (<Array<HTMLDivElement>>ul).forEach(i => {
+          document.getElementsByClassName("tray-items")[0].appendChild(i);
+        });
+        resolve();
+      });
     });
   }
   export function initTrayObj() {
     return new Promise((resolve) => {
-      var objs = d.pack.objs.getAll();
-      var ul = document.getElementsByClassName("tray-items")[0];
-      var list = Object.keys(objs);
-      var async = (i: number) => {
-        var item = list[i];
-        var li = document.createElement("div");
-        li.classList.add("tray-list", "tray-list-obj");
-        li.addEventListener("click", (e) => { event.raiseEvent("ui_clickTray", e); });
-        var img = document.createElement("img");
-        img.src = packManager.getPackPath(d.defaultPackName) + d.pack.objs.get(item).data.filename;
-        img.onload = () => {
-          img.alt = d.pack.objs.get(item).data.oName;
-          img.dataset["block"] = item;
-          li.style.width = img.style.width =
-            d.pack.objs.get(item).data.width / (d.pack.objs.get(item).data.height / 50) + "px";
-          li.style.height = img.style.height = "50px";
-          li.appendChild(img);
-          ul.appendChild(li);
-          if (i === list.length - 1) {
-            //ev.raiseEvent("initedTray", null);
-            resolve();
-          } else {
-            changeLoadingStatus("loading tray-obj : " + i.toString() + " / " + (list.length - 1).toString());
-            async(i + 1);
-          }
-        }
-      }
-      async(0);
+      tray.initTrayObj((numerator, denominator) => {
+        changeLoadingStatus(`loading tray-obj : ${numerator.toString()} / ${denominator.toString()}`);
+      }).then((ul) => {
+        (<Array<HTMLDivElement>>ul).forEach(i => {
+          document.getElementsByClassName("tray-items")[0].appendChild(i);
+        });
+        resolve();
+      });
     });
   }
   
@@ -219,13 +176,7 @@ module ui {
   
   export function hideLoading() {
     var elem = <HTMLElement>document.getElementsByClassName("loading")[0];
-    move(".loading")
-      .set("opacity", 0)
-      .duration("1s")
-      .then()
-      .set("display", "none")
-      .pop()
-      .end();
+    anim.hideLoading();
   }
   
   export function changeActiveBlock(blockName:string) {

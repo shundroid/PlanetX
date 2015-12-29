@@ -1,10 +1,8 @@
-import initDOM = require("./initDOM");
 import el = require("./elem");
-import ui = require("./../ui");
-module evElems {
-  initDOM(() => {
+module evElems { 
+  export function set(listenerNamespace:any) {
     el.forEachforQuery(".ev-btn", (i) => {
-      i.addEventListener("click", (<any>ui)[(<HTMLElement>i).dataset["listener"]]);
+      i.addEventListener("click", listenerNamespace[(<HTMLElement>i).dataset["listener"]]);
     })
     el.forEachforQuery(".ev-input", (i) => {
       var elem = <HTMLInputElement>i;
@@ -12,5 +10,6 @@ module evElems {
         elem.value = elem.dataset["default"];
       }
     });
-  });
+  }
 }
+export = evElems;

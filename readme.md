@@ -1,4 +1,8 @@
 # Planet
+Planet v1.0 by shundroid
+
+## Release log
+- Browserify対応！js/modules/以下にモジュールがあるぞ！
 
 ## 準備
 次のモジュールがない場合は、インストールしてください。  

@@ -1,4 +1,7 @@
-///<reference path="classes.ts" />
+import list = require("./classes/list");
+import prefabMini = require("./classes/prefabMini")
+import stage = require("./stage");
+
 module compiler {
   export function getLangAuto(oneLine:string):compileLangs {
     switch (oneLine) {
@@ -16,7 +19,7 @@ module compiler {
     auto
   }
   export class centerLang {
-    constructor(public prefabList:p.List<p.prefabLite>, public header:string, public footer:string, public effects:p.stageSettings) {};
+    constructor(public prefabList:list<prefabMini>, public header:string, public footer:string, public effects:stage.StageEffects) {};
   }
   export function toCenterLang(mode:compileLangs, text:string):centerLang {
     switch (mode) {
@@ -28,10 +31,10 @@ module compiler {
   }
   export function CSV2CenterLang(text:string) {
     var lines = text.replace(/;/g, "").split("\n");
-    var result = new p.List<p.prefabLite>();
-    var header = [];
-    var footer = [];
-    var effects = new p.stageSettings();
+    var result = new list<prefabMini>();
+    var header:Array<string> = [];
+    var footer:Array<string> = [];
+    var effects = new stage.StageEffects();
     var mode = 0; // 0: normal, 1: header, 2: footer
     lines.forEach(i => {
       if (mode === 0) {
@@ -50,7 +53,7 @@ module compiler {
             }
             return;
           }
-          result.push(i, new p.prefabLite(parseInt(items[1]), parseInt(items[2]), items[0]));
+          result.push(i, new prefabMini(parseInt(items[1]), parseInt(items[2]), items[0]));
         }
       } else if (mode === 1) {
         if (i === "//:/header") { mode = 0; return; }
@@ -64,7 +67,7 @@ module compiler {
   }
   export function old2CSV(old:string):string {
     var lines = old.split("\n");
-    var result = [];
+    var result:Array<string> = [];
     var id = 0;
     var mode = -1; // -1: system_header, 0: header, 1: normal, 2: footer, 3: return
     var count = 0;
@@ -133,3 +136,4 @@ module compiler {
     return result.join("\n");
   }
 }
+export = compiler;

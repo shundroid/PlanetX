@@ -1,14 +1,10 @@
-///<reference path="classes.ts" />
-/**
- * Canvasへの描画 ユーティリティーです。
- * Canvas.ts (Planet)
- * (c) 2015-2016 shundroid. all rights reserved.
- */
-module Canvas {
+import initDOM = require("./initDOM");
+import Rect = require("./classes/rect");
+module canvas {
   var canvas:HTMLCanvasElement;
   var ctx:CanvasRenderingContext2D;
-  export var canvasRect:pRect;
-  document.addEventListener("DOMContentLoaded", () => {
+  export var canvasRect:Rect;
+  initDOM(() => {
     canvas = <HTMLCanvasElement>document.getElementById("pla-canvas");
     canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
     resizeCanvas();
@@ -28,20 +24,14 @@ module Canvas {
    * @param {pRect} rect - 描画する部分(x, y, width, height)
    * @return {number} 画像を消すなどするときに、判別するID
    */
-  export function render(img:HTMLImageElement, rect:pRect):void {
+  export function render(img:HTMLImageElement, rect:Rect):void {
     ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
   }
-  export function clearByRect(rect:pRect) {
+  export function clearByRect(rect:Rect) {
     ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
   }
-  
   export function clear() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
-  export interface pRect {
-    x:number;
-    y:number;
-    width:number;
-    height:number;
-  }
 }
+export = canvas;

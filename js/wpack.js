@@ -194,7 +194,7 @@
 	            }
 	            else {
 	                var item = d.pack.objs.get(target.dataset["block"]).data;
-	                tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName);
+	                tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
 	            }
 	            changeActiveBlock(target.dataset["block"]);
 	        });

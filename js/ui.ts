@@ -38,7 +38,6 @@ module ui {
       event.raiseEvent("gridCanvas", new stage.gridDetail(g, e.type, new Vector2(e.clientX, e.clientY)));
     });
     event.addEventListener("initedPack", () => {
-      (<HTMLSelectElement>document.getElementById("stg-skybox")).value = d.pack.editor.defaultSkybox;
       el.forEachforQuery(".pack-select", (i) => {
         var elem = <HTMLSelectElement>i;
         elem.innerHTML = u.obj2SelectElem((<list<any>>(<any>d.pack)[elem.dataset["items"]]).toSimple());
@@ -49,6 +48,7 @@ module ui {
           elem.value = elem.dataset["default"];
         }
       });
+      (<HTMLSelectElement>document.getElementById("stg-skybox")).value = d.pack.editor.defaultSkybox;
     });
     // onBtnClickhandlerList = new Array<(target:Node,e:MouseEvent)=>void>();
   }
@@ -263,7 +263,7 @@ module ui {
 
   export function changeSkybox(e:Event) {
     stage.stageEffects.skybox = (<HTMLSelectElement>e.target).value;
-    setSkybox(d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
+    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
   }
   init();
 }

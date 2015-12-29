@@ -1023,7 +1023,6 @@ var ui;
             event.raiseEvent("gridCanvas", new stage.gridDetail(g, e.type, new Vector2(e.clientX, e.clientY)));
         });
         event.addEventListener("initedPack", function () {
-            document.getElementById("stg-skybox").value = d.pack.editor.defaultSkybox;
             el.forEachforQuery(".pack-select", function (i) {
                 var elem = i;
                 elem.innerHTML = u.obj2SelectElem(d.pack[elem.dataset["items"]].toSimple());
@@ -1034,6 +1033,7 @@ var ui;
                     elem.value = elem.dataset["default"];
                 }
             });
+            document.getElementById("stg-skybox").value = d.pack.editor.defaultSkybox;
         });
         // onBtnClickhandlerList = new Array<(target:Node,e:MouseEvent)=>void>();
     }
@@ -1253,7 +1253,7 @@ var ui;
     });
     function changeSkybox(e) {
         stage.stageEffects.skybox = e.target.value;
-        setSkybox(d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
+        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
     }
     ui.changeSkybox = changeSkybox;
     init();

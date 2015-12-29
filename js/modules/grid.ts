@@ -1,8 +1,8 @@
-import Vector2 = require("./vector2");
+import Vector2 = require("./classes/vector2");
 import d = require("./data");
 import prefab = require("./prefab");
 import stage = require("./stage");
-import rect = require("./rect");
+import rect = require("./classes/rect");
 /**
  * 座標系。ひえーー
  */

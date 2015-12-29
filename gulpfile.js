@@ -5,7 +5,6 @@ var glob = require("glob");
 var del = require("del");
 var tsify = require("tsify");
 var gulp = require("gulp");
-var ts = require("gulp-typescript");
 var less = require("gulp-less");
 var jade = require("gulp-jade");
 var buffer = require("vinyl-buffer");

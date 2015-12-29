@@ -103,7 +103,6 @@
 	            var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
 	            switch (d.activeToolName) {
 	                case "pencil":
-	                    console.log(stage.items.getAll());
 	                    if (e.eventName === "mousedown") {
 	                        if (!detail.contains) {
 	                            canvas.render(d.selectImage, rect);
@@ -964,7 +963,7 @@
 	            var height = stage.toMousePos(item.gridH);
 	            // 画面内に入っているか
 	            if (x + width >= 0 && x <= canvas.canvasRect.width &&
-	                y + height >= 0 && x <= canvas.canvasRect.height) {
+	                y + height >= 0 && y <= canvas.canvasRect.height) {
 	                canvas.render(image(d.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
 	            }
 	        });

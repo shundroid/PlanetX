@@ -73,8 +73,14 @@ var main;
                     if (e.eventName === "mousedown") {
                         // オブジェクトに対応させる
                         if (detail.prefab) {
-                            var bData = d.pack.blocks.get(detail.prefab.blockName);
-                            tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
+                            if (d.pack.objs.contains(detail.prefab.blockName)) {
+                                var oData = d.pack.objs.get(detail.prefab.blockName);
+                                tray.updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(d.defaultPackName) + oData.data.filename, oData.data.width, oData.data.height);
+                            }
+                            else {
+                                var bData = d.pack.blocks.get(detail.prefab.blockName);
+                                tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
+                            }
                             ui.changeActiveBlock(detail.prefab.blockName);
                         }
                     }

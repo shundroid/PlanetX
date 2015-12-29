@@ -10,6 +10,7 @@ module tray {
     var h = height || d.defaultBlockSize;
     d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
     console.log(d.defaultBlockSize);
+    updateSelectImage();
   }
   export function updateSelectImage() {
     d.selectImage = image(d.trayItemDataURLs.get(d.selectBlock.blockName));

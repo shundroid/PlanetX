@@ -46,18 +46,18 @@
 
 	var ui = __webpack_require__(1);
 	var initDOM = __webpack_require__(3);
-	var packLoader = __webpack_require__(19);
-	var packManager = __webpack_require__(13);
+	var packLoader = __webpack_require__(20);
+	var packManager = __webpack_require__(15);
 	var event = __webpack_require__(4);
 	var list = __webpack_require__(5);
-	var stage = __webpack_require__(15);
+	var stage = __webpack_require__(17);
 	var d = __webpack_require__(2);
-	var makeDataUrl = __webpack_require__(20);
+	var makeDataUrl = __webpack_require__(21);
 	var tray = __webpack_require__(11);
-	var prefab = __webpack_require__(21);
+	var prefab = __webpack_require__(22);
 	var Vector2 = __webpack_require__(10);
-	var Rect = __webpack_require__(18);
-	var canvas = __webpack_require__(16);
+	var Rect = __webpack_require__(19);
+	var canvas = __webpack_require__(18);
 	var main;
 	(function (main) {
 	    function init() {
@@ -176,9 +176,9 @@
 	var u = __webpack_require__(9);
 	var Vector2 = __webpack_require__(10);
 	var tray = __webpack_require__(11);
-	var packManager = __webpack_require__(13);
-	var planet = __webpack_require__(14);
-	var stage = __webpack_require__(15);
+	var packManager = __webpack_require__(15);
+	var planet = __webpack_require__(16);
+	var stage = __webpack_require__(17);
 	var ui;
 	(function (ui) {
 	    function init() {
@@ -432,14 +432,6 @@
 	        };
 	        ui.showInspector(btnName2InspectorName[name]);
 	    });
-	    function startUIWaitMode() {
-	        document.getElementById("pla-canvas").style.cursor = "wait";
-	    }
-	    ui.startUIWaitMode = startUIWaitMode;
-	    function endUIWaitMode() {
-	        document.getElementById("pla-canvas").style.cursor = "crosshair";
-	    }
-	    ui.endUIWaitMode = endUIWaitMode;
 	    function changeSkybox(e) {
 	        stage.stageEffects.skybox = e.target.value;
 	        setSkybox(d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
@@ -648,8 +640,10 @@
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var TrayBlockDetails = __webpack_require__(12);
+	var image = __webpack_require__(12);
+	var TrayBlockDetails = __webpack_require__(13);
 	var d = __webpack_require__(2);
+	var uiWaitMode = __webpack_require__(14);
 	var tray;
 	(function (tray) {
 	    function updateActiveBlock(blockName, fileName, label, width, height) {
@@ -658,10 +652,15 @@
 	        var h = height || d.defaultBlockSize;
 	        d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
 	        console.log(d.defaultBlockSize);
+	        updateSelectImage();
 	    }
 	    tray.updateActiveBlock = updateActiveBlock;
 	    function updateSelectImage() {
-	        //d.selectImage = 
+	        d.selectImage = image(d.trayItemDataURLs.get(d.selectBlock.blockName));
+	        uiWaitMode.start();
+	        d.selectImage.onload = function () {
+	            uiWaitMode.end();
+	        };
 	    }
 	    tray.updateSelectImage = updateSelectImage;
 	})(tray || (tray = {}));
@@ -670,6 +669,32 @@
 
 /***/ },
 /* 12 */
+/***/ function(module, exports) {
+
+	function image(url, isNoJaggy, size) {
+	    var a = new Image();
+	    a.src = url;
+	    if (isNoJaggy) {
+	        var width = (a.width + size.x) / 2;
+	        var height = (a.height + size.y) / 2;
+	        var newC, ctx;
+	        var saveURL;
+	        newC = document.createElement("canvas");
+	        newC.width = width;
+	        newC.height = height;
+	        ctx = newC.getContext("2d");
+	        ctx.drawImage(a, 0, 0, width, height);
+	        return image(newC.toDataURL("image/png"));
+	    }
+	    else {
+	        return a;
+	    }
+	}
+	module.exports = image;
+
+
+/***/ },
+/* 13 */
 /***/ function(module, exports) {
 
 	var TrayBlockDetails = (function () {
@@ -687,7 +712,25 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
+/***/ function(module, exports) {
+
+	var uiWaitMode;
+	(function (uiWaitMode) {
+	    function start() {
+	        document.getElementById("pla-canvas").style.cursor = "wait";
+	    }
+	    uiWaitMode.start = start;
+	    function end() {
+	        document.getElementById("pla-canvas").style.cursor = "crosshair";
+	    }
+	    uiWaitMode.end = end;
+	})(uiWaitMode || (uiWaitMode = {}));
+	module.exports = uiWaitMode;
+
+
+/***/ },
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __extends = (this && this.__extends) || function (d, b) {
@@ -832,10 +875,10 @@
 
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var stage = __webpack_require__(15);
+	var stage = __webpack_require__(17);
 	var planet;
 	(function (planet) {
 	    function exportText() {
@@ -851,14 +894,14 @@
 
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var list = __webpack_require__(5);
-	var canvas = __webpack_require__(16);
-	var image = __webpack_require__(17);
+	var canvas = __webpack_require__(18);
+	var image = __webpack_require__(12);
 	var d = __webpack_require__(2);
-	var rect = __webpack_require__(18);
+	var rect = __webpack_require__(19);
 	var event = __webpack_require__(4);
 	var Vector2 = __webpack_require__(10);
 	var stage;
@@ -1019,7 +1062,7 @@
 
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var initDOM = __webpack_require__(3);
@@ -1064,33 +1107,7 @@
 
 
 /***/ },
-/* 17 */
-/***/ function(module, exports) {
-
-	function image(url, isNoJaggy, size) {
-	    var a = new Image();
-	    a.src = url;
-	    if (isNoJaggy) {
-	        var width = (a.width + size.x) / 2;
-	        var height = (a.height + size.y) / 2;
-	        var newC, ctx;
-	        var saveURL;
-	        newC = document.createElement("canvas");
-	        newC.width = width;
-	        newC.height = height;
-	        ctx = newC.getContext("2d");
-	        ctx.drawImage(a, 0, 0, width, height);
-	        return image(newC.toDataURL("image/png"));
-	    }
-	    else {
-	        return a;
-	    }
-	}
-	module.exports = image;
-
-
-/***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports) {
 
 	var rect = (function () {
@@ -1106,11 +1123,11 @@
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
-	var packManager = __webpack_require__(13);
+	var packManager = __webpack_require__(15);
 	function load(packName) {
 	    return new Promise(function (resolve) {
 	        var xhr = new XMLHttpRequest();
@@ -1127,14 +1144,14 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var d = __webpack_require__(2);
 	var list = __webpack_require__(5);
-	var packManager = __webpack_require__(13);
+	var packManager = __webpack_require__(15);
 	var Vector2 = __webpack_require__(10);
-	var image = __webpack_require__(17);
+	var image = __webpack_require__(12);
 	function makeDataUrl() {
 	    var result = new list();
 	    var blockList = d.pack.blocks.getAll();
@@ -1152,7 +1169,7 @@
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports) {
 
 	var prefab = (function () {

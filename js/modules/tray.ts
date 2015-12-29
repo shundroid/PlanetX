@@ -1,4 +1,3 @@
-import d = require("./data");
 import image = require("./image");
 
 module tray {

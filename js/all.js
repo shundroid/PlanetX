@@ -119,7 +119,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/list":3,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":9,"./modules/event":12,"./modules/initDOM":15,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":18,"./modules/packUtil/packManager":19,"./modules/prefab":21,"./modules/stage":22,"./modules/tray":23,"./ui":27}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/list":3,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":9,"./modules/event":12,"./modules/initDOM":15,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":18,"./modules/packUtil/packManager":19,"./modules/prefab":21,"./modules/stage":22,"./modules/tray":23,"./ui":28}],2:[function(require,module,exports){
 var initDOM = require("./initDOM");
 var canvas;
 (function (canvas_1) {
@@ -444,14 +444,12 @@ var elem;
 })(elem || (elem = {}));
 module.exports = elem;
 },{}],11:[function(require,module,exports){
-var initDOM = require("./initDOM");
 var el = require("./elem");
-var ui = require("./../ui");
 var evElems;
 (function (evElems) {
-    initDOM(function () {
+    function set(listenerNamespace) {
         el.forEachforQuery(".ev-btn", function (i) {
-            i.addEventListener("click", ui[i.dataset["listener"]]);
+            i.addEventListener("click", listenerNamespace[i.dataset["listener"]]);
         });
         el.forEachforQuery(".ev-input", function (i) {
             var elem = i;
@@ -459,9 +457,11 @@ var evElems;
                 elem.value = elem.dataset["default"];
             }
         });
-    });
+    }
+    evElems.set = set;
 })(evElems || (evElems = {}));
-},{"./../ui":27,"./elem":10,"./initDOM":15}],12:[function(require,module,exports){
+module.exports = evElems;
+},{"./elem":10}],12:[function(require,module,exports){
 var list = require("./classes/list");
 var event;
 (function (event) {
@@ -989,6 +989,44 @@ var uiWaitMode;
 })(uiWaitMode || (uiWaitMode = {}));
 module.exports = uiWaitMode;
 },{}],25:[function(require,module,exports){
+/// <reference path="../../definitely/move.d.ts" />
+var anim;
+(function (anim) {
+    function showTrayFull() {
+        move(".pla-footer").set("height", "100%").duration("0.5s").end();
+    }
+    anim.showTrayFull = showTrayFull;
+    function hideTrayFull() {
+        move(".pla-footer").set("height", "50px").duration("0.5s").end();
+    }
+    anim.hideTrayFull = hideTrayFull;
+    function showInspector() {
+        move(".pla-inspector")
+            .set("left", "80%")
+            .duration("0.5s")
+            .end();
+    }
+    anim.showInspector = showInspector;
+    function hideInspector() {
+        move(".pla-inspector")
+            .set("left", "100%")
+            .duration("0.5s")
+            .end();
+    }
+    anim.hideInspector = hideInspector;
+    function hideLoading() {
+        move(".loading")
+            .set("opacity", 0)
+            .duration("1s")
+            .then()
+            .set("display", "none")
+            .pop()
+            .end();
+    }
+    anim.hideLoading = hideLoading;
+})(anim || (anim = {}));
+module.exports = anim;
+},{}],26:[function(require,module,exports){
 var util;
 (function (util) {
     function obj2SelectElem(obj) {
@@ -1008,14 +1046,14 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var version;
 (function (version_1) {
     version_1.version = "v1.0";
     version_1.author = "shundroid";
 })(version || (version = {}));
 module.exports = version;
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
@@ -1031,6 +1069,8 @@ var packManager = require("./modules/packUtil/packManager");
 var planet = require("./modules/planet");
 var stage = require("./modules/stage");
 var v = require("./modules/version");
+var evElems = require("./modules/evElems");
+var anim = require("./modules/ui/anim");
 var ui;
 (function (ui) {
     function init() {
@@ -1069,13 +1109,10 @@ var ui;
         });
     }
     initDOM(function () {
+        evElems.set(ui);
         document.getElementById("pla-ver").innerHTML = "Planet " + v.version + " by " + v.author;
-        document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen);
         el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
         el.addEventListenerforQuery(".io-hf", "change", changeHeaderorFooterValue);
-        // (<HTMLTextAreaElement>document.getElementById("conv-new")).value = "";
-        // (<HTMLTextAreaElement>document.getElementById("conv-old")).value = "";
-        // (<HTMLTextAreaElement>document.getElementById("pla-io")).value = "";
         el.addEventListenerforQuery(".tray-list-tool", "click", clickTrayTool);
         document.head.appendChild(importJS("bower_components/move.js/move.js"));
         event.raiseEvent("initDom", null);
@@ -1098,11 +1135,11 @@ var ui;
     function togglefullScreen(e) {
         if (!d.isFullscreenTray) {
             closeInspector();
-            move(".pla-footer").set("height", "100%").duration("0.5s").end();
+            anim.hideTrayFull();
             e.target.textContent = "↓";
         }
         else {
-            move(".pla-footer").set("height", "50px").duration("0.5s").end();
+            anim.showTrayFull();
             e.target.textContent = "↑";
         }
         d.isFullscreenTray = !d.isFullscreenTray;
@@ -1112,10 +1149,7 @@ var ui;
         if (!d.isShowInspector)
             return;
         d.isShowInspector = false;
-        move(".pla-inspector")
-            .set("left", "100%")
-            .duration("0.5s")
-            .end();
+        anim.hideInspector();
     }
     ui.closeInspector = closeInspector;
     function showInspector(inspectorName) {
@@ -1124,10 +1158,7 @@ var ui;
         if (d.isShowInspector)
             return;
         d.isShowInspector = true;
-        move(".pla-inspector")
-            .set("left", "80%")
-            .duration("0.5s")
-            .end();
+        anim.showInspector();
     }
     ui.showInspector = showInspector;
     function clickExport() {
@@ -1243,13 +1274,7 @@ var ui;
     ui.changeLoadingStatus = changeLoadingStatus;
     function hideLoading() {
         var elem = document.getElementsByClassName("loading")[0];
-        move(".loading")
-            .set("opacity", 0)
-            .duration("1s")
-            .then()
-            .set("display", "none")
-            .pop()
-            .end();
+        anim.hideLoading();
     }
     ui.hideLoading = hideLoading;
     function changeActiveBlock(blockName) {
@@ -1277,4 +1302,4 @@ var ui;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":7,"./modules/compiler":8,"./modules/data":9,"./modules/elem":10,"./modules/event":12,"./modules/importJS":14,"./modules/initDOM":15,"./modules/packUtil/packManager":19,"./modules/planet":20,"./modules/stage":22,"./modules/tray":23,"./modules/util":25,"./modules/version":26}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27]);
+},{"./modules/classes/vector2":7,"./modules/compiler":8,"./modules/data":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/importJS":14,"./modules/initDOM":15,"./modules/packUtil/packManager":19,"./modules/planet":20,"./modules/stage":22,"./modules/tray":23,"./modules/ui/anim":25,"./modules/util":26,"./modules/version":27}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,25,24,26,27,28]);

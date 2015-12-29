@@ -16,6 +16,7 @@ import planet = require("./modules/planet");
 import stage = require("./modules/stage");
 import v = require("./modules/version");
 import evElems = require("./modules/evElems");
+import anim = require("./modules/ui/anim");
 
 module ui {
   export var canvas: HTMLCanvasElement; 
@@ -54,13 +55,10 @@ module ui {
     });
   }
   initDOM(() => {
+    evElems.set(ui);
     document.getElementById("pla-ver").innerHTML = `Planet ${v.version} by ${v.author}`;
-    document.getElementById("tray-fullscreen").addEventListener("click", togglefullScreen)
     el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
     el.addEventListenerforQuery(".io-hf", "change", changeHeaderorFooterValue);
-    // (<HTMLTextAreaElement>document.getElementById("conv-new")).value = "";
-    // (<HTMLTextAreaElement>document.getElementById("conv-old")).value = "";
-    // (<HTMLTextAreaElement>document.getElementById("pla-io")).value = "";
     el.addEventListenerforQuery(".tray-list-tool", "click", clickTrayTool);
     document.head.appendChild(importJS("bower_components/move.js/move.js"));
     event.raiseEvent("initDom", null);
@@ -83,10 +81,10 @@ module ui {
   export function togglefullScreen(e:MouseEvent) {
     if (!d.isFullscreenTray) {
       closeInspector();
-      move(".pla-footer").set("height", "100%").duration("0.5s").end();
+      anim.hideTrayFull();
       (<HTMLElement>e.target).textContent = "↓";
     } else {
-      move(".pla-footer").set("height", "50px").duration("0.5s").end();
+      anim.showTrayFull();
       (<HTMLElement>e.target).textContent = "↑";
     }
     d.isFullscreenTray = !d.isFullscreenTray;
@@ -95,20 +93,14 @@ module ui {
   export function closeInspector() {
     if (!d.isShowInspector) return;
     d.isShowInspector = false;
-    move(".pla-inspector")
-      .set("left", "100%")
-      .duration("0.5s")
-      .end();
+    anim.hideInspector();
   }
   export function showInspector(inspectorName:string) {
     document.querySelector(".ins-article-active") && document.querySelector(".ins-article-active").classList.remove("ins-article-active");
     document.getElementById("ins-" + inspectorName).classList.add("ins-article-active");
     if (d.isShowInspector) return;
     d.isShowInspector = true;
-    move(".pla-inspector")
-      .set("left", "80%")
-      .duration("0.5s")
-      .end();
+    anim.showInspector();
   }
   
   export function clickExport() {
@@ -219,13 +211,7 @@ module ui {
   
   export function hideLoading() {
     var elem = <HTMLElement>document.getElementsByClassName("loading")[0];
-    move(".loading")
-      .set("opacity", 0)
-      .duration("1s")
-      .then()
-      .set("display", "none")
-      .pop()
-      .end();
+    anim.hideLoading();
   }
   
   export function changeActiveBlock(blockName:string) {

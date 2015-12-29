@@ -3,7 +3,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var list = require("./../list");
+var list = require("./../classes/list");
 var pack;
 (function (pack) {
     function getPackPath(packName) {

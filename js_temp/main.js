@@ -3,15 +3,15 @@ var initDOM = require("./modules/initDOM");
 var packLoader = require("./modules/packUtil/packLoader");
 var packManager = require("./modules/packUtil/packManager");
 var event = require("./modules/event");
-var list = require("./modules/list");
+var list = require("./modules/classes/list");
 var stage = require("./modules/stage");
 var d = require("./modules/data");
 var makeDataUrl = require("./modules/makePrefabDataUrls");
 var tray = require("./modules/tray");
 var grid = require("./modules/grid");
 var prefab = require("./modules/prefab");
-var Vector2 = require("./modules/vector2");
-var Rect = require("./modules/rect");
+var Vector2 = require("./modules/classes/vector2");
+var Rect = require("./modules/classes/rect");
 var canvas = require("./modules/canvas");
 var main;
 (function (main) {
@@ -46,7 +46,7 @@ var main;
             ui.changeLoadingStatus("making DataURL");
             d.trayItemDataURLs = makeDataUrl();
             console.log(d.defaultBlockSize);
-            d.selectBlock = tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック", d.defaultBlockSize, d.defaultBlockSize);
+            tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック");
             ui.changeLoadingStatus("Are you ready?");
             event.raiseEvent("ready", null);
         });
@@ -75,7 +75,7 @@ var main;
                         // オブジェクトに対応させる
                         if (detail.prefab) {
                             var bData = d.pack.blocks.get(detail.prefab.blockName);
-                            d.selectBlock = tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename, d.defaultBlockSize, d.defaultBlockSize);
+                            tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
                             ui.changeActiveBlock(detail.prefab.blockName);
                         }
                     }

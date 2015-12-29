@@ -1,4 +1,4 @@
-var list = require("./list");
+var list = require("./classes/list");
 var event;
 (function (event) {
     var eventHandlers = new list();

@@ -1,10 +1,10 @@
-import list = require("./list");
+import list = require("./classes/list");
 import prefab = require("./prefab");
 import canvas = require("./canvas");
 import grid = require("./grid");
 import image = require("./image");
 import d = require("./data");
-import rect = require("./rect");
+import rect = require("./classes/rect");
 import event = require("./event");
 
 module stage {

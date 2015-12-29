@@ -1,10 +1,8 @@
-import list = require("./list");
+import list = require("./classes/list");
 import packManager = require("./packUtil/packManager");
-import tray = require("./tray");
-import grid = require("./grid");
+import TrayBlockDetails = require("./classes/trayBlockDetails");
 
 class data {
-  static hogehogeho:string  ="hoge";
   private static datas:any = {};
   static get trayItemDataURLs() {
     return <list<string>>this.datas["trayItemDataURLs"];
@@ -37,9 +35,9 @@ class data {
     this.datas["pack"] = val;
   }
   static get selectBlock() {
-    return <tray.TrayBlockDetails>this.datas["selectBlock"];
+    return <TrayBlockDetails>this.datas["selectBlock"];
   }
-  static set selectBlock(val: tray.TrayBlockDetails) {
+  static set selectBlock(val: TrayBlockDetails) {
     this.datas["pack"] = val;
   }
   static get activeToolName() {
@@ -71,28 +69,6 @@ class data {
   }
   static set isShowInspector(val: boolean) {
     this.datas["pack"] = val;
-  }
-  
-  /**
-   * alias (grid.scrollX)
-   */
-  static get scrollX() {
-    console.log("this is alias");
-    return grid.scrollX;
-  } 
-  /**
-   * alias (grid.scrollY)
-   */
-  static get scrollY() {
-    console.log("this is alias");
-    return grid.scrollY;
-  }
-  /**
-   * alias (tray.updateSelectImage)
-   */
-  static updateSelectImage() {
-    console.log("this is alias");
-    tray.updateSelectImage();
   }
 }
 export = data;

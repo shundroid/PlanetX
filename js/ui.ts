@@ -8,9 +8,9 @@ import el = require("./modules/elem");
 import compiler = require("./modules/compiler");
 import importJS = require("./modules/importJS");
 import u = require("./modules/util");
-import list = require("./modules/list");
+import list = require("./modules/classes/list");
 import grid = require("./modules/grid");
-import Vector2 = require("./modules/vector2");
+import Vector2 = require("./modules/classes/vector2");
 import tray = require("./modules/tray");
 import packManager = require("./modules/packUtil/packManager");
 import planet = require("./modules/planet");
@@ -27,10 +27,10 @@ module ui {
       d.isObjMode = target.parentElement.classList.contains("tray-list-obj");
       if (!d.isObjMode) {
         let item = d.pack.blocks.get(target.dataset["block"]).data;
-        d.selectBlock = tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName, d.defaultBlockSize, d.defaultBlockSize);
+        tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName);
       } else {
         let item = d.pack.objs.get(target.dataset["block"]).data;
-        d.selectBlock = tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
+        tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName);
       }
       changeActiveBlock(target.dataset["block"]);
     });

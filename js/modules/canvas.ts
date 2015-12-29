@@ -1,5 +1,5 @@
 import initDOM = require("./initDOM");
-import Rect = require("./rect");
+import Rect = require("./classes/rect");
 module canvas {
   var canvas:HTMLCanvasElement;
   var ctx:CanvasRenderingContext2D;

@@ -3,15 +3,15 @@ import initDOM = require("./modules/initDOM");
 import packLoader = require("./modules/packUtil/packLoader");
 import packManager = require("./modules/packUtil/packManager");
 import event = require("./modules/event");
-import list = require("./modules/list");
+import list = require("./modules/classes/list");
 import stage = require("./modules/stage");
 import d = require("./modules/data");
 import makeDataUrl = require("./modules/makePrefabDataUrls");
 import tray = require("./modules/tray");
 import grid = require("./modules/grid");
 import prefab = require("./modules/prefab");
-import Vector2 = require("./modules/vector2");
-import Rect = require("./modules/rect");
+import Vector2 = require("./modules/classes/vector2");
+import Rect = require("./modules/classes/rect");
 import canvas = require("./modules/canvas");
 
 module main {
@@ -48,7 +48,7 @@ module main {
       ui.changeLoadingStatus("making DataURL");
       d.trayItemDataURLs = makeDataUrl();
       console.log(d.defaultBlockSize);
-      d.selectBlock = tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック", d.defaultBlockSize, d.defaultBlockSize);
+      tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック");
       ui.changeLoadingStatus("Are you ready?");
       event.raiseEvent("ready", null);
     });
@@ -76,7 +76,7 @@ module main {
             // オブジェクトに対応させる
             if (detail.prefab) {
               var bData = d.pack.blocks.get(detail.prefab.blockName);
-              d.selectBlock = tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename, d.defaultBlockSize, d.defaultBlockSize);
+              tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
               ui.changeActiveBlock(detail.prefab.blockName);
             }
           }

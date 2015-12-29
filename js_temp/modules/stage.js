@@ -1,9 +1,9 @@
-var list = require("./list");
+var list = require("./classes/list");
 var canvas = require("./canvas");
 var grid = require("./grid");
 var image = require("./image");
 var d = require("./data");
-var rect = require("./rect");
+var rect = require("./classes/rect");
 var event = require("./event");
 var stage;
 (function (stage) {

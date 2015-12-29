@@ -8,7 +8,7 @@ var compiler = require("./modules/compiler");
 var importJS = require("./modules/importJS");
 var u = require("./modules/util");
 var grid = require("./modules/grid");
-var Vector2 = require("./modules/vector2");
+var Vector2 = require("./modules/classes/vector2");
 var tray = require("./modules/tray");
 var packManager = require("./modules/packUtil/packManager");
 var planet = require("./modules/planet");
@@ -24,11 +24,11 @@ var ui;
             d.isObjMode = target.parentElement.classList.contains("tray-list-obj");
             if (!d.isObjMode) {
                 var item = d.pack.blocks.get(target.dataset["block"]).data;
-                d.selectBlock = tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName, d.defaultBlockSize, d.defaultBlockSize);
+                tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName);
             }
             else {
                 var item = d.pack.objs.get(target.dataset["block"]).data;
-                d.selectBlock = tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
+                tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName);
             }
             changeActiveBlock(target.dataset["block"]);
         });

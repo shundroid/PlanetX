@@ -1,5 +1,3 @@
-var tray = require("./tray");
-var grid = require("./grid");
 var data = (function () {
     function data() {
     }
@@ -113,36 +111,6 @@ var data = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(data, "scrollX", {
-        /**
-         * alias (grid.scrollX)
-         */
-        get: function () {
-            console.log("this is alias");
-            return grid.scrollX;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(data, "scrollY", {
-        /**
-         * alias (grid.scrollY)
-         */
-        get: function () {
-            console.log("this is alias");
-            return grid.scrollY;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * alias (tray.updateSelectImage)
-     */
-    data.updateSelectImage = function () {
-        console.log("this is alias");
-        tray.updateSelectImage();
-    };
-    data.hogehogeho = "hoge";
     data.datas = {};
     return data;
 })();

@@ -1,4 +1,4 @@
-import list = require("./../list");
+import list = require("./../classes/list");
 module pack {
   export function getPackPath(packName:string) {
     return "pack/" + packName + "/";

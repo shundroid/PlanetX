@@ -1,17 +1,16 @@
-import ui = require("./modules/ui");
+import ui = require("./ui");
 import initDOM = require("./modules/initDOM");
 import packLoader = require("./modules/packUtil/packLoader");
 import packManager = require("./modules/packUtil/packManager");
 import event = require("./modules/event");
-import list = require("./modules/list");
+import list = require("./modules/classes/list");
 import stage = require("./modules/stage");
 import d = require("./modules/data");
 import makeDataUrl = require("./modules/makePrefabDataUrls");
 import tray = require("./modules/tray");
-import grid = require("./modules/grid");
 import prefab = require("./modules/prefab");
-import Vector2 = require("./modules/vector2");
-import Rect = require("./modules/rect");
+import Vector2 = require("./modules/classes/vector2");
+import Rect = require("./modules/classes/rect");
 import canvas = require("./modules/canvas");
 
 module main {
@@ -47,7 +46,6 @@ module main {
     event.addEventListener("initedTray", () => {
       ui.changeLoadingStatus("making DataURL");
       d.trayItemDataURLs = makeDataUrl();
-      console.log(d.defaultBlockSize);
       tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック");
       ui.changeLoadingStatus("Are you ready?");
       event.raiseEvent("ready", null);
@@ -55,10 +53,10 @@ module main {
     event.addEventListener("ready", () => {
       ui.hideLoading();
     });
-    event.addEventListener("gridCanvas", (e:grid.gridDetail) => {
-      var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, grid.toGridPos(d.selectBlock.width), grid.toGridPos(d.selectBlock.height));
-      var detail = grid.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY));
-      var rect = grid.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
+    event.addEventListener("gridCanvas", (e:stage.gridDetail) => {
+      var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
+      var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY));
+      var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
       switch (d.activeToolName) {
         case "pencil":
           if (e.eventName === "mousedown") {
@@ -83,13 +81,13 @@ module main {
           break;
         case "hand":
           if (e.eventName === "mousemove") {
-            scrollX += e.mousePos.x - grid.scrollBeforeX;
-            scrollY += e.mousePos.y - grid.scrollBeforeY;
+            scrollX += e.mousePos.x - stage.scrollBeforeX;
+            scrollY += e.mousePos.y - stage.scrollBeforeY;
             stage.renderStage();
           }
           if (e.eventName !== "mouseup") {
-            grid.scrollBeforeX = e.mousePos.x;
-            grid.scrollBeforeY = e.mousePos.y;
+            stage.scrollBeforeX = e.mousePos.x;
+            stage.scrollBeforeY = e.mousePos.y;
           }
           break;
         default:

@@ -1,4 +1,4 @@
-import Vector2 = require("./vector2");
+import Vector2 = require("./classes/vector2");
 function image(url:string, isNoJaggy?:boolean, size?:Vector2):HTMLImageElement {
   var a = new Image();
   a.src = url;

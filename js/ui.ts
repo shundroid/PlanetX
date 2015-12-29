@@ -1,20 +1,19 @@
-/// <reference path="../../typings/es6-promise/es6-promise.d.ts" />
-/// <reference path="../definitely/move.d.ts" />
-import d = require("./data");
-import initDOM = require("./initDOM");
-import event = require("./event");
-import oI = require("./objIndex");
-import el = require("./elem");
-import compiler = require("./compiler");
-import importJS = require("./importJS");
-import u = require("./util");
-import list = require("./list");
-import grid = require("./grid");
-import Vector2 = require("./vector2");
-import tray = require("./tray");
-import packManager = require("./packUtil/packManager");
-import planet = require("./planet");
-import stage = require("./stage");
+/// <reference path="../typings/es6-promise/es6-promise.d.ts" />
+/// <reference path="definitely/move.d.ts" />
+import d = require("./modules/data");
+import initDOM = require("./modules/initDOM");
+import event = require("./modules/event");
+import oI = require("./modules/objIndex");
+import el = require("./modules/elem");
+import compiler = require("./modules/compiler");
+import importJS = require("./modules/importJS");
+import u = require("./modules/util");
+import list = require("./modules/classes/list");
+import Vector2 = require("./modules/classes/vector2");
+import tray = require("./modules/tray");
+import packManager = require("./modules/packUtil/packManager");
+import planet = require("./modules/planet");
+import stage = require("./modules/stage");
 
 module ui {
   export var canvas: HTMLCanvasElement; 
@@ -35,8 +34,8 @@ module ui {
       changeActiveBlock(target.dataset["block"]);
     });
     event.addEventListener("ui_mousedownCanvas|ui_mousemoveanddownCanvas|ui_mouseupCanvas", (e:MouseEvent) => {
-      var g = grid.getGridPosFromMousePos(new Vector2(e.clientX, e.clientY));
-      event.raiseEvent("gridCanvas", new grid.gridDetail(g, e.type, new Vector2(e.clientX, e.clientY)));
+      var g = stage.getGridPosFromMousePos(new Vector2(e.clientX, e.clientY));
+      event.raiseEvent("gridCanvas", new stage.gridDetail(g, e.type, new Vector2(e.clientX, e.clientY)));
     });
     event.addEventListener("initedPack", () => {
       (<HTMLSelectElement>document.getElementById("stg-skybox")).value = d.pack.editor.defaultSkybox;
@@ -68,7 +67,7 @@ module ui {
     (<HTMLTextAreaElement>document.getElementById("conv-old")).value = "";
     document.getElementById("conv").addEventListener("click", () => {
       (<HTMLTextAreaElement>document.getElementById("conv-new")).value = 
-        compiler.convertOldFile((<HTMLTextAreaElement>document.getElementById("conv-old")).value);
+        compiler.old2CSV((<HTMLTextAreaElement>document.getElementById("conv-old")).value);
     });
     (<HTMLTextAreaElement>document.getElementById("pla-io")).value = "";
     el.addEventListenerforQuery(".tray-list-tool", "click", clickTrayTool);
@@ -137,8 +136,7 @@ module ui {
   export function clickImport() {
     var effects = planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
     stage.stageEffects = effects;
-    console.log(effects.skybox);
-    setSkybox(d.pack.skyboxes.get(effects.skybox).data.filename);
+    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox).data.filename);
     stage.renderStage();
   }
   
@@ -149,9 +147,9 @@ module ui {
   export function changeHeaderorFooterValue(e:MouseEvent) {
     var elem = <HTMLTextAreaElement>e.target;
     if (elem.id === "io-header") {
-      planet.header = elem.value;
+      stage.header = elem.value;
     } else if (elem.id === "io-footer") {
-      planet.footer = elem.value;
+      stage.footer = elem.value;
     }
   }
   
@@ -262,13 +260,7 @@ module ui {
     ui.showInspector(btnName2InspectorName[name]);
   });
   
-  export function startUIWaitMode() {
-    document.getElementById("pla-canvas").style.cursor = "wait";
-  }
-  export function endUIWaitMode() {
-    document.getElementById("pla-canvas").style.cursor = "crosshair";
-  }
-  
+
   export function changeSkybox(e:Event) {
     stage.stageEffects.skybox = (<HTMLSelectElement>e.target).value;
     setSkybox(d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);

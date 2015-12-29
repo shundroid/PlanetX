@@ -90,7 +90,6 @@
 	        event.addEventListener("initedTray", function () {
 	            ui.changeLoadingStatus("making DataURL");
 	            d.trayItemDataURLs = makeDataUrl();
-	            console.log(d.defaultBlockSize);
 	            tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック");
 	            ui.changeLoadingStatus("Are you ready?");
 	            event.raiseEvent("ready", null);
@@ -104,6 +103,7 @@
 	            var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
 	            switch (d.activeToolName) {
 	                case "pencil":
+	                    console.log(stage.items.getAll());
 	                    if (e.eventName === "mousedown") {
 	                        if (!detail.contains) {
 	                            canvas.render(d.selectImage, rect);
@@ -304,7 +304,6 @@
 	    function clickImport() {
 	        var effects = planet.importText(document.getElementById("pla-io").value);
 	        stage.stageEffects = effects;
-	        console.log(effects.skybox);
 	        setSkybox(d.pack.skyboxes.get(effects.skybox).data.filename);
 	        stage.renderStage();
 	    }
@@ -647,11 +646,9 @@
 	var tray;
 	(function (tray) {
 	    function updateActiveBlock(blockName, fileName, label, width, height) {
-	        console.log(d);
 	        var w = width || d.defaultBlockSize;
 	        var h = height || d.defaultBlockSize;
 	        d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
-	        console.log(d.defaultBlockSize);
 	        updateSelectImage();
 	    }
 	    tray.updateActiveBlock = updateActiveBlock;

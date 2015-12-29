@@ -136,7 +136,6 @@ module ui {
   export function clickImport() {
     var effects = planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
     stage.stageEffects = effects;
-    console.log(effects.skybox);
     setSkybox(d.pack.skyboxes.get(effects.skybox).data.filename);
     stage.renderStage();
   }

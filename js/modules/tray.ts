@@ -5,11 +5,9 @@ import uiWaitMode = require("./uiWaitMode");
 
 module tray {
   export function updateActiveBlock(blockName:string, fileName:string, label:string, width?:number, height?:number) {
-    console.log(d);
     var w = width || d.defaultBlockSize;
     var h = height || d.defaultBlockSize;
     d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
-    console.log(d.defaultBlockSize);
     updateSelectImage();
   }
   export function updateSelectImage() {

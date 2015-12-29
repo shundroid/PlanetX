@@ -15,6 +15,8 @@ module stage {
     }
   }
   export var stageEffects:StageEffects = new StageEffects();
+  export var header:string;
+  export var footer:string;
   
   var prefabList:list<prefab>;
   export module items {
@@ -41,6 +43,8 @@ module stage {
   var maxId:number;
   function init() {
     prefabList = new list<prefab>();
+    header = "";
+    footer = "";
     maxId = 0;
   }
   init();
@@ -48,7 +52,7 @@ module stage {
   export function getId() {
     return maxId++;
   }
-  function resetId() {
+  export function resetId() {
     maxId = 0;
   }
   

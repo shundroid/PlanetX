@@ -85,7 +85,7 @@ module stage {
       renderStage();
     }, 100);
   });
-    export class gridDetail {
+  export class gridDetail {
     constructor(public gridPos:Vector2, public eventName:string, public mousePos:Vector2) { }
   }
   export function getMousePosFromCenterAndSize(center:number, size:number) {

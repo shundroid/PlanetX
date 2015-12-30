@@ -1,4 +1,6 @@
 import list = require("./../classes/list");
+import attribute = require("./../classes/blockAttr/attribute");
+import attrList = require("./../classes/blockAttr/attrList");
 module pack {
   export function getPackPath(packName:string) {
     return "pack/" + packName + "/";
@@ -9,7 +11,7 @@ module pack {
     blocks: list<blockInfo>;
     objs: list<objInfo>;
     descriptions: list<desInfo>;
-    attributes:list<attrInfo>;
+    attributes:attrList;
     skyboxes:skyboxInfoList;
     editor:packEditorInfo;
     constructor(data:Object) {
@@ -32,12 +34,11 @@ module pack {
         var cur = (<any>data)["descriptions"][i];
         this.descriptions.push(i, new desInfo(cur));
       });
-      this.attributes = new list<attrInfo>();
+      this.attributes = new attrList();
       Object.keys((<any>data)["attributes"]).forEach(i => {
-        var cur = (<any>data)["attributes"][i];
-        this.attributes.push(i, new attrInfo(cur));
+        var cur = <attribute>(<any>data)["attributes"][i];
+        this.attributes.push(i, cur);
       });
-      console.log(this.attributes.getAll());
       this.skyboxes = new skyboxInfoList();
       Object.keys((<any>data)["skyboxes"]).forEach(i => {
         this.skyboxes.push(i, new skyboxInfo((<any>data)["skyboxes"][i]));
@@ -85,12 +86,6 @@ module pack {
     type:string;
   }
   export class desInfo extends packItem<IDesInfo> { }
-  export interface IAttrInfo {
-    label: string,
-    format: string,
-    type: string
-  }
-  export class attrInfo extends packItem<IAttrInfo> { }
   export interface ISkyboxInfo {
     filename: string;
     label: string;

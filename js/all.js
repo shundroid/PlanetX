@@ -126,7 +126,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/list":3,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":9,"./modules/editBlock":10,"./modules/event":13,"./modules/initDOM":16,"./modules/makePrefabDataUrls":17,"./modules/packUtil/packLoader":19,"./modules/packUtil/packManager":20,"./modules/prefab":22,"./modules/stage":23,"./modules/tray":24,"./ui":29}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/list":4,"./modules/classes/rect":6,"./modules/classes/vector2":8,"./modules/data":10,"./modules/editBlock":11,"./modules/event":14,"./modules/initDOM":17,"./modules/makePrefabDataUrls":18,"./modules/packUtil/packLoader":20,"./modules/packUtil/packManager":21,"./modules/prefab":23,"./modules/stage":24,"./modules/tray":25,"./ui":30}],2:[function(require,module,exports){
 var initDOM = require("./initDOM");
 var canvas;
 (function (canvas_1) {
@@ -166,7 +166,31 @@ var canvas;
     canvas_1.clear = clear;
 })(canvas || (canvas = {}));
 module.exports = canvas;
-},{"./initDOM":16}],3:[function(require,module,exports){
+},{"./initDOM":17}],3:[function(require,module,exports){
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var list = require("./../list");
+var attrList = (function (_super) {
+    __extends(attrList, _super);
+    function attrList() {
+        _super.apply(this, arguments);
+    }
+    attrList.prototype.toSimple = function () {
+        var _this = this;
+        var list = this.getAll();
+        var result = {};
+        Object.keys(list).forEach(function (i) {
+            result[_this.get(i).label] = i;
+        });
+        return result;
+    };
+    return attrList;
+})(list);
+module.exports = attrList;
+},{"./../list":4}],4:[function(require,module,exports){
 var List = (function () {
     function List() {
         this.data = {};
@@ -198,7 +222,7 @@ var List = (function () {
     return List;
 })();
 module.exports = List;
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var prefabMini = (function () {
     function prefabMini(x, y, blockName) {
         this.x = x;
@@ -209,7 +233,7 @@ var prefabMini = (function () {
     return prefabMini;
 })();
 module.exports = prefabMini;
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var rect = (function () {
     function rect(x, y, width, height) {
         this.x = x;
@@ -220,7 +244,7 @@ var rect = (function () {
     return rect;
 })();
 module.exports = rect;
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var TrayBlockDetails = (function () {
     function TrayBlockDetails(blockName, fileName, label, // 表示するときのブロック名
         width, height) {
@@ -233,7 +257,7 @@ var TrayBlockDetails = (function () {
     return TrayBlockDetails;
 })();
 module.exports = TrayBlockDetails;
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var Vector2 = (function () {
     function Vector2(x, y) {
         this.x = x;
@@ -250,7 +274,7 @@ var Vector2 = (function () {
     return Vector2;
 })();
 module.exports = Vector2;
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var list = require("./classes/list");
 var prefabMini = require("./classes/prefabMini");
 var stage = require("./stage");
@@ -428,14 +452,14 @@ var compiler;
     compiler.old2CSV = old2CSV;
 })(compiler || (compiler = {}));
 module.exports = compiler;
-},{"./classes/list":3,"./classes/prefabMini":4,"./stage":23}],9:[function(require,module,exports){
+},{"./classes/list":4,"./classes/prefabMini":5,"./stage":24}],10:[function(require,module,exports){
 var data = (function () {
     function data() {
     }
     return data;
 })();
 module.exports = data;
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var editBlock;
 (function (editBlock_1) {
     var EditBlock = (function () {
@@ -468,7 +492,7 @@ var editBlock;
     editBlock_1.updateEditBlockUI = updateEditBlockUI;
 })(editBlock || (editBlock = {}));
 module.exports = editBlock;
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var elem;
 (function (elem) {
     function addEventListenerforQuery(query, eventName, listener) {
@@ -483,7 +507,7 @@ var elem;
     elem.forEachforQuery = forEachforQuery;
 })(elem || (elem = {}));
 module.exports = elem;
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var el = require("./elem");
 var evElems;
 (function (evElems) {
@@ -501,7 +525,7 @@ var evElems;
     evElems.set = set;
 })(evElems || (evElems = {}));
 module.exports = evElems;
-},{"./elem":11}],13:[function(require,module,exports){
+},{"./elem":12}],14:[function(require,module,exports){
 var list = require("./classes/list");
 var event;
 (function (event) {
@@ -532,7 +556,7 @@ var event;
     event.raiseEvent = raiseEvent;
 })(event || (event = {}));
 module.exports = event;
-},{"./classes/list":3}],14:[function(require,module,exports){
+},{"./classes/list":4}],15:[function(require,module,exports){
 function image(url, isNoJaggy, size) {
     var a = new Image();
     a.src = url;
@@ -553,14 +577,14 @@ function image(url, isNoJaggy, size) {
     }
 }
 module.exports = image;
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 function importJS(src) {
     var elem = document.createElement("script");
     elem.src = src;
     return elem;
 }
 module.exports = importJS;
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var handlerList = new Array();
 function add(fn) {
     handlerList.push(fn);
@@ -571,7 +595,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 module.exports = add;
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var d = require("./data");
 var list = require("./classes/list");
 var packManager = require("./packUtil/packManager");
@@ -591,9 +615,9 @@ function makeDataUrl() {
     return result;
 }
 module.exports = makeDataUrl;
-},{"./classes/list":3,"./classes/vector2":7,"./data":9,"./image":14,"./packUtil/packManager":20}],18:[function(require,module,exports){
+},{"./classes/list":4,"./classes/vector2":8,"./data":10,"./image":15,"./packUtil/packManager":21}],19:[function(require,module,exports){
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
 var packManager = require("./packManager");
 function load(packName) {
@@ -609,13 +633,14 @@ function load(packName) {
     });
 }
 module.exports = load;
-},{"./packManager":20}],20:[function(require,module,exports){
+},{"./packManager":21}],21:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var list = require("./../classes/list");
+var attrList = require("./../classes/blockAttr/attrList");
 var pack;
 (function (pack) {
     function getPackPath(packName) {
@@ -645,12 +670,11 @@ var pack;
                 var cur = data["descriptions"][i];
                 _this.descriptions.push(i, new desInfo(cur));
             });
-            this.attributes = new list();
+            this.attributes = new attrList();
             Object.keys(data["attributes"]).forEach(function (i) {
                 var cur = data["attributes"][i];
-                _this.attributes.push(i, new attrInfo(cur));
+                _this.attributes.push(i, cur);
             });
-            console.log(this.attributes.getAll());
             this.skyboxes = new skyboxInfoList();
             Object.keys(data["skyboxes"]).forEach(function (i) {
                 _this.skyboxes.push(i, new skyboxInfo(data["skyboxes"][i]));
@@ -708,14 +732,6 @@ var pack;
         return desInfo;
     })(packItem);
     pack.desInfo = desInfo;
-    var attrInfo = (function (_super) {
-        __extends(attrInfo, _super);
-        function attrInfo() {
-            _super.apply(this, arguments);
-        }
-        return attrInfo;
-    })(packItem);
-    pack.attrInfo = attrInfo;
     var skyboxInfo = (function (_super) {
         __extends(skyboxInfo, _super);
         function skyboxInfo() {
@@ -742,7 +758,7 @@ var pack;
     pack.skyboxInfoList = skyboxInfoList;
 })(pack || (pack = {}));
 module.exports = pack;
-},{"./../classes/list":3}],21:[function(require,module,exports){
+},{"./../classes/blockAttr/attrList":3,"./../classes/list":4}],22:[function(require,module,exports){
 var stage = require("./stage");
 var prefab = require("./prefab");
 var compiler = require("./compiler");
@@ -805,7 +821,7 @@ var planet;
     planet.importText = importText;
 })(planet || (planet = {}));
 module.exports = planet;
-},{"./compiler":8,"./data":9,"./prefab":22,"./stage":23}],22:[function(require,module,exports){
+},{"./compiler":9,"./data":10,"./prefab":23,"./stage":24}],23:[function(require,module,exports){
 var prefab = (function () {
     function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
         this.gridX = gridX;
@@ -818,7 +834,7 @@ var prefab = (function () {
     return prefab;
 })();
 module.exports = prefab;
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var list = require("./classes/list");
 var canvas = require("./canvas");
 var image = require("./image");
@@ -984,7 +1000,7 @@ var stage;
     stage.toDrawRect = toDrawRect;
 })(stage || (stage = {}));
 module.exports = stage;
-},{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":9,"./event":13,"./image":14}],24:[function(require,module,exports){
+},{"./canvas":2,"./classes/list":4,"./classes/rect":6,"./classes/vector2":8,"./data":10,"./event":14,"./image":15}],25:[function(require,module,exports){
 var image = require("./image");
 var TrayBlockDetails = require("./classes/trayBlockDetails");
 var d = require("./data");
@@ -1076,7 +1092,7 @@ var tray;
     tray.initTrayObj = initTrayObj;
 })(tray || (tray = {}));
 module.exports = tray;
-},{"./classes/trayBlockDetails":6,"./data":9,"./event":13,"./image":14,"./packUtil/packManager":20,"./uiWaitMode":25}],25:[function(require,module,exports){
+},{"./classes/trayBlockDetails":7,"./data":10,"./event":14,"./image":15,"./packUtil/packManager":21,"./uiWaitMode":26}],26:[function(require,module,exports){
 var uiWaitMode;
 (function (uiWaitMode) {
     function start() {
@@ -1089,7 +1105,7 @@ var uiWaitMode;
     uiWaitMode.end = end;
 })(uiWaitMode || (uiWaitMode = {}));
 module.exports = uiWaitMode;
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /// <reference path="../../definitely/move.d.ts" />
 var anim;
 (function (anim) {
@@ -1127,7 +1143,7 @@ var anim;
     anim.hideLoading = hideLoading;
 })(anim || (anim = {}));
 module.exports = anim;
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 var util;
 (function (util) {
     function obj2SelectElem(obj) {
@@ -1147,14 +1163,14 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 var version;
 (function (version_1) {
     version_1.version = "v1.0";
     version_1.author = "shundroid";
 })(version || (version = {}));
 module.exports = version;
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
@@ -1366,4 +1382,4 @@ var ui;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":7,"./modules/compiler":8,"./modules/data":9,"./modules/elem":11,"./modules/evElems":12,"./modules/event":13,"./modules/importJS":15,"./modules/initDOM":16,"./modules/packUtil/packManager":20,"./modules/planet":21,"./modules/stage":23,"./modules/tray":24,"./modules/ui/anim":26,"./modules/util":27,"./modules/version":28}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,26,25,27,28,29]);
+},{"./modules/classes/vector2":8,"./modules/compiler":9,"./modules/data":10,"./modules/elem":12,"./modules/evElems":13,"./modules/event":14,"./modules/importJS":16,"./modules/initDOM":17,"./modules/packUtil/packManager":21,"./modules/planet":22,"./modules/stage":24,"./modules/tray":25,"./modules/ui/anim":27,"./modules/util":28,"./modules/version":29}]},{},[1,2,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,27,26,28,29,30]);

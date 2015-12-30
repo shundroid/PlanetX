@@ -34,19 +34,33 @@ Firefox 45.0で確認しています。
 - `Object.defineProperty()`
 - Promise
   
-## Gulp
-Browserify、Watchifyに対応。
+## 開発について
+| 種類 | 言語 |
+|:--|:--|
+| スクリプト言語 | Typescript |
+| スタイルシート言語 | Less |
+| マークアップ言語 | Jade |
 
-### 普通に実行する
+- Gulpでコンパイル
+- パッケージ管理はNode Package Manager、Bower
+- TypescriptはCommonjsモジュール、Browserifyを使用。
+
+### GulpでのBrowserify
+
+#### 普通に実行する
 ```bash
 gulp browserify --dev
 ```
 
 `--dev`は、つけるとall.jsを圧縮しない。
 
-### watchify
+#### watchify
 ```bash
 gulp w-browserify --dev
 ```
 
-`--dev`は、普通に実行したときと同じ。
+`--dev`は、つけるとall.jsを圧縮しない。
+
+### ブラウザでの確認
+サーバーサイドスクリプトは使用してないが、Ajaxを使用している。  
+ローカルでのAjaxに対応していないブラウザでは、XAMPP、Apacheなどでサーバーを立てる。

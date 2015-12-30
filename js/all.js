@@ -645,19 +645,12 @@ var pack;
                 var cur = data["descriptions"][i];
                 _this.descriptions.push(i, new desInfo(cur));
             });
-            var a1 = new list();
-            Object.keys(data["abilities"]["selectelement"]).forEach(function (i) {
-                a1.push(i, data["abilities"]["selectelement"][i]);
+            this.attributes = new list();
+            Object.keys(data["attributes"]).forEach(function (i) {
+                var cur = data["attributes"][i];
+                _this.attributes.push(i, new attrInfo(cur));
             });
-            var a2 = new list();
-            Object.keys(data["abilities"]["keys"]).forEach(function (i) {
-                a2.push(i, data["abilities"]["keys"][i]);
-            });
-            var a3 = new list();
-            Object.keys(data["abilities"]["types"]).forEach(function (i) {
-                a3.push(i, data["abilities"]["keys"][i]);
-            });
-            this.abilities = new abilityInfo({ selectelement: a1, keys: a2, types: a3 });
+            console.log(this.attributes.getAll());
             this.skyboxes = new skyboxInfoList();
             Object.keys(data["skyboxes"]).forEach(function (i) {
                 _this.skyboxes.push(i, new skyboxInfo(data["skyboxes"][i]));
@@ -715,14 +708,14 @@ var pack;
         return desInfo;
     })(packItem);
     pack.desInfo = desInfo;
-    var abilityInfo = (function (_super) {
-        __extends(abilityInfo, _super);
-        function abilityInfo() {
+    var attrInfo = (function (_super) {
+        __extends(attrInfo, _super);
+        function attrInfo() {
             _super.apply(this, arguments);
         }
-        return abilityInfo;
+        return attrInfo;
     })(packItem);
-    pack.abilityInfo = abilityInfo;
+    pack.attrInfo = attrInfo;
     var skyboxInfo = (function (_super) {
         __extends(skyboxInfo, _super);
         function skyboxInfo() {

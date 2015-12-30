@@ -195,28 +195,32 @@
     "conveyers/conveyerll": { "description":"右に速く、π、ハルスターなどの物理オブジェクトを動かします。", "type":"オブジェクト" },
     "conveyers/conveyerrr": { "description":"左に速くπ、ハルスターなどの物理オブジェクトを動かします。", "type":"オブジェクト" }
   },
-  "abilities": {
-    "selectelement": {
-      "*custom,sayblock,.name.,.value.": "メッセージブロック",
-      "*custom,bomblock,.name.,.value.": "消えるブロック",
-      "*custom,supergrape,.name.,.value.": "謎のぶどう",
-      "*custom,supertv,.name.,.value.": "SuperTV Connect",
-      "*custom,w1s8r,.name.,.value.": "W1S8R Speed",
-      "*custom,baadon,.name.,.value.": "ばあどん"
+  "attributes": "(コメント)ばあどん属性はとりあえず廃止",
+  "attributes": {
+    "sayblock": {
+      "label": "メッセージブロック",
+      "format": "*custom,sayblock,{block},{value}",
+      "type": "text"
     },
-    "keys": {
-      "sayblock": "*custom,sayblock,.name.,.value.",
-      "bomblock": "*custom,bomblock,.name.,.value.",
-      "supergrape": "*custom,supergrape,.name.,.value.",
-      "supertv": "*custom,supertv,.name.,.value.",
-      "w1s8r": "*custom,w1s8r,.name.,.value."
+    "bomblock": {
+      "label": "消えるブロック",
+      "format": "*custom,bomblock,{block},{value}",
+      "type": "number"
     },
-    "types": {
-      "*custom,sayblock,.name.,.value.": "text",
-      "*custom,bomblock,.name.,.value.": "number",
-      "*custom,supergrape,.name.,.value.": "number",
-      "*custom,supertv,.name.,.value.": "number",
-      "*custom,w1s8r,.name.,.value.": "number"
+    "supergrape": {
+      "label": "謎のぶどう",
+      "format": "*custom,supergrape,{block},{value}",
+      "type": "number"
+    },
+    "supertv": {
+      "label": "SuperTV Connect",
+      "format": "*custom,supertv,{block},{value}",
+      "type": "number"
+    },
+    "w1s8r": {
+      "label": "W1S8R Speed",
+      "format": "*custom,w1s8r,{block},{value}",
+      "type": "number"
     }
   },
   "skyboxes": {

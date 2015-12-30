@@ -12,6 +12,7 @@ import prefab = require("./modules/prefab");
 import Vector2 = require("./modules/classes/vector2");
 import Rect = require("./modules/classes/rect");
 import canvas = require("./modules/canvas");
+import editBlock = require("./modules/editBlock");
 
 module main {
 
@@ -93,6 +94,12 @@ module main {
           if (e.eventName !== "mouseup") {
             stage.scrollBeforeX = e.mousePos.x;
             stage.scrollBeforeY = e.mousePos.y;
+          }
+          break;
+        case "edit":
+          if (e.eventName === "mousedown" && detail.contains) {
+            ui.showInspector("edit-block");
+            editBlock.updateEditBlock(new editBlock.EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
           }
           break;
         default:

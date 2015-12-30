@@ -30,7 +30,6 @@ gulp.task("jade", function() {
   })).pipe(gulp.dest('./'));
 });
 gulp.task("build", function() {
-  gulp.watch("./js/**/*.ts", ["ts"]);
   gulp.watch("./css/*.less", ["less"]);
   gulp.watch("./*.jade", ["jade"]);
 });

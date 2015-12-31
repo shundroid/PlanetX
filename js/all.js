@@ -854,6 +854,17 @@ var planet;
             var item = stage.items.get(parseInt(i));
             result.push([[item.blockName, item.gridX, item.gridY].join(","), i].join("="));
         });
+        // attributes
+        var atts = stage.blockAttrs.getAll();
+        console.log(atts);
+        if (atts) {
+            Object.keys(atts).forEach(function (i) {
+                var attr = stage.blockAttrs.getBlock(parseInt(i)).getAll();
+                Object.keys(attr).forEach(function (j) {
+                    result.push(d.pack.attributes.get(j).format.replace("{block}", i).replace("{value}", stage.blockAttrs.getBlock(parseInt(i)).get(j)));
+                });
+            });
+        }
         // footer
         if (stage.footer.replace(/ /g, "").replace(/\n/g, "") !== "") {
             result.push("//:footer");

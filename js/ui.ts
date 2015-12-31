@@ -207,7 +207,6 @@ module ui {
     var attrKey = (<HTMLSelectElement>document.getElementsByClassName("ed-attr")[0]).value;
     editBlock.renderAttributeUI(attrKey);
     stage.blockAttrs.push(d.editingBlockId, attrKey, "");
-    console.log(stage.blockAttrs.getAll());
   }
   export function changeAttrInput(e:Event) {
     stage.blockAttrs.update(d.editingBlockId, (<HTMLElement>e.target).id.replace("ed-attr-", ""), (<HTMLInputElement>e.target).value);

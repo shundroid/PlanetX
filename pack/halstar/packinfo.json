@@ -199,28 +199,23 @@
   "attributes": {
     "sayblock": {
       "label": "メッセージブロック",
-      "format": "*custom,sayblock,{block},{value}",
       "type": "text",
       "placeholder": "ブロックが叩かれたときのメッセージ"
     },
     "bomblock": {
       "label": "消えるブロック",
-      "format": "*custom,bomblock,{block},{value}",
       "type": "number"
     },
     "supergrape": {
       "label": "謎のぶどう",
-      "format": "*custom,supergrape,{block},{value}",
       "type": "number"
     },
     "supertv": {
       "label": "SuperTV Connect",
-      "format": "*custom,supertv,{block},{value}",
       "type": "number"
     },
     "w1s8r": {
       "label": "W1S8R Speed",
-      "format": "*custom,w1s8r,{block},{value}",
       "type": "number"
     }
   },

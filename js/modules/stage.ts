@@ -21,6 +21,9 @@ module stage {
   
   var blockAttrsList:list<list<string>>;
   export module blockAttrs {
+    export function setAll(lst:list<list<string>>) {
+      blockAttrsList = lst;
+    }
     export function push(blockId: number, attrName:string, value:string) {
       var l:list<string>;
       if (containsBlock(blockId)) {

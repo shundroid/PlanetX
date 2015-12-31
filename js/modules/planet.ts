@@ -28,12 +28,11 @@ module planet {
     
     // attributes
     var atts = stage.blockAttrs.getAll();
-    console.log(atts);
     if (atts) {
       Object.keys(atts).forEach(i => {
         var attr = stage.blockAttrs.getBlock(parseInt(i)).getAll();
         Object.keys(attr).forEach(j => {
-          result.push(d.pack.attributes.get(j).format.replace("{block}", i).replace("{value}", stage.blockAttrs.getBlock(parseInt(i)).get(j)));
+          result.push(["*custom", j, i, stage.blockAttrs.getBlock(parseInt(i)).get(j)].join(","));
         });
       });
     }
@@ -66,6 +65,7 @@ module planet {
         stage.items.push(stage.getId(), new prefab(item.x, item.y, blockData.data.filename, item.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)));
       }
     });
+    stage.blockAttrs.setAll(centerLang.attrList);
     return result;
   }
 }

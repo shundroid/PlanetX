@@ -193,9 +193,8 @@ var attrList = (function (_super) {
 module.exports = attrList;
 },{"./../list":6}],4:[function(require,module,exports){
 var attribute = (function () {
-    function attribute(label, format, type, placeholder, defaultValue) {
+    function attribute(label, type, placeholder, defaultValue) {
         this.label = label;
-        this.format = format;
         this.type = type;
         this.placeholder = placeholder;
         this.defaultValue = defaultValue;
@@ -302,6 +301,7 @@ module.exports = Vector2;
 var list = require("./classes/list");
 var prefabMini = require("./classes/prefabMini");
 var stage = require("./stage");
+var d = require("./data");
 var compiler;
 (function (compiler) {
     function getLangAuto(oneLine) {
@@ -322,11 +322,12 @@ var compiler;
     })(compiler.compileLangs || (compiler.compileLangs = {}));
     var compileLangs = compiler.compileLangs;
     var centerLang = (function () {
-        function centerLang(prefabList, header, footer, effects) {
+        function centerLang(prefabList, header, footer, effects, attrList) {
             this.prefabList = prefabList;
             this.header = header;
             this.footer = footer;
             this.effects = effects;
+            this.attrList = attrList;
         }
         ;
         return centerLang;
@@ -348,6 +349,14 @@ var compiler;
         var footer = [];
         var effects = new stage.StageEffects();
         var mode = 0; // 0: normal, 1: header, 2: footer
+        var attrs = new list();
+        // Attr setup
+        var l = d.pack.attributes.getAll();
+        var attrFormatList = [];
+        Object.keys(l).forEach(function (i) {
+            var formatListItem = [];
+            attrFormatList.push(formatListItem.join(","));
+        });
         lines.forEach(function (i) {
             if (mode === 0) {
                 if (i === "//:header") {
@@ -366,6 +375,19 @@ var compiler;
                     if (items[0].substring(0, 1) === "*") {
                         if (items[0] === "*skybox") {
                             effects.skybox = items[1];
+                        }
+                        else {
+                            if (Object.keys(d.pack.attributes.getAll()).indexOf(items[1]) !== -1) {
+                                var lst;
+                                if (attrs.contains(items[2])) {
+                                    lst = attrs.get(items[2]);
+                                }
+                                else {
+                                    lst = new list();
+                                }
+                                lst.push(items[1], items[3]);
+                                attrs.push(items[2], lst);
+                            }
                         }
                         return;
                     }
@@ -387,7 +409,7 @@ var compiler;
                 footer.push(i);
             }
         });
-        return new centerLang(result, header.join("\n"), footer.join("\n"), effects);
+        return new centerLang(result, header.join("\n"), footer.join("\n"), effects, attrs);
     }
     compiler.CSV2CenterLang = CSV2CenterLang;
     function old2CSV(old) {
@@ -476,7 +498,7 @@ var compiler;
     compiler.old2CSV = old2CSV;
 })(compiler || (compiler = {}));
 module.exports = compiler;
-},{"./classes/list":6,"./classes/prefabMini":7,"./stage":26}],12:[function(require,module,exports){
+},{"./classes/list":6,"./classes/prefabMini":7,"./data":12,"./stage":26}],12:[function(require,module,exports){
 var data = (function () {
     function data() {
     }
@@ -856,12 +878,11 @@ var planet;
         });
         // attributes
         var atts = stage.blockAttrs.getAll();
-        console.log(atts);
         if (atts) {
             Object.keys(atts).forEach(function (i) {
                 var attr = stage.blockAttrs.getBlock(parseInt(i)).getAll();
                 Object.keys(attr).forEach(function (j) {
-                    result.push(d.pack.attributes.get(j).format.replace("{block}", i).replace("{value}", stage.blockAttrs.getBlock(parseInt(i)).get(j)));
+                    result.push(["*custom", j, i, stage.blockAttrs.getBlock(parseInt(i)).get(j)].join(","));
                 });
             });
         }
@@ -896,6 +917,7 @@ var planet;
                 stage.items.push(stage.getId(), new prefab(item.x, item.y, blockData.data.filename, item.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)));
             }
         });
+        stage.blockAttrs.setAll(centerLang.attrList);
         return result;
     }
     planet.importText = importText;
@@ -935,6 +957,10 @@ var stage;
     var blockAttrsList;
     var blockAttrs;
     (function (blockAttrs) {
+        function setAll(lst) {
+            blockAttrsList = lst;
+        }
+        blockAttrs.setAll = setAll;
         function push(blockId, attrName, value) {
             var l;
             if (containsBlock(blockId)) {
@@ -1528,7 +1554,6 @@ var ui;
         var attrKey = document.getElementsByClassName("ed-attr")[0].value;
         editBlock.renderAttributeUI(attrKey);
         stage.blockAttrs.push(d.editingBlockId, attrKey, "");
-        console.log(stage.blockAttrs.getAll());
     }
     ui.clickAddAttr = clickAddAttr;
     function changeAttrInput(e) {

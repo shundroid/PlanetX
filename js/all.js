@@ -1419,12 +1419,12 @@ var ui;
         }
         var addLabel = document.createElement("label");
         addLabel.htmlFor = addInput.id;
-        addLabel.textContent = addAttr.label + ": ";
+        addLabel.textContent = " " + addAttr.label + ": ";
         var removeButton = document.createElement("button");
         removeButton.innerHTML = '<i class="fa fa-minus"></i>';
         removeButton.classList.add("pla-btn");
-        addElem.appendChild(addLabel);
         addElem.appendChild(removeButton);
+        addElem.appendChild(addLabel);
         addElem.appendChild(addInput);
         document.getElementsByClassName("ed-attr-view")[0].appendChild(addElem);
     }

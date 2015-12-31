@@ -71,7 +71,9 @@ html(lang="ja")
           span#ed-name: br
           span#ed-pos: br
           span#ed-id: br
-          select.ed-attr.pack-select(data-items="attributes")
+          .pla-btngroup
+            select.ed-attr.pack-select(data-items="attributes")
+            button.pla-btn.ev-btn(data-listener="clickAddAttr"): i.fa.fa-plus
     footer.pla-footer
       .tray
         button.pla-btn.ev-btn#tray-fullscreen(data-listener="togglefullScreen") ↑

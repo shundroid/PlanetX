@@ -1379,6 +1379,9 @@ var ui;
         setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
     }
     ui.changeSkybox = changeSkybox;
+    function clickAddAttr() {
+    }
+    ui.clickAddAttr = clickAddAttr;
     init();
 })(ui || (ui = {}));
 module.exports = ui;

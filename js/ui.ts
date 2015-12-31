@@ -201,6 +201,10 @@ module ui {
     stage.stageEffects.skybox = (<HTMLSelectElement>e.target).value;
     setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
   }
+  
+  export function clickAddAttr() {
+    
+  }
   init();
 }
 export = ui;

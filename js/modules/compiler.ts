@@ -1,6 +1,7 @@
 import list = require("./classes/list");
 import prefabMini = require("./classes/prefabMini")
 import stage = require("./stage");
+import d = require("./data");
 
 module compiler {
   export function getLangAuto(oneLine:string):compileLangs {
@@ -19,7 +20,7 @@ module compiler {
     auto
   }
   export class centerLang {
-    constructor(public prefabList:list<prefabMini>, public header:string, public footer:string, public effects:stage.StageEffects) {};
+    constructor(public prefabList:list<prefabMini>, public header:string, public footer:string, public effects:stage.StageEffects, public attrList:list<list<string>>) {};
   }
   export function toCenterLang(mode:compileLangs, text:string):centerLang {
     switch (mode) {
@@ -36,6 +37,14 @@ module compiler {
     var footer:Array<string> = [];
     var effects = new stage.StageEffects();
     var mode = 0; // 0: normal, 1: header, 2: footer
+    var attrs = new list<list<string>>();
+    // Attr setup
+    var l = d.pack.attributes.getAll();
+    var attrFormatList:Array<string> = [];
+    Object.keys(l).forEach(i => {
+      var formatListItem:Array<string> = [];
+      attrFormatList.push(formatListItem.join(","));
+    });
     lines.forEach(i => {
       if (mode === 0) {
         if (i === "//:header") {
@@ -50,6 +59,17 @@ module compiler {
           if (items[0].substring(0, 1) === "*") {
             if (items[0] === "*skybox") {
               effects.skybox = items[1];
+            } else {
+              if (Object.keys(d.pack.attributes.getAll()).indexOf(items[1]) !== -1) {
+                var lst:list<string>;
+                if (attrs.contains(items[2])) {
+                  lst = attrs.get(items[2]);
+                } else {
+                  lst = new list<string>();
+                }
+                lst.push(items[1], items[3])
+                attrs.push(items[2], lst);
+              }
             }
             return;
           }
@@ -63,7 +83,7 @@ module compiler {
         footer.push(i);
       }
     });
-    return new centerLang(result, header.join("\n"), footer.join("\n"), effects);
+    return new centerLang(result, header.join("\n"), footer.join("\n"), effects, attrs);
   }
   export function old2CSV(old:string):string {
     var lines = old.split("\n");

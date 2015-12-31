@@ -10,17 +10,7 @@ var jade = require("gulp-jade");
 var buffer = require("vinyl-buffer");
 var minimist = require("minimist");
 var watchify = require("watchify");
-
-function find(pattern) {
-  return new Promise(resolve => {
-    glob(pattern, function (err, files) {
-      if (err) {
-        console.log(err);
-      }
-      resolve(files);
-    });
-  });
-}
+var find = require("gulp-find-glob");
 gulp.task("less", function() {
   gulp.src('css/*.less').pipe(less()).pipe(gulp.dest('./css/'));
 });
@@ -30,7 +20,6 @@ gulp.task("jade", function() {
   })).pipe(gulp.dest('./'));
 });
 gulp.task("build", function() {
-  gulp.watch("./js/**/*.ts", ["ts"]);
   gulp.watch("./css/*.less", ["less"]);
   gulp.watch("./*.jade", ["jade"]);
 });

@@ -65,6 +65,16 @@ html(lang="ja")
       .ins-article#ins-preferences
         h1 Editor Preferences
         .ins-content
+      .ins-article#ins-edit-block
+        h1 Edit a Block
+        .ins-content
+          span#ed-name: br
+          span#ed-pos: br
+          span#ed-id: br
+          .pla-btngroup
+            select.ed-attr.pack-select(data-items="attributes")
+            button.pla-btn.ev-btn(data-listener="clickAddAttr"): i.fa.fa-plus
+          .ed-attr-view
     footer.pla-footer
       .tray
         button.pla-btn.ev-btn#tray-fullscreen(data-listener="togglefullScreen") ↑

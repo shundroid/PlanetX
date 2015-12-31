@@ -14,5 +14,6 @@ class data {
   static isObjMode:boolean;
   static isFullscreenTray:boolean;
   static isShowInspector:boolean;
+  static editingBlockId:number;
 }
 export = data;

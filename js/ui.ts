@@ -17,6 +17,7 @@ import stage = require("./modules/stage");
 import v = require("./modules/version");
 import evElems = require("./modules/evElems");
 import anim = require("./modules/ui/anim");
+import editBlock = require("./modules/editBlock");
 
 module ui {
   export var canvas: HTMLCanvasElement; 
@@ -200,6 +201,17 @@ module ui {
   export function changeSkybox(e:Event) {
     stage.stageEffects.skybox = (<HTMLSelectElement>e.target).value;
     setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
+  }
+  
+  export function clickAddAttr() {
+    var attrKey = (<HTMLSelectElement>document.getElementsByClassName("ed-attr")[0]).value;
+    if (!stage.blockAttrs.containsAttr(d.editingBlockId, attrKey)) {
+      editBlock.renderAttributeUI(attrKey);
+      stage.blockAttrs.push(d.editingBlockId, attrKey, "");
+    }
+  }
+  export function changeAttrInput(e:Event) {
+    stage.blockAttrs.update(d.editingBlockId, (<HTMLElement>e.target).id.replace("ed-attr-", ""), (<HTMLInputElement>e.target).value);
   }
   init();
 }

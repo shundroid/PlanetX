@@ -6,7 +6,8 @@ import d = require("./data");
 import rect = require("./classes/rect");
 import event = require("./event");
 import Vector2 = require("./classes/vector2");
-
+import blockAttributes = require("./classes/blockAttr/blockAttributes");
+import attribute = require("./classes/blockAttr/attribute");
 module stage {
   export class StageEffects {
     public skybox:string;
@@ -17,6 +18,61 @@ module stage {
   export var stageEffects:StageEffects = new StageEffects();
   export var header:string;
   export var footer:string;
+  
+  var blockAttrsList:list<list<string>>;
+  export module blockAttrs {
+    export function setAll(lst:list<list<string>>) {
+      blockAttrsList = lst;
+    }
+    export function push(blockId: number, attrName:string, value:string) {
+      var l:list<string>;
+      if (containsBlock(blockId)) {
+        l = getBlock(blockId);
+      } else {
+        l = new list<string>();
+      }
+      l.push(attrName, value);
+      blockAttrsList.push(blockId.toString(), l);
+    }
+    export function update(blockId: number, attrName:string, value:string) {
+      var l = getBlock(blockId);
+      l.update(attrName, value);
+      blockAttrsList.update(blockId.toString(), l);
+    }
+    export function containsAttr(blockId: number, attrName:string) {
+      if (containsBlock(blockId)) {
+        var l = getBlock(blockId);
+        return l.contains(attrName);
+      } else {
+        return false;
+      }
+    }
+    export function containsBlock(blockId: number) {
+      return blockAttrsList.contains(blockId.toString());
+    }
+    export function removeAttr(blockId: number, attrName:string) {
+      var l = getBlock(blockId);
+      l.remove(attrName);
+      blockAttrsList.update(blockId.toString(), l);
+    }
+    export function removeBlock(blockId: number) {
+      blockAttrsList.remove(blockId.toString());
+    }
+    export function getBlock(blockId: number) {
+      return blockAttrsList.get(blockId.toString());
+    }
+    export function getAttr(blockId: number, attrName: string) {
+      return blockAttrsList.get(blockId.toString()).get(attrName);
+    }
+    export function getAll() {
+      var l = blockAttrsList.getAll();
+      var result:any = {};
+      Object.keys(l).forEach(i => {
+        result[i] = blockAttrsList.get(i).getAll(); 
+      });
+      return result;
+    }
+  }
   
   var prefabList:list<prefab>;
   export module items {
@@ -43,6 +99,7 @@ module stage {
   var maxId:number;
   function init() {
     prefabList = new list<prefab>();
+    blockAttrsList = new list<list<string>>();
     header = "";
     footer = "";
     maxId = 0;
@@ -85,7 +142,7 @@ module stage {
       renderStage();
     }, 100);
   });
-    export class gridDetail {
+  export class gridDetail {
     constructor(public gridPos:Vector2, public eventName:string, public mousePos:Vector2) { }
   }
   export function getMousePosFromCenterAndSize(center:number, size:number) {

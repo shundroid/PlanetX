@@ -26,6 +26,16 @@ module planet {
       result.push([[item.blockName, item.gridX, item.gridY].join(","), i].join("="));
     });
     
+    // attributes
+    var atts = stage.blockAttrs.getAll();
+    if (atts) {
+      Object.keys(atts).forEach(i => {
+        var attr = stage.blockAttrs.getBlock(parseInt(i)).getAll();
+        Object.keys(attr).forEach(j => {
+          result.push(["*custom", j, i, stage.blockAttrs.getBlock(parseInt(i)).get(j)].join(","));
+        });
+      });
+    }
     // footer
     if (stage.footer.replace(/ /g, "").replace(/\n/g, "") !== "") {
       result.push("//:footer");
@@ -55,6 +65,7 @@ module planet {
         stage.items.push(stage.getId(), new prefab(item.x, item.y, blockData.data.filename, item.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)));
       }
     });
+    stage.blockAttrs.setAll(centerLang.attrList);
     return result;
   }
 }

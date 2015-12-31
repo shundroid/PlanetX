@@ -1,4 +1,6 @@
 import list = require("./../classes/list");
+import attribute = require("./../classes/blockAttr/attribute");
+import attrList = require("./../classes/blockAttr/attrList");
 module pack {
   export function getPackPath(packName:string) {
     return "pack/" + packName + "/";
@@ -9,7 +11,7 @@ module pack {
     blocks: list<blockInfo>;
     objs: list<objInfo>;
     descriptions: list<desInfo>;
-    abilities:abilityInfo;
+    attributes:attrList;
     skyboxes:skyboxInfoList;
     editor:packEditorInfo;
     constructor(data:Object) {
@@ -32,19 +34,11 @@ module pack {
         var cur = (<any>data)["descriptions"][i];
         this.descriptions.push(i, new desInfo(cur));
       });
-      var a1 = new list<string>();
-      Object.keys((<any>data)["abilities"]["selectelement"]).forEach(i => {
-        a1.push(i, (<any>data)["abilities"]["selectelement"][i]);
+      this.attributes = new attrList();
+      Object.keys((<any>data)["attributes"]).forEach(i => {
+        var cur = <attribute>(<any>data)["attributes"][i];
+        this.attributes.push(i, cur);
       });
-      var a2 = new list<string>();
-      Object.keys((<any>data)["abilities"]["keys"]).forEach(i => {
-        a2.push(i, (<any>data)["abilities"]["keys"][i]);
-      });
-      var a3 = new list<string>();
-      Object.keys((<any>data)["abilities"]["types"]).forEach(i => {
-        a3.push(i, (<any>data)["abilities"]["keys"][i]);
-      });
-      this.abilities = new abilityInfo({selectelement: a1, keys: a2, types: a3});
       this.skyboxes = new skyboxInfoList();
       Object.keys((<any>data)["skyboxes"]).forEach(i => {
         this.skyboxes.push(i, new skyboxInfo((<any>data)["skyboxes"][i]));
@@ -92,12 +86,6 @@ module pack {
     type:string;
   }
   export class desInfo extends packItem<IDesInfo> { }
-  export interface IAblityInfo {
-    selectelement: list<string>;
-    keys: list<string>;
-    types: list<string>;
-  }
-  export class abilityInfo extends packItem<IAblityInfo> { }
   export interface ISkyboxInfo {
     filename: string;
     label: string;

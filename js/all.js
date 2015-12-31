@@ -13,6 +13,7 @@ var prefab = require("./modules/prefab");
 var Vector2 = require("./modules/classes/vector2");
 var Rect = require("./modules/classes/rect");
 var canvas = require("./modules/canvas");
+var editBlock = require("./modules/editBlock");
 var main;
 (function (main) {
     function init() {
@@ -96,6 +97,13 @@ var main;
                         stage.scrollBeforeY = e.mousePos.y;
                     }
                     break;
+                case "edit":
+                    if (e.eventName === "mousedown" && detail.contains) {
+                        ui.showInspector("edit-block");
+                        d.editingBlockId = detail.id;
+                        editBlock.updateEditBlock(new editBlock.EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
+                    }
+                    break;
                 default:
                     if (e.eventName === "mousemove" || e.eventName === "mousedown") {
                         if (d.activeToolName === "brush") {
@@ -119,7 +127,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/list":3,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":9,"./modules/event":12,"./modules/initDOM":15,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":18,"./modules/packUtil/packManager":19,"./modules/prefab":21,"./modules/stage":22,"./modules/tray":23,"./ui":28}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/list":6,"./modules/classes/rect":8,"./modules/classes/vector2":10,"./modules/data":12,"./modules/editBlock":13,"./modules/event":16,"./modules/initDOM":19,"./modules/makePrefabDataUrls":20,"./modules/packUtil/packLoader":22,"./modules/packUtil/packManager":23,"./modules/prefab":25,"./modules/stage":26,"./modules/tray":27,"./ui":32}],2:[function(require,module,exports){
 var initDOM = require("./initDOM");
 var canvas;
 (function (canvas_1) {
@@ -159,7 +167,53 @@ var canvas;
     canvas_1.clear = clear;
 })(canvas || (canvas = {}));
 module.exports = canvas;
-},{"./initDOM":15}],3:[function(require,module,exports){
+},{"./initDOM":19}],3:[function(require,module,exports){
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var list = require("./../list");
+var attrList = (function (_super) {
+    __extends(attrList, _super);
+    function attrList() {
+        _super.apply(this, arguments);
+    }
+    attrList.prototype.toSimple = function () {
+        var _this = this;
+        var list = this.getAll();
+        var result = {};
+        Object.keys(list).forEach(function (i) {
+            result[_this.get(i).label] = i;
+        });
+        return result;
+    };
+    return attrList;
+})(list);
+module.exports = attrList;
+},{"./../list":6}],4:[function(require,module,exports){
+var attribute = (function () {
+    function attribute(label, type, placeholder, defaultValue) {
+        this.label = label;
+        this.type = type;
+        this.placeholder = placeholder;
+        this.defaultValue = defaultValue;
+    }
+    return attribute;
+})();
+module.exports = attribute;
+},{}],5:[function(require,module,exports){
+var blockAttributes = (function () {
+    function blockAttributes(blockId, attr, attrValue // 結局はstringになる。
+        ) {
+        this.blockId = blockId;
+        this.attr = attr;
+        this.attrValue = attrValue;
+    }
+    return blockAttributes;
+})();
+module.exports = blockAttributes;
+},{}],6:[function(require,module,exports){
 var List = (function () {
     function List() {
         this.data = {};
@@ -191,7 +245,7 @@ var List = (function () {
     return List;
 })();
 module.exports = List;
-},{}],4:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var prefabMini = (function () {
     function prefabMini(x, y, blockName) {
         this.x = x;
@@ -202,7 +256,7 @@ var prefabMini = (function () {
     return prefabMini;
 })();
 module.exports = prefabMini;
-},{}],5:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var rect = (function () {
     function rect(x, y, width, height) {
         this.x = x;
@@ -213,7 +267,7 @@ var rect = (function () {
     return rect;
 })();
 module.exports = rect;
-},{}],6:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var TrayBlockDetails = (function () {
     function TrayBlockDetails(blockName, fileName, label, // 表示するときのブロック名
         width, height) {
@@ -226,7 +280,7 @@ var TrayBlockDetails = (function () {
     return TrayBlockDetails;
 })();
 module.exports = TrayBlockDetails;
-},{}],7:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var Vector2 = (function () {
     function Vector2(x, y) {
         this.x = x;
@@ -243,10 +297,11 @@ var Vector2 = (function () {
     return Vector2;
 })();
 module.exports = Vector2;
-},{}],8:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var list = require("./classes/list");
 var prefabMini = require("./classes/prefabMini");
 var stage = require("./stage");
+var d = require("./data");
 var compiler;
 (function (compiler) {
     function getLangAuto(oneLine) {
@@ -267,11 +322,12 @@ var compiler;
     })(compiler.compileLangs || (compiler.compileLangs = {}));
     var compileLangs = compiler.compileLangs;
     var centerLang = (function () {
-        function centerLang(prefabList, header, footer, effects) {
+        function centerLang(prefabList, header, footer, effects, attrList) {
             this.prefabList = prefabList;
             this.header = header;
             this.footer = footer;
             this.effects = effects;
+            this.attrList = attrList;
         }
         ;
         return centerLang;
@@ -293,6 +349,14 @@ var compiler;
         var footer = [];
         var effects = new stage.StageEffects();
         var mode = 0; // 0: normal, 1: header, 2: footer
+        var attrs = new list();
+        // Attr setup
+        var l = d.pack.attributes.getAll();
+        var attrFormatList = [];
+        Object.keys(l).forEach(function (i) {
+            var formatListItem = [];
+            attrFormatList.push(formatListItem.join(","));
+        });
         lines.forEach(function (i) {
             if (mode === 0) {
                 if (i === "//:header") {
@@ -311,6 +375,19 @@ var compiler;
                     if (items[0].substring(0, 1) === "*") {
                         if (items[0] === "*skybox") {
                             effects.skybox = items[1];
+                        }
+                        else {
+                            if (Object.keys(d.pack.attributes.getAll()).indexOf(items[1]) !== -1) {
+                                var lst;
+                                if (attrs.contains(items[2])) {
+                                    lst = attrs.get(items[2]);
+                                }
+                                else {
+                                    lst = new list();
+                                }
+                                lst.push(items[1], items[3]);
+                                attrs.push(items[2], lst);
+                            }
                         }
                         return;
                     }
@@ -332,7 +409,7 @@ var compiler;
                 footer.push(i);
             }
         });
-        return new centerLang(result, header.join("\n"), footer.join("\n"), effects);
+        return new centerLang(result, header.join("\n"), footer.join("\n"), effects, attrs);
     }
     compiler.CSV2CenterLang = CSV2CenterLang;
     function old2CSV(old) {
@@ -421,14 +498,101 @@ var compiler;
     compiler.old2CSV = old2CSV;
 })(compiler || (compiler = {}));
 module.exports = compiler;
-},{"./classes/list":3,"./classes/prefabMini":4,"./stage":22}],9:[function(require,module,exports){
+},{"./classes/list":6,"./classes/prefabMini":7,"./data":12,"./stage":26}],12:[function(require,module,exports){
 var data = (function () {
     function data() {
     }
     return data;
 })();
 module.exports = data;
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
+var d = require("./data");
+var stage = require("./stage");
+var editBlock;
+(function (editBlock_1) {
+    var EditBlock = (function () {
+        function EditBlock(blockName, blockPos, blockId) {
+            this.blockName = blockName;
+            this.blockPos = blockPos;
+            this.blockId = blockId;
+        }
+        return EditBlock;
+    })();
+    editBlock_1.EditBlock = EditBlock;
+    var currentEditBlock;
+    /**
+     * 関数内でupdateEditBlockUI()を呼び出します。
+     */
+    function updateEditBlock(editBlock) {
+        currentEditBlock = editBlock;
+        updateEditBlockUI();
+    }
+    editBlock_1.updateEditBlock = updateEditBlock;
+    function getCurrentEditBlock() {
+        return currentEditBlock;
+    }
+    editBlock_1.getCurrentEditBlock = getCurrentEditBlock;
+    function updateEditBlockUI() {
+        document.getElementById("ed-name").textContent = "Name: " + currentEditBlock.blockName;
+        document.getElementById("ed-pos").textContent = "Pos: " + currentEditBlock.blockPos.x + ", " + currentEditBlock.blockPos.y;
+        document.getElementById("ed-id").textContent = "ID: " + currentEditBlock.blockId;
+        document.getElementsByClassName("ed-attr-view")[0].innerHTML = "";
+        if (stage.blockAttrs.containsBlock(d.editingBlockId)) {
+            var l = stage.blockAttrs.getBlock(d.editingBlockId).getAll();
+            Object.keys(l).forEach(function (i) {
+                renderAttributeUI(i, stage.blockAttrs.getAttr(d.editingBlockId, i));
+            });
+        }
+    }
+    editBlock_1.updateEditBlockUI = updateEditBlockUI;
+    function renderAttributeUI(attrName, inputValue) {
+        var addAttr = d.pack.attributes.get(attrName);
+        var addElem = document.createElement("section");
+        addElem.id = "ed-attr-field-" + attrName;
+        var addInput = document.createElement("input");
+        addInput.type = addAttr.type;
+        addInput.id = "ed-attr-" + attrName;
+        if (typeof addAttr.placeholder !== "undefined") {
+            addInput.placeholder = addAttr.placeholder;
+        }
+        if (typeof inputValue !== "undefined") {
+            console.log("hoge");
+            addInput.value = inputValue;
+        }
+        else if (typeof addAttr.defaultValue !== "undefined") {
+            addInput.value = addAttr.defaultValue;
+        }
+        else if (addInput.type === "number") {
+            addInput.value = "0";
+        }
+        addInput.addEventListener("change", changeAttrInput);
+        var addLabel = document.createElement("label");
+        addLabel.htmlFor = addInput.id;
+        addLabel.textContent = " " + addAttr.label + ": ";
+        var removeButton = document.createElement("button");
+        removeButton.innerHTML = '<i class="fa fa-minus"></i>';
+        removeButton.classList.add("pla-btn");
+        removeButton.id = "ed-attr-remove-" + attrName;
+        removeButton.addEventListener("click", clickRemoveAttr);
+        addElem.appendChild(removeButton);
+        addElem.appendChild(addLabel);
+        addElem.appendChild(addInput);
+        document.getElementsByClassName("ed-attr-view")[0].appendChild(addElem);
+    }
+    editBlock_1.renderAttributeUI = renderAttributeUI;
+    function changeAttrInput(e) {
+        stage.blockAttrs.update(d.editingBlockId, e.target.id.replace("ed-attr-", ""), e.target.value);
+    }
+    editBlock_1.changeAttrInput = changeAttrInput;
+    function clickRemoveAttr(e) {
+        var attrName = e.target.id.replace("ed-attr-remove-", "");
+        stage.blockAttrs.removeAttr(d.editingBlockId, attrName);
+        document.getElementsByClassName("ed-attr-view")[0].removeChild(document.getElementById("ed-attr-field-" + attrName));
+    }
+    editBlock_1.clickRemoveAttr = clickRemoveAttr;
+})(editBlock || (editBlock = {}));
+module.exports = editBlock;
+},{"./data":12,"./stage":26}],14:[function(require,module,exports){
 var elem;
 (function (elem) {
     function addEventListenerforQuery(query, eventName, listener) {
@@ -443,7 +607,7 @@ var elem;
     elem.forEachforQuery = forEachforQuery;
 })(elem || (elem = {}));
 module.exports = elem;
-},{}],11:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var el = require("./elem");
 var evElems;
 (function (evElems) {
@@ -461,7 +625,7 @@ var evElems;
     evElems.set = set;
 })(evElems || (evElems = {}));
 module.exports = evElems;
-},{"./elem":10}],12:[function(require,module,exports){
+},{"./elem":14}],16:[function(require,module,exports){
 var list = require("./classes/list");
 var event;
 (function (event) {
@@ -492,7 +656,7 @@ var event;
     event.raiseEvent = raiseEvent;
 })(event || (event = {}));
 module.exports = event;
-},{"./classes/list":3}],13:[function(require,module,exports){
+},{"./classes/list":6}],17:[function(require,module,exports){
 function image(url, isNoJaggy, size) {
     var a = new Image();
     a.src = url;
@@ -513,14 +677,14 @@ function image(url, isNoJaggy, size) {
     }
 }
 module.exports = image;
-},{}],14:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 function importJS(src) {
     var elem = document.createElement("script");
     elem.src = src;
     return elem;
 }
 module.exports = importJS;
-},{}],15:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var handlerList = new Array();
 function add(fn) {
     handlerList.push(fn);
@@ -531,7 +695,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 module.exports = add;
-},{}],16:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var d = require("./data");
 var list = require("./classes/list");
 var packManager = require("./packUtil/packManager");
@@ -551,9 +715,9 @@ function makeDataUrl() {
     return result;
 }
 module.exports = makeDataUrl;
-},{"./classes/list":3,"./classes/vector2":7,"./data":9,"./image":13,"./packUtil/packManager":19}],17:[function(require,module,exports){
+},{"./classes/list":6,"./classes/vector2":10,"./data":12,"./image":17,"./packUtil/packManager":23}],21:[function(require,module,exports){
 
-},{}],18:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
 var packManager = require("./packManager");
 function load(packName) {
@@ -569,13 +733,14 @@ function load(packName) {
     });
 }
 module.exports = load;
-},{"./packManager":19}],19:[function(require,module,exports){
+},{"./packManager":23}],23:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var list = require("./../classes/list");
+var attrList = require("./../classes/blockAttr/attrList");
 var pack;
 (function (pack) {
     function getPackPath(packName) {
@@ -605,19 +770,11 @@ var pack;
                 var cur = data["descriptions"][i];
                 _this.descriptions.push(i, new desInfo(cur));
             });
-            var a1 = new list();
-            Object.keys(data["abilities"]["selectelement"]).forEach(function (i) {
-                a1.push(i, data["abilities"]["selectelement"][i]);
+            this.attributes = new attrList();
+            Object.keys(data["attributes"]).forEach(function (i) {
+                var cur = data["attributes"][i];
+                _this.attributes.push(i, cur);
             });
-            var a2 = new list();
-            Object.keys(data["abilities"]["keys"]).forEach(function (i) {
-                a2.push(i, data["abilities"]["keys"][i]);
-            });
-            var a3 = new list();
-            Object.keys(data["abilities"]["types"]).forEach(function (i) {
-                a3.push(i, data["abilities"]["keys"][i]);
-            });
-            this.abilities = new abilityInfo({ selectelement: a1, keys: a2, types: a3 });
             this.skyboxes = new skyboxInfoList();
             Object.keys(data["skyboxes"]).forEach(function (i) {
                 _this.skyboxes.push(i, new skyboxInfo(data["skyboxes"][i]));
@@ -675,14 +832,6 @@ var pack;
         return desInfo;
     })(packItem);
     pack.desInfo = desInfo;
-    var abilityInfo = (function (_super) {
-        __extends(abilityInfo, _super);
-        function abilityInfo() {
-            _super.apply(this, arguments);
-        }
-        return abilityInfo;
-    })(packItem);
-    pack.abilityInfo = abilityInfo;
     var skyboxInfo = (function (_super) {
         __extends(skyboxInfo, _super);
         function skyboxInfo() {
@@ -709,7 +858,7 @@ var pack;
     pack.skyboxInfoList = skyboxInfoList;
 })(pack || (pack = {}));
 module.exports = pack;
-},{"./../classes/list":3}],20:[function(require,module,exports){
+},{"./../classes/blockAttr/attrList":3,"./../classes/list":6}],24:[function(require,module,exports){
 var stage = require("./stage");
 var prefab = require("./prefab");
 var compiler = require("./compiler");
@@ -736,6 +885,16 @@ var planet;
             var item = stage.items.get(parseInt(i));
             result.push([[item.blockName, item.gridX, item.gridY].join(","), i].join("="));
         });
+        // attributes
+        var atts = stage.blockAttrs.getAll();
+        if (atts) {
+            Object.keys(atts).forEach(function (i) {
+                var attr = stage.blockAttrs.getBlock(parseInt(i)).getAll();
+                Object.keys(attr).forEach(function (j) {
+                    result.push(["*custom", j, i, stage.blockAttrs.getBlock(parseInt(i)).get(j)].join(","));
+                });
+            });
+        }
         // footer
         if (stage.footer.replace(/ /g, "").replace(/\n/g, "") !== "") {
             result.push("//:footer");
@@ -767,12 +926,13 @@ var planet;
                 stage.items.push(stage.getId(), new prefab(item.x, item.y, blockData.data.filename, item.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)));
             }
         });
+        stage.blockAttrs.setAll(centerLang.attrList);
         return result;
     }
     planet.importText = importText;
 })(planet || (planet = {}));
 module.exports = planet;
-},{"./compiler":8,"./data":9,"./prefab":21,"./stage":22}],21:[function(require,module,exports){
+},{"./compiler":11,"./data":12,"./prefab":25,"./stage":26}],25:[function(require,module,exports){
 var prefab = (function () {
     function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
         this.gridX = gridX;
@@ -785,7 +945,7 @@ var prefab = (function () {
     return prefab;
 })();
 module.exports = prefab;
-},{}],22:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var list = require("./classes/list");
 var canvas = require("./canvas");
 var image = require("./image");
@@ -803,6 +963,73 @@ var stage;
     })();
     stage.StageEffects = StageEffects;
     stage.stageEffects = new StageEffects();
+    var blockAttrsList;
+    var blockAttrs;
+    (function (blockAttrs) {
+        function setAll(lst) {
+            blockAttrsList = lst;
+        }
+        blockAttrs.setAll = setAll;
+        function push(blockId, attrName, value) {
+            var l;
+            if (containsBlock(blockId)) {
+                l = getBlock(blockId);
+            }
+            else {
+                l = new list();
+            }
+            l.push(attrName, value);
+            blockAttrsList.push(blockId.toString(), l);
+        }
+        blockAttrs.push = push;
+        function update(blockId, attrName, value) {
+            var l = getBlock(blockId);
+            l.update(attrName, value);
+            blockAttrsList.update(blockId.toString(), l);
+        }
+        blockAttrs.update = update;
+        function containsAttr(blockId, attrName) {
+            if (containsBlock(blockId)) {
+                var l = getBlock(blockId);
+                return l.contains(attrName);
+            }
+            else {
+                return false;
+            }
+        }
+        blockAttrs.containsAttr = containsAttr;
+        function containsBlock(blockId) {
+            return blockAttrsList.contains(blockId.toString());
+        }
+        blockAttrs.containsBlock = containsBlock;
+        function removeAttr(blockId, attrName) {
+            var l = getBlock(blockId);
+            l.remove(attrName);
+            blockAttrsList.update(blockId.toString(), l);
+        }
+        blockAttrs.removeAttr = removeAttr;
+        function removeBlock(blockId) {
+            blockAttrsList.remove(blockId.toString());
+        }
+        blockAttrs.removeBlock = removeBlock;
+        function getBlock(blockId) {
+            return blockAttrsList.get(blockId.toString());
+        }
+        blockAttrs.getBlock = getBlock;
+        function getAttr(blockId, attrName) {
+            return blockAttrsList.get(blockId.toString()).get(attrName);
+        }
+        blockAttrs.getAttr = getAttr;
+        function getAll() {
+            var l = blockAttrsList.getAll();
+            var result = {};
+            Object.keys(l).forEach(function (i) {
+                result[i] = blockAttrsList.get(i).getAll();
+            });
+            return result;
+        }
+        blockAttrs.getAll = getAll;
+    })(blockAttrs = stage.blockAttrs || (stage.blockAttrs = {}));
     var prefabList;
     var items;
     (function (items) {
@@ -835,6 +1062,7 @@ var stage;
     var maxId;
     function init() {
         prefabList = new list();
+        blockAttrsList = new list();
         stage.header = "";
         stage.footer = "";
         maxId = 0;
@@ -951,7 +1179,7 @@ var stage;
     stage.toDrawRect = toDrawRect;
 })(stage || (stage = {}));
 module.exports = stage;
-},{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":9,"./event":12,"./image":13}],23:[function(require,module,exports){
+},{"./canvas":2,"./classes/list":6,"./classes/rect":8,"./classes/vector2":10,"./data":12,"./event":16,"./image":17}],27:[function(require,module,exports){
 var image = require("./image");
 var TrayBlockDetails = require("./classes/trayBlockDetails");
 var d = require("./data");
@@ -1043,7 +1271,7 @@ var tray;
     tray.initTrayObj = initTrayObj;
 })(tray || (tray = {}));
 module.exports = tray;
-},{"./classes/trayBlockDetails":6,"./data":9,"./event":12,"./image":13,"./packUtil/packManager":19,"./uiWaitMode":24}],24:[function(require,module,exports){
+},{"./classes/trayBlockDetails":9,"./data":12,"./event":16,"./image":17,"./packUtil/packManager":23,"./uiWaitMode":28}],28:[function(require,module,exports){
 var uiWaitMode;
 (function (uiWaitMode) {
     function start() {
@@ -1056,7 +1284,7 @@ var uiWaitMode;
     uiWaitMode.end = end;
 })(uiWaitMode || (uiWaitMode = {}));
 module.exports = uiWaitMode;
-},{}],25:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /// <reference path="../../definitely/move.d.ts" />
 var anim;
 (function (anim) {
@@ -1094,7 +1322,7 @@ var anim;
     anim.hideLoading = hideLoading;
 })(anim || (anim = {}));
 module.exports = anim;
-},{}],26:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var util;
 (function (util) {
     function obj2SelectElem(obj) {
@@ -1114,14 +1342,14 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],27:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 var version;
 (function (version_1) {
     version_1.version = "v1.0";
     version_1.author = "shundroid";
 })(version || (version = {}));
 module.exports = version;
-},{}],28:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
@@ -1139,6 +1367,7 @@ var stage = require("./modules/stage");
 var v = require("./modules/version");
 var evElems = require("./modules/evElems");
 var anim = require("./modules/ui/anim");
+var editBlock = require("./modules/editBlock");
 var ui;
 (function (ui) {
     function init() {
@@ -1330,7 +1559,19 @@ var ui;
         setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
     }
     ui.changeSkybox = changeSkybox;
+    function clickAddAttr() {
+        var attrKey = document.getElementsByClassName("ed-attr")[0].value;
+        if (!stage.blockAttrs.containsAttr(d.editingBlockId, attrKey)) {
+            editBlock.renderAttributeUI(attrKey);
+            stage.blockAttrs.push(d.editingBlockId, attrKey, "");
+        }
+    }
+    ui.clickAddAttr = clickAddAttr;
+    function changeAttrInput(e) {
+        stage.blockAttrs.update(d.editingBlockId, e.target.id.replace("ed-attr-", ""), e.target.value);
+    }
+    ui.changeAttrInput = changeAttrInput;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":7,"./modules/compiler":8,"./modules/data":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/importJS":14,"./modules/initDOM":15,"./modules/packUtil/packManager":19,"./modules/planet":20,"./modules/stage":22,"./modules/tray":23,"./modules/ui/anim":25,"./modules/util":26,"./modules/version":27}]},{},[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,25,24,26,27,28]);
+},{"./modules/classes/vector2":10,"./modules/compiler":11,"./modules/data":12,"./modules/editBlock":13,"./modules/elem":14,"./modules/evElems":15,"./modules/event":16,"./modules/importJS":18,"./modules/initDOM":19,"./modules/packUtil/packManager":23,"./modules/planet":24,"./modules/stage":26,"./modules/tray":27,"./modules/ui/anim":29,"./modules/util":30,"./modules/version":31}]},{},[1,2,4,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,29,28,30,31,32]);

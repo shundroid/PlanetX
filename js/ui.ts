@@ -17,6 +17,7 @@ import stage = require("./modules/stage");
 import v = require("./modules/version");
 import evElems = require("./modules/evElems");
 import anim = require("./modules/ui/anim");
+import editBlock = require("./modules/editBlock");
 
 module ui {
   export var canvas: HTMLCanvasElement; 
@@ -204,29 +205,12 @@ module ui {
   
   export function clickAddAttr() {
     var attrKey = (<HTMLSelectElement>document.getElementsByClassName("ed-attr")[0]).value;
-    var addAttr = d.pack.attributes.get(attrKey);
-    var addElem = document.createElement("section");
-    var addInput = document.createElement("input");
-    addInput.type = addAttr.type;
-    addInput.id = `ed-attr-${attrKey}`
-    if (typeof addAttr.placeholder !== "undefined") {
-      addInput.placeholder = addAttr.placeholder;
-    }
-    if (typeof addAttr.defaultValue !== "undefined") {
-      addInput.value = addAttr.defaultValue;
-    } else if (addInput.type === "number") {
-      addInput.value = "0";
-    }
-    var addLabel = document.createElement("label");
-    addLabel.htmlFor = addInput.id;
-    addLabel.textContent = ` ${addAttr.label}: `;
-    var removeButton = document.createElement("button");
-    removeButton.innerHTML = '<i class="fa fa-minus"></i>';
-    removeButton.classList.add("pla-btn");
-    addElem.appendChild(removeButton);
-    addElem.appendChild(addLabel);
-    addElem.appendChild(addInput);
-    document.getElementsByClassName("ed-attr-view")[0].appendChild(addElem);
+    editBlock.renderAttributeUI(attrKey);
+    stage.blockAttrs.push(d.editingBlockId, attrKey, "");
+    console.log(stage.blockAttrs.getAll());
+  }
+  export function changeAttrInput(e:Event) {
+    stage.blockAttrs.update(d.editingBlockId, (<HTMLElement>e.target).id.replace("ed-attr-", ""), (<HTMLInputElement>e.target).value);
   }
   init();
 }

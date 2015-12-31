@@ -100,6 +100,7 @@ var main;
                 case "edit":
                     if (e.eventName === "mousedown" && detail.contains) {
                         ui.showInspector("edit-block");
+                        d.editingBlockId = detail.id;
                         editBlock.updateEditBlock(new editBlock.EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
                     }
                     break;
@@ -204,7 +205,8 @@ var attribute = (function () {
 module.exports = attribute;
 },{}],5:[function(require,module,exports){
 var blockAttributes = (function () {
-    function blockAttributes(blockId, attr, attrValue) {
+    function blockAttributes(blockId, attr, attrValue // 結局はstringになる。
+        ) {
         this.blockId = blockId;
         this.attr = attr;
         this.attrValue = attrValue;
@@ -482,6 +484,8 @@ var data = (function () {
 })();
 module.exports = data;
 },{}],13:[function(require,module,exports){
+var d = require("./data");
+var stage = require("./stage");
 var editBlock;
 (function (editBlock_1) {
     var EditBlock = (function () {
@@ -510,11 +514,54 @@ var editBlock;
         document.getElementById("ed-name").textContent = "Name: " + currentEditBlock.blockName;
         document.getElementById("ed-pos").textContent = "Pos: " + currentEditBlock.blockPos.x + ", " + currentEditBlock.blockPos.y;
         document.getElementById("ed-id").textContent = "ID: " + currentEditBlock.blockId;
+        document.getElementsByClassName("ed-attr-view")[0].innerHTML = "";
+        if (stage.blockAttrs.containsBlock(d.editingBlockId)) {
+            var l = stage.blockAttrs.getBlock(d.editingBlockId).getAll();
+            Object.keys(l).forEach(function (i) {
+                renderAttributeUI(i, stage.blockAttrs.getAttr(d.editingBlockId, i));
+            });
+        }
     }
     editBlock_1.updateEditBlockUI = updateEditBlockUI;
+    function renderAttributeUI(attrName, inputValue) {
+        var addAttr = d.pack.attributes.get(attrName);
+        var addElem = document.createElement("section");
+        var addInput = document.createElement("input");
+        addInput.type = addAttr.type;
+        addInput.id = "ed-attr-" + attrName;
+        if (typeof addAttr.placeholder !== "undefined") {
+            addInput.placeholder = addAttr.placeholder;
+        }
+        if (typeof inputValue !== "undefined") {
+            console.log("hoge");
+            addInput.value = inputValue;
+        }
+        else if (typeof addAttr.defaultValue !== "undefined") {
+            addInput.value = addAttr.defaultValue;
+        }
+        else if (addInput.type === "number") {
+            addInput.value = "0";
+        }
+        addInput.addEventListener("change", changeAttrInput);
+        var addLabel = document.createElement("label");
+        addLabel.htmlFor = addInput.id;
+        addLabel.textContent = " " + addAttr.label + ": ";
+        var removeButton = document.createElement("button");
+        removeButton.innerHTML = '<i class="fa fa-minus"></i>';
+        removeButton.classList.add("pla-btn");
+        addElem.appendChild(removeButton);
+        addElem.appendChild(addLabel);
+        addElem.appendChild(addInput);
+        document.getElementsByClassName("ed-attr-view")[0].appendChild(addElem);
+    }
+    editBlock_1.renderAttributeUI = renderAttributeUI;
+    function changeAttrInput(e) {
+        stage.blockAttrs.update(d.editingBlockId, e.target.id.replace("ed-attr-", ""), e.target.value);
+    }
+    editBlock_1.changeAttrInput = changeAttrInput;
 })(editBlock || (editBlock = {}));
 module.exports = editBlock;
-},{}],14:[function(require,module,exports){
+},{"./data":12,"./stage":26}],14:[function(require,module,exports){
 var elem;
 (function (elem) {
     function addEventListenerforQuery(query, eventName, listener) {
@@ -874,6 +921,69 @@ var stage;
     })();
     stage.StageEffects = StageEffects;
     stage.stageEffects = new StageEffects();
+    var blockAttrsList;
+    var blockAttrs;
+    (function (blockAttrs) {
+        function push(blockId, attrName, value) {
+            var l;
+            if (containsBlock(blockId)) {
+                l = getBlock(blockId);
+            }
+            else {
+                l = new list();
+            }
+            l.push(attrName, value);
+            blockAttrsList.push(blockId.toString(), l);
+        }
+        blockAttrs.push = push;
+        function update(blockId, attrName, value) {
+            var l = getBlock(blockId);
+            l.update(attrName, value);
+            blockAttrsList.update(blockId.toString(), l);
+        }
+        blockAttrs.update = update;
+        function containsAttr(blockId, attrName) {
+            if (containsBlock(blockId)) {
+                var l = getBlock(blockId);
+                return l.contains(attrName);
+            }
+            else {
+                return false;
+            }
+        }
+        blockAttrs.containsAttr = containsAttr;
+        function containsBlock(blockId) {
+            return blockAttrsList.contains(blockId.toString());
+        }
+        blockAttrs.containsBlock = containsBlock;
+        function removeAttr(blockId, attrName) {
+            var l = getBlock(blockId);
+            l.remove(attrName);
+            blockAttrsList.update(blockId.toString(), l);
+        }
+        blockAttrs.removeAttr = removeAttr;
+        function removeBlock(blockId) {
+            blockAttrsList.remove(blockId.toString());
+        }
+        blockAttrs.removeBlock = removeBlock;
+        function getBlock(blockId) {
+            return blockAttrsList.get(blockId.toString());
+        }
+        blockAttrs.getBlock = getBlock;
+        function getAttr(blockId, attrName) {
+            return blockAttrsList.get(blockId.toString()).get(attrName);
+        }
+        blockAttrs.getAttr = getAttr;
+        function getAll() {
+            var l = blockAttrsList.getAll();
+            var result = {};
+            Object.keys(l).forEach(function (i) {
+                result[i] = blockAttrsList.get(i).getAll();
+            });
+            return result;
+        }
+        blockAttrs.getAll = getAll;
+    })(blockAttrs = stage.blockAttrs || (stage.blockAttrs = {}));
     var prefabList;
     var items;
     (function (items) {
@@ -906,6 +1016,7 @@ var stage;
     var maxId;
     function init() {
         prefabList = new list();
+        blockAttrsList = new list();
         stage.header = "";
         stage.footer = "";
         maxId = 0;
@@ -1210,6 +1321,7 @@ var stage = require("./modules/stage");
 var v = require("./modules/version");
 var evElems = require("./modules/evElems");
 var anim = require("./modules/ui/anim");
+var editBlock = require("./modules/editBlock");
 var ui;
 (function (ui) {
     function init() {
@@ -1403,33 +1515,16 @@ var ui;
     ui.changeSkybox = changeSkybox;
     function clickAddAttr() {
         var attrKey = document.getElementsByClassName("ed-attr")[0].value;
-        var addAttr = d.pack.attributes.get(attrKey);
-        var addElem = document.createElement("section");
-        var addInput = document.createElement("input");
-        addInput.type = addAttr.type;
-        addInput.id = "ed-attr-" + attrKey;
-        if (typeof addAttr.placeholder !== "undefined") {
-            addInput.placeholder = addAttr.placeholder;
-        }
-        if (typeof addAttr.defaultValue !== "undefined") {
-            addInput.value = addAttr.defaultValue;
-        }
-        else if (addInput.type === "number") {
-            addInput.value = "0";
-        }
-        var addLabel = document.createElement("label");
-        addLabel.htmlFor = addInput.id;
-        addLabel.textContent = " " + addAttr.label + ": ";
-        var removeButton = document.createElement("button");
-        removeButton.innerHTML = '<i class="fa fa-minus"></i>';
-        removeButton.classList.add("pla-btn");
-        addElem.appendChild(removeButton);
-        addElem.appendChild(addLabel);
-        addElem.appendChild(addInput);
-        document.getElementsByClassName("ed-attr-view")[0].appendChild(addElem);
+        editBlock.renderAttributeUI(attrKey);
+        stage.blockAttrs.push(d.editingBlockId, attrKey, "");
+        console.log(stage.blockAttrs.getAll());
     }
     ui.clickAddAttr = clickAddAttr;
+    function changeAttrInput(e) {
+        stage.blockAttrs.update(d.editingBlockId, e.target.id.replace("ed-attr-", ""), e.target.value);
+    }
+    ui.changeAttrInput = changeAttrInput;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":10,"./modules/compiler":11,"./modules/data":12,"./modules/elem":14,"./modules/evElems":15,"./modules/event":16,"./modules/importJS":18,"./modules/initDOM":19,"./modules/packUtil/packManager":23,"./modules/planet":24,"./modules/stage":26,"./modules/tray":27,"./modules/ui/anim":29,"./modules/util":30,"./modules/version":31}]},{},[1,2,4,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,29,28,30,31,32]);
+},{"./modules/classes/vector2":10,"./modules/compiler":11,"./modules/data":12,"./modules/editBlock":13,"./modules/elem":14,"./modules/evElems":15,"./modules/event":16,"./modules/importJS":18,"./modules/initDOM":19,"./modules/packUtil/packManager":23,"./modules/planet":24,"./modules/stage":26,"./modules/tray":27,"./modules/ui/anim":29,"./modules/util":30,"./modules/version":31}]},{},[1,2,4,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,29,28,30,31,32]);

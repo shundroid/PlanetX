@@ -99,6 +99,7 @@ module main {
         case "edit":
           if (e.eventName === "mousedown" && detail.contains) {
             ui.showInspector("edit-block");
+            d.editingBlockId = detail.id;
             editBlock.updateEditBlock(new editBlock.EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
           }
           break;

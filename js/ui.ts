@@ -205,8 +205,10 @@ module ui {
   
   export function clickAddAttr() {
     var attrKey = (<HTMLSelectElement>document.getElementsByClassName("ed-attr")[0]).value;
-    editBlock.renderAttributeUI(attrKey);
-    stage.blockAttrs.push(d.editingBlockId, attrKey, "");
+    if (!stage.blockAttrs.containsAttr(d.editingBlockId, attrKey)) {
+      editBlock.renderAttributeUI(attrKey);
+      stage.blockAttrs.push(d.editingBlockId, attrKey, "");
+    }
   }
   export function changeAttrInput(e:Event) {
     stage.blockAttrs.update(d.editingBlockId, (<HTMLElement>e.target).id.replace("ed-attr-", ""), (<HTMLInputElement>e.target).value);

@@ -1552,8 +1552,10 @@ var ui;
     ui.changeSkybox = changeSkybox;
     function clickAddAttr() {
         var attrKey = document.getElementsByClassName("ed-attr")[0].value;
-        editBlock.renderAttributeUI(attrKey);
-        stage.blockAttrs.push(d.editingBlockId, attrKey, "");
+        if (!stage.blockAttrs.containsAttr(d.editingBlockId, attrKey)) {
+            editBlock.renderAttributeUI(attrKey);
+            stage.blockAttrs.push(d.editingBlockId, attrKey, "");
+        }
     }
     ui.clickAddAttr = clickAddAttr;
     function changeAttrInput(e) {

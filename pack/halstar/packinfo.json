@@ -200,7 +200,8 @@
     "sayblock": {
       "label": "メッセージブロック",
       "format": "*custom,sayblock,{block},{value}",
-      "type": "text"
+      "type": "text",
+      "placeholder": "ブロックが叩かれたときのメッセージ"
     },
     "bomblock": {
       "label": "消えるブロック",

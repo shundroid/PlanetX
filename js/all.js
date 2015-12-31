@@ -548,6 +548,7 @@ var editBlock;
     function renderAttributeUI(attrName, inputValue) {
         var addAttr = d.pack.attributes.get(attrName);
         var addElem = document.createElement("section");
+        addElem.id = "ed-attr-field-" + attrName;
         var addInput = document.createElement("input");
         addInput.type = addAttr.type;
         addInput.id = "ed-attr-" + attrName;
@@ -571,6 +572,8 @@ var editBlock;
         var removeButton = document.createElement("button");
         removeButton.innerHTML = '<i class="fa fa-minus"></i>';
         removeButton.classList.add("pla-btn");
+        removeButton.id = "ed-attr-remove-" + attrName;
+        removeButton.addEventListener("click", clickRemoveAttr);
         addElem.appendChild(removeButton);
         addElem.appendChild(addLabel);
         addElem.appendChild(addInput);
@@ -581,6 +584,12 @@ var editBlock;
         stage.blockAttrs.update(d.editingBlockId, e.target.id.replace("ed-attr-", ""), e.target.value);
     }
     editBlock_1.changeAttrInput = changeAttrInput;
+    function clickRemoveAttr(e) {
+        var attrName = e.target.id.replace("ed-attr-remove-", "");
+        stage.blockAttrs.removeAttr(d.editingBlockId, attrName);
+        document.getElementsByClassName("ed-attr-view")[0].removeChild(document.getElementById("ed-attr-field-" + attrName));
+    }
+    editBlock_1.clickRemoveAttr = clickRemoveAttr;
 })(editBlock || (editBlock = {}));
 module.exports = editBlock;
 },{"./data":12,"./stage":26}],14:[function(require,module,exports){

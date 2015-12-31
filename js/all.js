@@ -1410,6 +1410,10 @@ var ui;
         el.addEventListenerforQuery(".io-hf", "change", changeHeaderorFooterValue);
         el.addEventListenerforQuery(".tray-list-tool", "click", clickTrayTool);
         document.head.appendChild(importJS("bower_components/move.js/move.js"));
+        window.onbeforeunload = function (event) {
+            event.returnValue = "ページを移動しますか？";
+            return "ページを移動しますか？";
+        };
         event.raiseEvent("initDom", null);
     });
     function setupCanvas() {

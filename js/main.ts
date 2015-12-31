@@ -87,14 +87,12 @@ module main {
           break;
         case "hand":
           if (e.eventName === "mousemove") {
-            scrollX += e.mousePos.x - stage.scrollBeforeX;
-            scrollY += e.mousePos.y - stage.scrollBeforeY;
+            stage.scrollX += e.mousePos.x - stage.scrollBeforeX;
+            stage.scrollY += e.mousePos.y - stage.scrollBeforeY;
             stage.renderStage();
           }
-          if (e.eventName !== "mouseup") {
-            stage.scrollBeforeX = e.mousePos.x;
-            stage.scrollBeforeY = e.mousePos.y;
-          }
+          stage.scrollBeforeX = e.mousePos.x;
+          stage.scrollBeforeY = e.mousePos.y;
           break;
         case "edit":
           if (e.eventName === "mousedown" && detail.contains) {

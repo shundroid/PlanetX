@@ -42,6 +42,17 @@ module ui {
       event.raiseEvent("gridCanvas", new stage.gridDetail(g, e.type, new Vector2(e.clientX, e.clientY)));
     });
     event.addEventListener("initedPack", () => {
+      // SkyboxMode
+      if (typeof d.pack.editor.skyboxMode !== "undefined") {
+        if (d.pack.editor.skyboxMode === "repeat") {
+          document.body.style.backgroundRepeat = "repeat";
+          if (typeof d.pack.editor.skyboxSize !== "undefined") {
+            document.body.style.backgroundSize = d.pack.editor.skyboxSize; 
+          } else {
+            document.body.style.backgroundSize = "auto";
+          }
+        }
+      }
       el.forEachforQuery(".pack-select", (i) => {
         var elem = <HTMLSelectElement>i;
         elem.innerHTML = u.obj2SelectElem((<list<any>>(<any>d.pack)[elem.dataset["items"]]).toSimple());

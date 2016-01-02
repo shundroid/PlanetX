@@ -18,7 +18,7 @@ module main {
 
   function init() {
     d.trayItemDataURLs = new list<string>();
-    d.defaultPackName = "halstar";
+    d.defaultPackName = "oa";
     //d.pack = new packManager.packModule({});
     d.defaultGridSize = 25;
     d.defaultBlockSize = 50;
@@ -47,7 +47,8 @@ module main {
     event.addEventListener("initedTray", () => {
       ui.changeLoadingStatus("making DataURL");
       d.trayItemDataURLs = makeDataUrl();
-      tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック");
+      var item = d.pack.blocks.get(d.pack.editor.defaultBlock);
+      tray.updateActiveBlock(d.pack.editor.defaultBlock, item.data.filename, item.data.bName);
       ui.changeLoadingStatus("Are you ready?");
       event.raiseEvent("ready", null);
     });

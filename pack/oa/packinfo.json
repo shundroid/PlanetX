@@ -1,0 +1,36 @@
+{
+  "pack": {
+    "name": "Halstar Official Pack",
+    "version": "1.0.0",
+    "author": "Minchi by shundroid",
+    "exportType": "stagectrl"
+  },
+  "blocks": {
+    "block": { "name": "ふつうのブロック", "filename": "block.png" },
+    "character": { "name": "キャラクター", "filename": "character.png" }
+  },
+  "objs": {
+    "tree": { "width": 100, "height": 100, "filename": "tree.png", "name": "木", "type": "飾り"}
+  },
+  "descriptions": {
+    "block": { "description": "ふつうのブロックです。", "type": "ブロック" },
+    "character": { "description": "ゲームの主人公です", "type": "人物" },
+    "tree": { "description": "飾りです", "type": "飾り" }
+  },
+  "attributes": {
+    "sayblock": {
+      "label": "メッセージブロック",
+      "type": "text",
+      "placeholder": "ブロックが叩かれたときのメッセージ"
+    }
+  },
+  "skyboxes": {
+    "sky": { "filename": "background.png", "label": "普通" }
+  },
+  "editor": {
+    "defaultSkybox": "sky",
+    "defaultBlock": "block",
+    "skyboxMode": "repeat",
+    "skyboxSize": "400px"
+  }
+}

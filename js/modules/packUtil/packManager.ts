@@ -43,11 +43,11 @@ module pack {
       Object.keys((<any>data)["skyboxes"]).forEach(i => {
         this.skyboxes.push(i, new skyboxInfo((<any>data)["skyboxes"][i]));
       })
-      this.editor = new packEditorInfo((<any>data)["editor"]["defaultSkybox"]);
+      this.editor = (<any>data)["editor"];
     }
   }
   export class packEditorInfo {
-    constructor(public defaultSkybox:string) {}
+    constructor(public defaultSkybox:string, public defaultBlock:string, public skyboxMode?: string, public skyboxSize?: string) {}
   }
   export class packInfo {
     pName:string;

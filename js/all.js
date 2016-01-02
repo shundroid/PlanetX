@@ -18,7 +18,7 @@ var main;
 (function (main) {
     function init() {
         d.trayItemDataURLs = new list();
-        d.defaultPackName = "halstar";
+        d.defaultPackName = "oa";
         //d.pack = new packManager.packModule({});
         d.defaultGridSize = 25;
         d.defaultBlockSize = 50;
@@ -46,7 +46,8 @@ var main;
         event.addEventListener("initedTray", function () {
             ui.changeLoadingStatus("making DataURL");
             d.trayItemDataURLs = makeDataUrl();
-            tray.updateActiveBlock("w1/block2", "pack/halstar/images/mapicons/w1block2-2.png", "W1草付ブロック");
+            var item = d.pack.blocks.get(d.pack.editor.defaultBlock);
+            tray.updateActiveBlock(d.pack.editor.defaultBlock, item.data.filename, item.data.bName);
             ui.changeLoadingStatus("Are you ready?");
             event.raiseEvent("ready", null);
         });
@@ -777,14 +778,17 @@ var pack;
             Object.keys(data["skyboxes"]).forEach(function (i) {
                 _this.skyboxes.push(i, new skyboxInfo(data["skyboxes"][i]));
             });
-            this.editor = new packEditorInfo(data["editor"]["defaultSkybox"]);
+            this.editor = data["editor"];
         }
         return packModule;
     })();
     pack.packModule = packModule;
     var packEditorInfo = (function () {
-        function packEditorInfo(defaultSkybox) {
+        function packEditorInfo(defaultSkybox, defaultBlock, skyboxMode, skyboxSize) {
             this.defaultSkybox = defaultSkybox;
+            this.defaultBlock = defaultBlock;
+            this.skyboxMode = skyboxMode;
+            this.skyboxSize = skyboxSize;
         }
         return packEditorInfo;
     })();
@@ -1390,6 +1394,18 @@ var ui;
             event.raiseEvent("gridCanvas", new stage.gridDetail(g, e.type, new Vector2(e.clientX, e.clientY)));
         });
         event.addEventListener("initedPack", function () {
+            // SkyboxMode
+            if (typeof d.pack.editor.skyboxMode !== "undefined") {
+                if (d.pack.editor.skyboxMode === "repeat") {
+                    document.body.style.backgroundRepeat = "repeat";
+                    if (typeof d.pack.editor.skyboxSize !== "undefined") {
+                        document.body.style.backgroundSize = d.pack.editor.skyboxSize;
+                    }
+                    else {
+                        document.body.style.backgroundSize = "auto";
+                    }
+                }
+            }
             el.forEachforQuery(".pack-select", function (i) {
                 var elem = i;
                 elem.innerHTML = u.obj2SelectElem(d.pack[elem.dataset["items"]].toSimple());
@@ -1412,7 +1428,6 @@ var ui;
         document.head.appendChild(importJS("bower_components/move.js/move.js"));
         window.onbeforeunload = function (event) {
             event.returnValue = "ページを移動しますか？";
-            return "ページを移動しますか？";
         };
         event.raiseEvent("initDom", null);
     });

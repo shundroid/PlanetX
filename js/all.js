@@ -14,6 +14,7 @@ var Vector2 = require("./modules/classes/vector2");
 var Rect = require("./modules/classes/rect");
 var canvas = require("./modules/canvas");
 var editBlock = require("./modules/editBlock");
+var fGuide = require("./modules/ui/focusGuide");
 var main;
 (function (main) {
     function init() {
@@ -58,9 +59,10 @@ var main;
             var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
             var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY));
             var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
+            fGuide.hide();
             switch (d.activeToolName) {
                 case "pencil":
-                    if (e.eventName === "mousedown") {
+                    if (e.eventName === "down") {
                         if (!detail.contains) {
                             canvas.render(d.selectImage, rect);
                             stage.items.push(stage.getId(), pre);
@@ -70,9 +72,12 @@ var main;
                             stage.renderStage();
                         }
                     }
+                    else if (e.eventName === "hovering") {
+                        fGuide.focus(new Vector2(rect.x, rect.y), new Vector2(rect.width, rect.height), detail.contains ? "rgba(240,0,0,0.6)" : "rgba(0,240,0,0.6)");
+                    }
                     break;
                 case "choice":
-                    if (e.eventName === "mousedown") {
+                    if (e.eventName === "down") {
                         // オブジェクトに対応させる
                         if (detail.prefab) {
                             if (d.pack.objs.contains(detail.prefab.blockName)) {
@@ -88,7 +93,7 @@ var main;
                     }
                     break;
                 case "hand":
-                    if (e.eventName === "mousemove") {
+                    if (e.eventName === "move") {
                         stage.scrollX += e.mousePos.x - stage.scrollBeforeX;
                         stage.scrollY += e.mousePos.y - stage.scrollBeforeY;
                         stage.renderStage();
@@ -97,14 +102,14 @@ var main;
                     stage.scrollBeforeY = e.mousePos.y;
                     break;
                 case "edit":
-                    if (e.eventName === "mousedown" && detail.contains) {
+                    if (e.eventName === "down" && detail.contains) {
                         ui.showInspector("edit-block");
                         d.editingBlockId = detail.id;
                         editBlock.updateEditBlock(new editBlock.EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
                     }
                     break;
                 default:
-                    if (e.eventName === "mousemove" || e.eventName === "mousedown") {
+                    if (e.eventName === "move" || e.eventName === "down") {
                         if (d.activeToolName === "brush") {
                             if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
                                 stage.items.remove(detail.id);
@@ -126,7 +131,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/list":6,"./modules/classes/rect":8,"./modules/classes/vector2":10,"./modules/data":12,"./modules/editBlock":13,"./modules/event":16,"./modules/initDOM":19,"./modules/makePrefabDataUrls":20,"./modules/packUtil/packLoader":22,"./modules/packUtil/packManager":23,"./modules/prefab":25,"./modules/stage":26,"./modules/tray":27,"./ui":32}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/list":6,"./modules/classes/rect":8,"./modules/classes/vector2":10,"./modules/data":12,"./modules/editBlock":13,"./modules/event":16,"./modules/initDOM":19,"./modules/makePrefabDataUrls":20,"./modules/packUtil/packLoader":22,"./modules/packUtil/packManager":23,"./modules/prefab":25,"./modules/stage":26,"./modules/tray":27,"./modules/ui/focusGuide":30,"./ui":33}],2:[function(require,module,exports){
 var initDOM = require("./initDOM");
 var canvas;
 (function (canvas_1) {
@@ -648,7 +653,7 @@ var event;
     function raiseEvent(eventName, params) {
         if (eventHandlers.contains(eventName)) {
             eventHandlers.get(eventName).forEach(function (i) {
-                i(params);
+                i(params, eventName);
             });
         }
     }
@@ -1325,6 +1330,34 @@ var anim;
 })(anim || (anim = {}));
 module.exports = anim;
 },{}],30:[function(require,module,exports){
+var initDOM = require("./../initDOM");
+var focusGuide;
+(function (focusGuide) {
+    var guideElement;
+    initDOM(function () {
+        guideElement = document.createElement("div");
+        guideElement.id = "guide";
+        guideElement.style.position = "fixed";
+        guideElement.style.backgroundColor = "rgba(240,0,0,0.6)";
+        guideElement.style.pointerEvents = "none";
+        document.body.appendChild(guideElement);
+    });
+    function focus(screenPos, size, color) {
+        guideElement.style.visibility = "visible";
+        guideElement.style.left = screenPos.x + "px";
+        guideElement.style.top = screenPos.y + "px";
+        guideElement.style.width = size.x + "px";
+        guideElement.style.height = size.y + "px";
+        guideElement.style.backgroundColor = color;
+    }
+    focusGuide.focus = focus;
+    function hide() {
+        guideElement.style.visibility = "hidden";
+    }
+    focusGuide.hide = hide;
+})(focusGuide || (focusGuide = {}));
+module.exports = focusGuide;
+},{"./../initDOM":19}],31:[function(require,module,exports){
 var util;
 (function (util) {
     function obj2SelectElem(obj) {
@@ -1344,14 +1377,14 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var version;
 (function (version_1) {
     version_1.version = "v1.0";
     version_1.author = "shundroid";
 })(version || (version = {}));
 module.exports = version;
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
@@ -1389,9 +1422,10 @@ var ui;
             }
             changeActiveBlock(target.dataset["block"]);
         });
-        event.addEventListener("ui_mousedownCanvas|ui_mousemoveanddownCanvas|ui_mouseupCanvas", function (e) {
+        event.addEventListener("ui_downCanvas|ui_moveCanvas|ui_upCanvas|ui_hoveringCanvas", function (e, eventName) {
             var g = stage.getGridPosFromMousePos(new Vector2(e.clientX, e.clientY));
-            event.raiseEvent("gridCanvas", new stage.gridDetail(g, e.type, new Vector2(e.clientX, e.clientY)));
+            console.log(eventName);
+            event.raiseEvent("gridCanvas", new stage.gridDetail(g, eventName.replace("ui_", "").replace("Canvas", ""), new Vector2(e.clientX, e.clientY)));
         });
         event.addEventListener("initedPack", function () {
             // SkyboxMode
@@ -1434,15 +1468,18 @@ var ui;
     function setupCanvas() {
         ui.canvas = document.getElementById("pla-canvas");
         ui.canvas.addEventListener("mousedown", function (e) {
-            event.raiseEvent("ui_mousedownCanvas", e);
+            event.raiseEvent("ui_downCanvas", e);
         });
         ui.canvas.addEventListener("mousemove", function (e) {
             if (e.buttons === 1) {
-                event.raiseEvent("ui_mousemoveanddownCanvas", e);
+                event.raiseEvent("ui_moveCanvas", e);
+            }
+            else {
+                event.raiseEvent("ui_hoveringCanvas", e);
             }
         });
         ui.canvas.addEventListener("mouseup", function (e) {
-            event.raiseEvent("ui_mouseupCanvas", e);
+            event.raiseEvent("ui_upCanvas", e);
         });
     }
     ui.setupCanvas = setupCanvas;
@@ -1591,4 +1628,4 @@ var ui;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":10,"./modules/compiler":11,"./modules/data":12,"./modules/editBlock":13,"./modules/elem":14,"./modules/evElems":15,"./modules/event":16,"./modules/importJS":18,"./modules/initDOM":19,"./modules/packUtil/packManager":23,"./modules/planet":24,"./modules/stage":26,"./modules/tray":27,"./modules/ui/anim":29,"./modules/util":30,"./modules/version":31}]},{},[1,2,4,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,29,28,30,31,32]);
+},{"./modules/classes/vector2":10,"./modules/compiler":11,"./modules/data":12,"./modules/editBlock":13,"./modules/elem":14,"./modules/evElems":15,"./modules/event":16,"./modules/importJS":18,"./modules/initDOM":19,"./modules/packUtil/packManager":23,"./modules/planet":24,"./modules/stage":26,"./modules/tray":27,"./modules/ui/anim":29,"./modules/util":31,"./modules/version":32}]},{},[1,2,4,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,29,30,28,31,32,33]);

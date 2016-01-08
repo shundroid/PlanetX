@@ -76,3 +76,7 @@ function rify(isWatch) {
 gulp.task("deljs", function() {
   del(["./js/{main.js,modules/*.js}"]);
 });
+
+gulp.task("build2", function() {
+  console.log(minimist(process.argv.slice(2)));
+});

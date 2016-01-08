@@ -1,21 +1,30 @@
 {
   "pack": {
-    "name": "Halstar Official Pack",
+    "name": "OpenAdventure Official Pack",
     "version": "1.0.0",
     "author": "Minchi by shundroid",
     "exportType": "stagectrl"
   },
   "blocks": {
-    "block": { "name": "ふつうのブロック", "filename": "block.png" },
-    "character": { "name": "キャラクター", "filename": "character.png" }
+    "block/block": { "name": "ふつうのブロック", "filename": "block.png" },
+    "block/mv/right": { "name": "ムーブ（右）", "filename": "m_right.png" },
+    "block/mv/down": { "name": "ムーブ（下）", "filename": "m_down.png" },
+    "block/mv/left": { "name": "ムーブ（左）", "filename": "m_left.png" },
+    "block/mv/up": { "name": "ムーブ（上）", "filename": "m_up.png" },
+    "block/bom": { "name": "消えるブロック", "filename": "bom.png" } 
   },
   "objs": {
-    "tree": { "width": 100, "height": 100, "filename": "tree.png", "name": "木", "type": "飾り"}
+    "tree": { "width": 100, "height": 100, "filename": "tree.png", "name": "木", "type": "飾り"},
+    "@character": { "width": 50, "height": 100, "name": "ハルスター", "filename": "halstar.png" }
   },
   "descriptions": {
     "block": { "description": "ふつうのブロックです。", "type": "ブロック" },
     "character": { "description": "ゲームの主人公です", "type": "人物" },
-    "tree": { "description": "飾りです", "type": "飾り" }
+    "tree": { "description": "飾りです", "type": "飾り" },
+    "mv/right": { "description": "右に動く", "type": "仕掛け" },
+    "mv/down": { "description": "下に動く", "type": "仕掛け" },
+    "mv/left": { "description": "左に動く", "type": "仕掛け" },
+    "mv/up": { "description": "上に動く", "type": "仕掛け" }
   },
   "attributes": {
     "sayblock": {
@@ -29,7 +38,7 @@
   },
   "editor": {
     "defaultSkybox": "sky",
-    "defaultBlock": "block",
+    "defaultBlock": "block/block",
     "skyboxMode": "repeat",
     "skyboxSize": "400px"
   }

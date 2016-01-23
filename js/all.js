@@ -307,6 +307,7 @@ var prefabMini = require("./classes/prefabMini");
 var stage = require("./stage");
 var d = require("./data");
 var jsonPlanet = require("./jsonPlanet");
+var version = require("./version");
 var compiler;
 (function (compiler) {
     function getLangAuto(oneLine) {
@@ -502,9 +503,12 @@ var compiler;
     }
     compiler.old2CSV = old2CSV;
     function csv2Json(csv) {
-        var result = new jsonPlanet.jsonPlanet(0.1);
+        var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
         var lines = csv.split("\n");
         lines.forEach(function (i) {
+            if (i === "") {
+                return;
+            }
             if (i.substring(0, 1) === "*") {
                 return;
             }
@@ -520,7 +524,7 @@ var compiler;
     compiler.csv2Json = csv2Json;
 })(compiler || (compiler = {}));
 module.exports = compiler;
-},{"./classes/list":6,"./classes/prefabMini":7,"./data":12,"./jsonPlanet":20,"./stage":27}],12:[function(require,module,exports){
+},{"./classes/list":6,"./classes/prefabMini":7,"./data":12,"./jsonPlanet":20,"./stage":27,"./version":33}],12:[function(require,module,exports){
 var data = (function () {
     function data() {
     }
@@ -718,6 +722,10 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 module.exports = add;
 },{}],20:[function(require,module,exports){
+var version = require("./version");
+/**
+ * 構造化した、jsonPlanet関連を提供します。
+ */
 var jsonPlanet;
 (function (jsonPlanet_1) {
     var jsonBlockAttr = (function () {
@@ -755,6 +763,11 @@ var jsonPlanet;
             }
             return result;
         };
+        jsonBlockItem.fromArray = function (ar) {
+            var result = new jsonBlockItem(ar[0], ar[1], ar[2], ar[3]);
+            // Todo: Attr
+            return result;
+        };
         return jsonBlockItem;
     })();
     jsonPlanet_1.jsonBlockItem = jsonBlockItem;
@@ -773,12 +786,19 @@ var jsonPlanet;
             });
             return result;
         };
+        jsonPlanet.importJson = function (json) {
+            var result = new jsonPlanet(json["JsonPlanetVersion"] || version.jsonPlanetVersion);
+            json["Stage"].forEach(function (i) {
+                result.Stage.push(jsonBlockItem.fromArray(i));
+            });
+            return result;
+        };
         return jsonPlanet;
     })();
     jsonPlanet_1.jsonPlanet = jsonPlanet;
 })(jsonPlanet || (jsonPlanet = {}));
 module.exports = jsonPlanet;
-},{}],21:[function(require,module,exports){
+},{"./version":33}],21:[function(require,module,exports){
 var d = require("./data");
 var list = require("./classes/list");
 var packManager = require("./packUtil/packManager");
@@ -949,8 +969,52 @@ var stage = require("./stage");
 var prefab = require("./prefab");
 var compiler = require("./compiler");
 var d = require("./data");
+var jsonPlanet = require("./jsonPlanet");
+var version = require("./version");
+/**
+ * stageから、compilerを利用して、外部形式へ入出力する機能を提供します。
+ */
 var planet;
 (function (planet) {
+    /**
+     * stageを、jsonPlanetへ変換します。
+     * jsonPlanetから、jsonに変換するのには、jsonPlanet.exportJson()を利用してください。
+     */
+    function toJsonPlanet() {
+        var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
+        var items = stage.items.getAll();
+        Object.keys(items).forEach(function (i) {
+            var item = stage.items.get(parseInt(i));
+            result.Stage.push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, i));
+        });
+        return result;
+    }
+    planet.toJsonPlanet = toJsonPlanet;
+    /**
+     * jsonPlanetを、stageへ変換します。
+     * 内部で、stage.itemsをクリアし、新しくpushします。
+     */
+    function fromJsonPlanet(jsonPla) {
+        stage.items.clear();
+        stage.resetId();
+        jsonPla.Stage.forEach(function (i) {
+            if (d.pack.objs.contains(i.blockName)) {
+                var objData = d.pack.objs.get(i.blockName);
+                stage.items.push(stage.getId(), new prefab(i.posX, i.posY, objData.data.filename, i.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)));
+            }
+            else {
+                var blockData = d.pack.blocks.get(i.blockName);
+                stage.items.push(stage.getId(), new prefab(i.posX, i.posY, blockData.data.filename, i.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)));
+            }
+        });
+        var result = new stage.StageEffects();
+        // Todo: StageEffect
+        return result;
+    }
+    planet.fromJsonPlanet = fromJsonPlanet;
+    /**
+     * 非推奨
+     */
     function exportText() {
         var result = [];
         result.push("//:csv");
@@ -993,6 +1057,9 @@ var planet;
         return result.join("\n");
     }
     planet.exportText = exportText;
+    /**
+     * 非推奨
+     */
     function importText(file) {
         stage.items.clear();
         stage.resetId();
@@ -1018,7 +1085,7 @@ var planet;
     planet.importText = importText;
 })(planet || (planet = {}));
 module.exports = planet;
-},{"./compiler":11,"./data":12,"./prefab":26,"./stage":27}],26:[function(require,module,exports){
+},{"./compiler":11,"./data":12,"./jsonPlanet":20,"./prefab":26,"./stage":27,"./version":33}],26:[function(require,module,exports){
 var prefab = (function () {
     function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
         this.gridX = gridX;
@@ -1461,6 +1528,7 @@ var version;
 (function (version_1) {
     version_1.version = "v1.0";
     version_1.author = "shundroid";
+    version_1.jsonPlanetVersion = 0.1;
 })(version || (version = {}));
 module.exports = version;
 },{}],34:[function(require,module,exports){
@@ -1482,6 +1550,7 @@ var v = require("./modules/version");
 var evElems = require("./modules/evElems");
 var anim = require("./modules/ui/anim");
 var editBlock = require("./modules/editBlock");
+var jsonPlanet = require("./modules/jsonPlanet");
 var ui;
 (function (ui) {
     function init() {
@@ -1591,11 +1660,12 @@ var ui;
     }
     ui.showInspector = showInspector;
     function clickExport() {
-        document.getElementById("pla-io").value = planet.exportText();
+        document.getElementById("pla-io").value = JSON.stringify(planet.toJsonPlanet().exportJson());
     }
     ui.clickExport = clickExport;
     function clickImport() {
-        var effects = planet.importText(document.getElementById("pla-io").value);
+        //var effects = planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
+        var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse(document.getElementById("pla-io").value)));
         stage.stageEffects = effects;
         setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox).data.filename);
         stage.renderStage();
@@ -1705,4 +1775,4 @@ var ui;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":10,"./modules/compiler":11,"./modules/data":12,"./modules/editBlock":13,"./modules/elem":14,"./modules/evElems":15,"./modules/event":16,"./modules/importJS":18,"./modules/initDOM":19,"./modules/packUtil/packManager":24,"./modules/planet":25,"./modules/stage":27,"./modules/tray":28,"./modules/ui/anim":30,"./modules/util":32,"./modules/version":33}]},{},[1,2,4,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,30,31,29,32,33,34]);
+},{"./modules/classes/vector2":10,"./modules/compiler":11,"./modules/data":12,"./modules/editBlock":13,"./modules/elem":14,"./modules/evElems":15,"./modules/event":16,"./modules/importJS":18,"./modules/initDOM":19,"./modules/jsonPlanet":20,"./modules/packUtil/packManager":24,"./modules/planet":25,"./modules/stage":27,"./modules/tray":28,"./modules/ui/anim":30,"./modules/util":32,"./modules/version":33}]},{},[1,2,4,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,30,31,29,32,33,34]);

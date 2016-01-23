@@ -11,7 +11,7 @@
     "block/mv/down": { "name": "ムーブ（下）", "filename": "m_down.png" },
     "block/mv/left": { "name": "ムーブ（左）", "filename": "m_left.png" },
     "block/mv/up": { "name": "ムーブ（上）", "filename": "m_up.png" },
-    "block/bom": { "name": "消えるブロック", "filename": "bom.png" } 
+    "block/bom": { "name": "消えるブロック", "filename": "bom.png" }
   },
   "objs": {
     "tree": { "width": 100, "height": 100, "filename": "tree.png", "name": "木", "type": "飾り"},

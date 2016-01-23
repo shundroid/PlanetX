@@ -3,8 +3,10 @@ import prefabMini = require("./classes/prefabMini")
 import stage = require("./stage");
 import d = require("./data");
 import jsonPlanet = require("./jsonPlanet");
+import version = require("./version");
 
 module compiler {
+
   export function getLangAuto(oneLine:string):compileLangs {
     switch (oneLine) {
       case "//:csv":
@@ -158,7 +160,7 @@ module compiler {
   }
   
   export function csv2Json(csv:string):jsonPlanet.jsonPlanet {
-    var result = new jsonPlanet.jsonPlanet(0.1);
+    var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
     var lines = csv.split("\n");
     lines.forEach(i => {
       if (i === "") {

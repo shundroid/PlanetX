@@ -2,8 +2,52 @@ import stage = require("./stage");
 import prefab = require("./prefab");
 import compiler = require("./compiler");
 import d = require("./data");
+import jsonPlanet = require("./jsonPlanet");
+import version = require("./version");
 
+/**
+ * stageから、compilerを利用して、外部形式へ入出力する機能を提供します。
+ */
 module planet {
+  
+  /**
+   * stageを、jsonPlanetへ変換します。
+   * jsonPlanetから、jsonに変換するのには、jsonPlanet.exportJson()を利用してください。
+   */
+  export function toJsonPlanet() {
+    var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
+    var items:any = stage.items.getAll();
+    Object.keys(items).forEach(i => {
+      var item = stage.items.get(parseInt(i));
+      result.Stage.push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, i));
+    });
+    return result;
+  }
+  
+  /**
+   * jsonPlanetを、stageへ変換します。
+   * 内部で、stage.itemsをクリアし、新しくpushします。
+   */
+  export function fromJsonPlanet(jsonPla: jsonPlanet.jsonPlanet) {
+    stage.items.clear();
+    stage.resetId();
+    jsonPla.Stage.forEach(i => {
+      if (d.pack.objs.contains(i.blockName)) {
+        let objData = d.pack.objs.get(i.blockName);
+        stage.items.push(stage.getId(), new prefab(i.posX, i.posY, objData.data.filename, i.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)));
+      } else {
+        let blockData = d.pack.blocks.get(i.blockName);
+        stage.items.push(stage.getId(), new prefab(i.posX, i.posY, blockData.data.filename, i.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)));
+      }
+    });
+    var result = new stage.StageEffects();
+    // Todo: StageEffect
+    return result;
+  }
+  
+  /**
+   * 非推奨
+   */
   export function exportText():string {
     var result:Array<string> = [];
     result.push("//:csv");
@@ -47,6 +91,10 @@ module planet {
     }
     return result.join("\n");
   }
+  
+  /**
+   * 非推奨
+   */
   export function importText(file:string) {
     stage.items.clear();
     stage.resetId();

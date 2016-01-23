@@ -18,6 +18,7 @@ import v = require("./modules/version");
 import evElems = require("./modules/evElems");
 import anim = require("./modules/ui/anim");
 import editBlock = require("./modules/editBlock");
+import jsonPlanet = require("./modules/jsonPlanet");
 
 module ui {
   export var canvas: HTMLCanvasElement; 
@@ -121,10 +122,11 @@ module ui {
   }
   
   export function clickExport() {
-    (<HTMLTextAreaElement>document.getElementById("pla-io")).value = planet.exportText();
+    (<HTMLTextAreaElement>document.getElementById("pla-io")).value = JSON.stringify(planet.toJsonPlanet().exportJson());
   }
   export function clickImport() {
-    var effects = planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
+    //var effects = planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
+    var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
     stage.stageEffects = effects;
     setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox).data.filename);
     stage.renderStage();

@@ -210,7 +210,7 @@ module ui {
   
   export function clickConvertOldFile() {
     (<HTMLTextAreaElement>document.getElementById("conv-new")).value = 
-      compiler.old2CSV((<HTMLTextAreaElement>document.getElementById("conv-old")).value);
+      JSON.stringify(compiler.csv2Json((<HTMLTextAreaElement>document.getElementById("conv-old")).value).exportJson());
   }
   
   export function changeSkybox(e:Event) {

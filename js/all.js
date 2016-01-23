@@ -131,7 +131,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/list":6,"./modules/classes/rect":8,"./modules/classes/vector2":10,"./modules/data":12,"./modules/editBlock":13,"./modules/event":16,"./modules/initDOM":19,"./modules/makePrefabDataUrls":20,"./modules/packUtil/packLoader":22,"./modules/packUtil/packManager":23,"./modules/prefab":25,"./modules/stage":26,"./modules/tray":27,"./modules/ui/focusGuide":30,"./ui":33}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/list":6,"./modules/classes/rect":8,"./modules/classes/vector2":10,"./modules/data":12,"./modules/editBlock":13,"./modules/event":16,"./modules/initDOM":19,"./modules/makePrefabDataUrls":21,"./modules/packUtil/packLoader":23,"./modules/packUtil/packManager":24,"./modules/prefab":26,"./modules/stage":27,"./modules/tray":28,"./modules/ui/focusGuide":31,"./ui":34}],2:[function(require,module,exports){
 var initDOM = require("./initDOM");
 var canvas;
 (function (canvas_1) {
@@ -306,6 +306,7 @@ var list = require("./classes/list");
 var prefabMini = require("./classes/prefabMini");
 var stage = require("./stage");
 var d = require("./data");
+var jsonPlanet = require("./jsonPlanet");
 var compiler;
 (function (compiler) {
     function getLangAuto(oneLine) {
@@ -500,9 +501,26 @@ var compiler;
         return result.join("\n");
     }
     compiler.old2CSV = old2CSV;
+    function csv2Json(csv) {
+        var result = new jsonPlanet.jsonPlanet(0.1);
+        var lines = csv.split("\n");
+        lines.forEach(function (i) {
+            if (i.substring(0, 1) === "*") {
+                return;
+            }
+            if (i.substring(0, 2) === "//") {
+                return;
+            }
+            var nameAndblock = i.split("=");
+            var items = nameAndblock[0].split(",");
+            result.Stage.push(new jsonPlanet.jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
+        });
+        return result;
+    }
+    compiler.csv2Json = csv2Json;
 })(compiler || (compiler = {}));
 module.exports = compiler;
-},{"./classes/list":6,"./classes/prefabMini":7,"./data":12,"./stage":26}],12:[function(require,module,exports){
+},{"./classes/list":6,"./classes/prefabMini":7,"./data":12,"./jsonPlanet":20,"./stage":27}],12:[function(require,module,exports){
 var data = (function () {
     function data() {
     }
@@ -596,7 +614,7 @@ var editBlock;
     editBlock_1.clickRemoveAttr = clickRemoveAttr;
 })(editBlock || (editBlock = {}));
 module.exports = editBlock;
-},{"./data":12,"./stage":26}],14:[function(require,module,exports){
+},{"./data":12,"./stage":27}],14:[function(require,module,exports){
 var elem;
 (function (elem) {
     function addEventListenerforQuery(query, eventName, listener) {
@@ -700,6 +718,67 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 module.exports = add;
 },{}],20:[function(require,module,exports){
+var jsonPlanet;
+(function (jsonPlanet_1) {
+    var jsonBlockAttr = (function () {
+        function jsonBlockAttr(blockMode) {
+            this.blockMode = blockMode;
+        }
+        jsonBlockAttr.prototype.toJson = function () {
+            var result = {};
+            if (typeof this.blockMode !== "undefined") {
+                result["blockMode"] = this.blockMode;
+            }
+            return result;
+        };
+        return jsonBlockAttr;
+    })();
+    jsonPlanet_1.jsonBlockAttr = jsonBlockAttr;
+    var jsonBlockItem = (function () {
+        function jsonBlockItem(blockName, posX, posY, name, attr) {
+            this.blockName = blockName;
+            this.posX = posX;
+            this.posY = posY;
+            this.name = name;
+            this.attr = attr;
+        }
+        jsonBlockItem.prototype.toArray = function () {
+            var result = [this.blockName, this.posX, this.posY];
+            if (typeof this.name !== "undefined") {
+                result.push(this.name);
+            }
+            else {
+                result.push("");
+            }
+            if (typeof this.attr !== "undefined") {
+                result.push(this.attr.toJson());
+            }
+            return result;
+        };
+        return jsonBlockItem;
+    })();
+    jsonPlanet_1.jsonBlockItem = jsonBlockItem;
+    var jsonPlanet = (function () {
+        function jsonPlanet(JsonPlanetVersion, Stage) {
+            if (Stage === void 0) { Stage = []; }
+            this.JsonPlanetVersion = JsonPlanetVersion;
+            this.Stage = Stage;
+        }
+        jsonPlanet.prototype.exportJson = function () {
+            var result = {};
+            result["JsonPlanetVersion"] = this.JsonPlanetVersion;
+            result["Stage"] = [];
+            this.Stage.forEach(function (i) {
+                result["Stage"].push(i.toArray());
+            });
+            return result;
+        };
+        return jsonPlanet;
+    })();
+    jsonPlanet_1.jsonPlanet = jsonPlanet;
+})(jsonPlanet || (jsonPlanet = {}));
+module.exports = jsonPlanet;
+},{}],21:[function(require,module,exports){
 var d = require("./data");
 var list = require("./classes/list");
 var packManager = require("./packUtil/packManager");
@@ -719,9 +798,9 @@ function makeDataUrl() {
     return result;
 }
 module.exports = makeDataUrl;
-},{"./classes/list":6,"./classes/vector2":10,"./data":12,"./image":17,"./packUtil/packManager":23}],21:[function(require,module,exports){
+},{"./classes/list":6,"./classes/vector2":10,"./data":12,"./image":17,"./packUtil/packManager":24}],22:[function(require,module,exports){
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
 var packManager = require("./packManager");
 function load(packName) {
@@ -737,7 +816,7 @@ function load(packName) {
     });
 }
 module.exports = load;
-},{"./packManager":23}],23:[function(require,module,exports){
+},{"./packManager":24}],24:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -865,7 +944,7 @@ var pack;
     pack.skyboxInfoList = skyboxInfoList;
 })(pack || (pack = {}));
 module.exports = pack;
-},{"./../classes/blockAttr/attrList":3,"./../classes/list":6}],24:[function(require,module,exports){
+},{"./../classes/blockAttr/attrList":3,"./../classes/list":6}],25:[function(require,module,exports){
 var stage = require("./stage");
 var prefab = require("./prefab");
 var compiler = require("./compiler");
@@ -939,7 +1018,7 @@ var planet;
     planet.importText = importText;
 })(planet || (planet = {}));
 module.exports = planet;
-},{"./compiler":11,"./data":12,"./prefab":25,"./stage":26}],25:[function(require,module,exports){
+},{"./compiler":11,"./data":12,"./prefab":26,"./stage":27}],26:[function(require,module,exports){
 var prefab = (function () {
     function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
         this.gridX = gridX;
@@ -952,7 +1031,7 @@ var prefab = (function () {
     return prefab;
 })();
 module.exports = prefab;
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var list = require("./classes/list");
 var canvas = require("./canvas");
 var image = require("./image");
@@ -1186,7 +1265,7 @@ var stage;
     stage.toDrawRect = toDrawRect;
 })(stage || (stage = {}));
 module.exports = stage;
-},{"./canvas":2,"./classes/list":6,"./classes/rect":8,"./classes/vector2":10,"./data":12,"./event":16,"./image":17}],27:[function(require,module,exports){
+},{"./canvas":2,"./classes/list":6,"./classes/rect":8,"./classes/vector2":10,"./data":12,"./event":16,"./image":17}],28:[function(require,module,exports){
 var image = require("./image");
 var TrayBlockDetails = require("./classes/trayBlockDetails");
 var d = require("./data");
@@ -1278,7 +1357,7 @@ var tray;
     tray.initTrayObj = initTrayObj;
 })(tray || (tray = {}));
 module.exports = tray;
-},{"./classes/trayBlockDetails":9,"./data":12,"./event":16,"./image":17,"./packUtil/packManager":23,"./uiWaitMode":28}],28:[function(require,module,exports){
+},{"./classes/trayBlockDetails":9,"./data":12,"./event":16,"./image":17,"./packUtil/packManager":24,"./uiWaitMode":29}],29:[function(require,module,exports){
 var uiWaitMode;
 (function (uiWaitMode) {
     function start() {
@@ -1291,7 +1370,7 @@ var uiWaitMode;
     uiWaitMode.end = end;
 })(uiWaitMode || (uiWaitMode = {}));
 module.exports = uiWaitMode;
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /// <reference path="../../definitely/move.d.ts" />
 var anim;
 (function (anim) {
@@ -1329,7 +1408,7 @@ var anim;
     anim.hideLoading = hideLoading;
 })(anim || (anim = {}));
 module.exports = anim;
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 var initDOM = require("./../initDOM");
 var focusGuide;
 (function (focusGuide) {
@@ -1357,7 +1436,7 @@ var focusGuide;
     focusGuide.hide = hide;
 })(focusGuide || (focusGuide = {}));
 module.exports = focusGuide;
-},{"./../initDOM":19}],31:[function(require,module,exports){
+},{"./../initDOM":19}],32:[function(require,module,exports){
 var util;
 (function (util) {
     function obj2SelectElem(obj) {
@@ -1377,14 +1456,14 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var version;
 (function (version_1) {
     version_1.version = "v1.0";
     version_1.author = "shundroid";
 })(version || (version = {}));
 module.exports = version;
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
@@ -1424,7 +1503,6 @@ var ui;
         });
         event.addEventListener("ui_downCanvas|ui_moveCanvas|ui_upCanvas|ui_hoveringCanvas", function (e, eventName) {
             var g = stage.getGridPosFromMousePos(new Vector2(e.clientX, e.clientY));
-            console.log(eventName);
             event.raiseEvent("gridCanvas", new stage.gridDetail(g, eventName.replace("ui_", "").replace("Canvas", ""), new Vector2(e.clientX, e.clientY)));
         });
         event.addEventListener("initedPack", function () {
@@ -1484,7 +1562,6 @@ var ui;
     }
     ui.setupCanvas = setupCanvas;
     function togglefullScreen(e) {
-        console.log(d.isFullscreenTray);
         if (!d.isFullscreenTray) {
             closeInspector();
             anim.showTrayFull();
@@ -1605,7 +1682,7 @@ var ui;
     });
     function clickConvertOldFile() {
         document.getElementById("conv-new").value =
-            compiler.old2CSV(document.getElementById("conv-old").value);
+            JSON.stringify(compiler.csv2Json(document.getElementById("conv-old").value).exportJson());
     }
     ui.clickConvertOldFile = clickConvertOldFile;
     function changeSkybox(e) {
@@ -1628,4 +1705,4 @@ var ui;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":10,"./modules/compiler":11,"./modules/data":12,"./modules/editBlock":13,"./modules/elem":14,"./modules/evElems":15,"./modules/event":16,"./modules/importJS":18,"./modules/initDOM":19,"./modules/packUtil/packManager":23,"./modules/planet":24,"./modules/stage":26,"./modules/tray":27,"./modules/ui/anim":29,"./modules/util":31,"./modules/version":32}]},{},[1,2,4,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,29,30,28,31,32,33]);
+},{"./modules/classes/vector2":10,"./modules/compiler":11,"./modules/data":12,"./modules/editBlock":13,"./modules/elem":14,"./modules/evElems":15,"./modules/event":16,"./modules/importJS":18,"./modules/initDOM":19,"./modules/packUtil/packManager":24,"./modules/planet":25,"./modules/stage":27,"./modules/tray":28,"./modules/ui/anim":30,"./modules/util":32,"./modules/version":33}]},{},[1,2,4,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,30,31,29,32,33,34]);

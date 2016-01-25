@@ -18,21 +18,13 @@ import fGuide = require("./modules/ui/focusGuide");
 module main {
 
   function init() {
-    d.trayItemDataURLs = new list<string>();
-    d.defaultPackName = "oa";
-    //d.pack = new packManager.packModule({});
-    d.defaultGridSize = 25;
-    d.defaultBlockSize = 50;
-    d.activeToolName = "pencil";
-    d.isObjMode = false;
-    d.isFullscreenTray = false;
-    d.isShowInspector = false;
+    d.dataInit();
   }
   init();
   
   initDOM(() => {
     ui.setupCanvas();
-    packLoader(d.defaultPackName).then(i => {
+    packLoader(d.defaultPackName).then((i:any) => {
       d.pack = new packManager.packModule(i);
       event.raiseEvent("packLoaded", null);
       stage.stageEffects.skybox = d.pack.editor.defaultSkybox;
@@ -115,7 +107,7 @@ module main {
               }
               if (!detail.contains) {
                 canvas.render(d.selectImage, rect);
-                stage.items.add(stage.getId(), pre);
+                stage.items.push(stage.getId(), pre);
               }
             } else if (d.activeToolName === "erase" && detail.contains) {
               stage.items.remove(detail.id);

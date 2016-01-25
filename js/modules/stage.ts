@@ -74,14 +74,20 @@ module stage {
     }
   }
   
+  /**
+   * ステージ上のすべてのPrefabのリスト
+   */
   var prefabList:list<prefab>;
+  
+  /**
+   * stageLayer別のIdを格納
+   */
+  var prefabLayer:number[][];
+  
   export module items {
-    /**
-     * alias (push)
-     */
-    export function add(id:number, p:prefab) { push(id, p); }
-    export function push(id:number, p:prefab) {
+    export function push(id:number, p:prefab, stageLayer:number=0) {
       prefabList.push(id.toString(), p);
+      prefabLayer[stageLayer].push(id);
     }
     export function getAll() {
       return prefabList.getAll();
@@ -94,6 +100,12 @@ module stage {
     }
     export function get(id:number) {
       return prefabList.get(id.toString());
+    }
+    /**
+     * レイヤーごとにIdを取得
+     */
+    export function getLayer(stageLayer:number) {
+      return prefabLayer[stageLayer];
     }
   }
   var maxId:number;

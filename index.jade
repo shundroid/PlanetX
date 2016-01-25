@@ -16,12 +16,6 @@ html(lang="ja")
       .ins-article#ins-io
         h1 Import / Export
         .ins-content
-          select
-            option(value="csv") csv
-            option(value="json") json
-            option(value="jsPla") jsWithPlaLib
-            option(value="yaml") yaml
-            option(value="in:auto") Auto (Import Only)
           textarea#pla-io.ev-input(data-default="")
           .pla-btngroup
             button.pla-btn.bl.bl-top.ev-btn#io-export(data-bl="Export", data-listener="clickExport"): i.fa.fa-upload
@@ -35,24 +29,27 @@ html(lang="ja")
             li: button.pla-btn.ins-show-btn(data-ins="header-footer") Header / Footer
             li: button.pla-btn.ins-show-btn(data-ins="conv-old-file") Convert old file
             li: button.pla-btn.ins-show-btn(data-ins="preferences") Editor Preferences
+          // stageLayer用
+          | Active Layer:&nbsp;
+          input.ev-input#slayer-active-number(type="number", data-default="0", min="0", data-change="changeActiveStageLayer")
           span#pla-ver
       .ins-article#ins-conv-old-file
         h1 Convert old file
         .ins-content
-          span Old:
+          | Old:
           br
           textarea#conv-old.ta-no-resize.ev-input(data-default="")
-          span New:
+          | New:
           br
           textarea#conv-new.ta-no-resize.ev-input(readonly, data-default="")
           div: button.pla-btn.bl.bl-top.ev-btn#conv(data-bl="convert", data-listener="clickConvertOldFile"): i.fa.fa-exchange
       .ins-article#ins-header-footer
         h1 Header / Footer
         .ins-content
-          span Header:
+          | Header:
           br
           textarea.io-hf#io-header.ta-no-resize.ev-input(data-default="")
-          span Footer:
+          | Footer:
           br
           textarea.io-hf#io-footer.ta-no-resize.ev-input(data-default="")
       .ins-article#ins-stage-effect
@@ -60,8 +57,8 @@ html(lang="ja")
         .ins-content
           ul
             li
-              span Skybox:
-              select.pack-select#stg-skybox(data-items="skyboxes", data-change="changeSkybox")
+              | Skybox:
+              select.pack-select.ev-input#stg-skybox(data-items="skyboxes", data-change="changeSkybox")
       .ins-article#ins-preferences
         h1 Editor Preferences
         .ins-content
@@ -72,7 +69,7 @@ html(lang="ja")
           span#ed-pos: br
           span#ed-id: br
           .pla-btngroup
-            select.ed-attr.pack-select(data-items="attributes")
+            select.ed-attr.pack-select.ev-input(data-items="attributes")
             button.pla-btn.ev-btn(data-listener="clickAddAttr"): i.fa.fa-plus
           .ed-attr-view
     footer.pla-footer

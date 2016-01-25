@@ -18,13 +18,7 @@
     "@character": { "width": 50, "height": 100, "name": "ハルスター", "filename": "halstar.png" }
   },
   "descriptions": {
-    "block": { "description": "ふつうのブロックです。", "type": "ブロック" },
-    "character": { "description": "ゲームの主人公です", "type": "人物" },
-    "tree": { "description": "飾りです", "type": "飾り" },
-    "mv/right": { "description": "右に動く", "type": "仕掛け" },
-    "mv/down": { "description": "下に動く", "type": "仕掛け" },
-    "mv/left": { "description": "左に動く", "type": "仕掛け" },
-    "mv/up": { "description": "上に動く", "type": "仕掛け" }
+    "block": { "description": "ふつうのブロックです。", "type": "ブロック" }
   },
   "attributes": {
     "sayblock": {

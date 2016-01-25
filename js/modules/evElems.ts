@@ -9,6 +9,9 @@ module evElems {
       if (typeof elem.dataset["default"] !== "undefined") {
         elem.value = elem.dataset["default"];
       }
+      if (typeof elem.dataset["change"] !== "undefined") {
+        elem.addEventListener("change", listenerNamespace[elem.dataset["change"]]);
+      }
     });
   }
 }

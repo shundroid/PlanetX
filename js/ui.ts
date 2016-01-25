@@ -57,12 +57,13 @@ module ui {
       el.forEachforQuery(".pack-select", (i) => {
         var elem = <HTMLSelectElement>i;
         elem.innerHTML = u.obj2SelectElem((<list<any>>(<any>d.pack)[elem.dataset["items"]]).toSimple());
-        if (elem.dataset["change"]) {
-          elem.addEventListener("change", (<any>ui)[elem.dataset["change"]]);
-        }
-        if (elem.dataset["default"]) {
-          elem.value = elem.dataset["default"];
-        }
+        // ev-inputで実装
+//        if (elem.dataset["change"]) {
+//          elem.addEventListener("change", (<any>ui)[elem.dataset["change"]]);
+//        }
+//        if (elem.dataset["default"]) {
+//          elem.value = elem.dataset["default"];
+//        }
       });
       (<HTMLSelectElement>document.getElementById("stg-skybox")).value = d.pack.editor.defaultSkybox;
     });
@@ -164,10 +165,10 @@ module ui {
   }
   
   export function initTrayBlock() {
-    return new Promise((resolve) => {
+    return new Promise((resolve:any) => {
       tray.initTrayBlock((numerator, denominator) => {
         changeLoadingStatus(`loading tray-block : ${numerator.toString()} / ${denominator.toString()}`);
-      }).then((ul) => {
+      }).then((ul:any) => {
         (<Array<HTMLDivElement>>ul).forEach(i => {
           document.getElementsByClassName("tray-items")[0].appendChild(i);
         });
@@ -229,6 +230,9 @@ module ui {
   }
   export function changeAttrInput(e:Event) {
     stage.blockAttrs.update(d.editingBlockId, (<HTMLElement>e.target).id.replace("ed-attr-", ""), (<HTMLInputElement>e.target).value);
+  }
+  export function changeActiveStageLayer(e:Event) {
+    alert("hoge");
   }
   init();
 }

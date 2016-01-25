@@ -4,7 +4,6 @@ var initDOM = require("./modules/initDOM");
 var packLoader = require("./modules/packUtil/packLoader");
 var packManager = require("./modules/packUtil/packManager");
 var event = require("./modules/event");
-var list = require("./modules/classes/list");
 var stage = require("./modules/stage");
 var d = require("./modules/data");
 var makeDataUrl = require("./modules/makePrefabDataUrls");
@@ -18,15 +17,7 @@ var fGuide = require("./modules/ui/focusGuide");
 var main;
 (function (main) {
     function init() {
-        d.trayItemDataURLs = new list();
-        d.defaultPackName = "oa";
-        //d.pack = new packManager.packModule({});
-        d.defaultGridSize = 25;
-        d.defaultBlockSize = 50;
-        d.activeToolName = "pencil";
-        d.isObjMode = false;
-        d.isFullscreenTray = false;
-        d.isShowInspector = false;
+        d.dataInit();
     }
     init();
     initDOM(function () {
@@ -117,7 +108,7 @@ var main;
                             }
                             if (!detail.contains) {
                                 canvas.render(d.selectImage, rect);
-                                stage.items.add(stage.getId(), pre);
+                                stage.items.push(stage.getId(), pre);
                             }
                         }
                         else if (d.activeToolName === "erase" && detail.contains) {
@@ -131,7 +122,8 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/list":6,"./modules/classes/rect":8,"./modules/classes/vector2":10,"./modules/data":12,"./modules/editBlock":13,"./modules/event":16,"./modules/initDOM":19,"./modules/makePrefabDataUrls":21,"./modules/packUtil/packLoader":23,"./modules/packUtil/packManager":24,"./modules/prefab":26,"./modules/stage":27,"./modules/tray":28,"./modules/ui/focusGuide":31,"./ui":34}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/rect":8,"./modules/classes/vector2":10,"./modules/data":12,"./modules/editBlock":13,"./modules/event":16,"./modules/initDOM":19,"./modules/makePrefabDataUrls":21,"./modules/packUtil/packLoader":23,"./modules/packUtil/packManager":24,"./modules/prefab":26,"./modules/stage":27,"./modules/tray":28,"./modules/ui/focusGuide":31,"./ui":34}],2:[function(require,module,exports){
+/// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
 var initDOM = require("./initDOM");
 var canvas;
 (function (canvas_1) {
@@ -143,6 +135,10 @@ var canvas;
         resizeCanvas();
         if (canvas && canvas.getContext) {
             ctx = canvas.getContext("2d");
+            ctx.imageSmoothingEnabled = false;
+            ctx.mozImageSmoothingEnabled = false;
+            ctx.webkitImageSmoothingEnabled = false;
+            ctx.msImageSmoothingEnabled = false;
         }
     });
     window.addEventListener("resize", resizeCanvas);
@@ -161,10 +157,16 @@ var canvas;
         ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height);
     }
     canvas_1.render = render;
+    /**
+     * 指定された四角形の範囲をclearRectします。
+     */
     function clearByRect(rect) {
         ctx.clearRect(rect.x, rect.y, rect.width, rect.height);
     }
     canvas_1.clearByRect = clearByRect;
+    /**
+     * Canvas 全体をclearRectします。
+     */
     function clear() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
@@ -525,13 +527,29 @@ var compiler;
 })(compiler || (compiler = {}));
 module.exports = compiler;
 },{"./classes/list":6,"./classes/prefabMini":7,"./data":12,"./jsonPlanet":20,"./stage":27,"./version":33}],12:[function(require,module,exports){
+var list = require("./classes/list");
 var data = (function () {
     function data() {
     }
+    /*
+     * 全ての Data メンバーを、初期化します。
+     */
+    data.dataInit = function () {
+        this.trayItemDataURLs = new list();
+        this.defaultPackName = "oa";
+        //this.pack = new packManager.packModule({});
+        this.defaultGridSize = 25;
+        this.defaultBlockSize = 50;
+        this.activeToolName = "pencil";
+        this.isObjMode = false;
+        this.isFullscreenTray = false;
+        this.isShowInspector = false;
+        this.activeStageLayer = 0;
+    };
     return data;
 })();
 module.exports = data;
-},{}],13:[function(require,module,exports){
+},{"./classes/list":6}],13:[function(require,module,exports){
 var d = require("./data");
 var stage = require("./stage");
 var editBlock;
@@ -645,6 +663,9 @@ var evElems;
             var elem = i;
             if (typeof elem.dataset["default"] !== "undefined") {
                 elem.value = elem.dataset["default"];
+            }
+            if (typeof elem.dataset["change"] !== "undefined") {
+                elem.addEventListener("change", listenerNamespace[elem.dataset["change"]]);
             }
         });
     }
@@ -1183,16 +1204,20 @@ var stage;
         }
         blockAttrs.getAll = getAll;
     })(blockAttrs = stage.blockAttrs || (stage.blockAttrs = {}));
+    /**
+     * ステージ上のすべてのPrefabのリスト
+     */
     var prefabList;
+    /**
+     * stageLayer別のIdを格納
+     */
+    var prefabLayer;
     var items;
     (function (items) {
-        /**
-         * alias (push)
-         */
-        function add(id, p) { push(id, p); }
-        items.add = add;
-        function push(id, p) {
+        function push(id, p, stageLayer) {
+            if (stageLayer === void 0) { stageLayer = 0; }
             prefabList.push(id.toString(), p);
+            prefabLayer[stageLayer].push(id);
         }
         items.push = push;
         function getAll() {
@@ -1211,6 +1236,13 @@ var stage;
             return prefabList.get(id.toString());
         }
         items.get = get;
+        /**
+         * レイヤーごとにIdを取得
+         */
+        function getLayer(stageLayer) {
+            return prefabLayer[stageLayer];
+        }
+        items.getLayer = getLayer;
     })(items = stage.items || (stage.items = {}));
     var maxId;
     function init() {
@@ -1590,12 +1622,13 @@ var ui;
             el.forEachforQuery(".pack-select", function (i) {
                 var elem = i;
                 elem.innerHTML = u.obj2SelectElem(d.pack[elem.dataset["items"]].toSimple());
-                if (elem.dataset["change"]) {
-                    elem.addEventListener("change", ui[elem.dataset["change"]]);
-                }
-                if (elem.dataset["default"]) {
-                    elem.value = elem.dataset["default"];
-                }
+                // ev-inputで実装
+                //        if (elem.dataset["change"]) {
+                //          elem.addEventListener("change", (<any>ui)[elem.dataset["change"]]);
+                //        }
+                //        if (elem.dataset["default"]) {
+                //          elem.value = elem.dataset["default"];
+                //        }
             });
             document.getElementById("stg-skybox").value = d.pack.editor.defaultSkybox;
         });
@@ -1772,6 +1805,10 @@ var ui;
         stage.blockAttrs.update(d.editingBlockId, e.target.id.replace("ed-attr-", ""), e.target.value);
     }
     ui.changeAttrInput = changeAttrInput;
+    function changeActiveStageLayer(e) {
+        alert("hoge");
+    }
+    ui.changeActiveStageLayer = changeActiveStageLayer;
     init();
 })(ui || (ui = {}));
 module.exports = ui;

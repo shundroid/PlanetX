@@ -48,7 +48,7 @@ var main;
         });
         event.addEventListener("gridCanvas", function (e) {
             var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
-            var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY));
+            var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY), d.activeStageLayer);
             var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
             fGuide.hide();
             switch (d.activeToolName) {
@@ -56,11 +56,11 @@ var main;
                     if (e.eventName === "down") {
                         if (!detail.contains) {
                             canvas.render(d.selectImage, rect);
-                            stage.items.push(stage.getId(), pre);
+                            stage.items.push(stage.getId(), pre, d.activeStageLayer);
                         }
                         else {
                             stage.items.remove(detail.id);
-                            stage.renderStage();
+                            stage.renderStage(d.activeStageLayer);
                         }
                     }
                     else if (e.eventName === "hovering") {
@@ -87,7 +87,7 @@ var main;
                     if (e.eventName === "move") {
                         stage.scrollX += e.mousePos.x - stage.scrollBeforeX;
                         stage.scrollY += e.mousePos.y - stage.scrollBeforeY;
-                        stage.renderStage();
+                        stage.renderStage(d.activeStageLayer);
                     }
                     stage.scrollBeforeX = e.mousePos.x;
                     stage.scrollBeforeY = e.mousePos.y;
@@ -104,16 +104,16 @@ var main;
                         if (d.activeToolName === "brush") {
                             if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
                                 stage.items.remove(detail.id);
-                                stage.renderStage();
+                                stage.renderStage(d.activeStageLayer);
                             }
                             if (!detail.contains) {
                                 canvas.render(d.selectImage, rect);
-                                stage.items.push(stage.getId(), pre);
+                                stage.items.push(stage.getId(), pre, d.activeStageLayer);
                             }
                         }
                         else if (d.activeToolName === "erase" && detail.contains) {
                             stage.items.remove(detail.id);
-                            stage.renderStage();
+                            stage.renderStage(d.activeStageLayer);
                         }
                     }
                     break;
@@ -519,7 +519,7 @@ var compiler;
             }
             var nameAndblock = i.split("=");
             var items = nameAndblock[0].split(",");
-            result.Stage.push(new jsonPlanet.jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
+            result.Stage[0].push(new jsonPlanet.jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
         });
         return result;
     }
@@ -802,16 +802,25 @@ var jsonPlanet;
             var result = {};
             result["JsonPlanetVersion"] = this.JsonPlanetVersion;
             result["Stage"] = [];
-            this.Stage.forEach(function (i) {
-                result["Stage"].push(i.toArray());
-            });
+            for (var i = 0; i < this.Stage.length; i++) {
+                result["Stage"][i] = [];
+                this.Stage[i].forEach(function (j) {
+                    result["Stage"][i].push(j.toArray());
+                });
+            }
+            ;
             return result;
         };
         jsonPlanet.importJson = function (json) {
             var result = new jsonPlanet(json["JsonPlanetVersion"] || version.jsonPlanetVersion);
-            json["Stage"].forEach(function (i) {
-                result.Stage.push(jsonBlockItem.fromArray(i));
-            });
+            var stage = json["Stage"];
+            for (var i = 0; i < stage.length; i++) {
+                result.Stage[i] = [];
+                stage[i].forEach(function (j) {
+                    result.Stage[i].push(jsonBlockItem.fromArray(j));
+                });
+            }
+            ;
             return result;
         };
         return jsonPlanet;
@@ -1003,11 +1012,14 @@ var planet;
      */
     function toJsonPlanet() {
         var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
-        var items = stage.items.getAll();
-        Object.keys(items).forEach(function (i) {
-            var item = stage.items.get(parseInt(i));
-            result.Stage.push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, i));
-        });
+        var items = stage.items.getAllLayer();
+        for (var i = 0; i < items.length; i++) {
+            result.Stage[i] = [];
+            items[i].forEach(function (j) {
+                var item = stage.items.get(j);
+                result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
+            });
+        }
         return result;
     }
     planet.toJsonPlanet = toJsonPlanet;
@@ -1018,17 +1030,21 @@ var planet;
     function fromJsonPlanet(jsonPla) {
         stage.items.clear();
         stage.resetId();
-        jsonPla.Stage.forEach(function (i) {
-            if (d.pack.objs.contains(i.blockName)) {
-                var objData = d.pack.objs.get(i.blockName);
-                stage.items.push(stage.getId(), new prefab(i.posX, i.posY, objData.data.filename, i.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)));
-            }
-            else {
-                var blockData = d.pack.blocks.get(i.blockName);
-                stage.items.push(stage.getId(), new prefab(i.posX, i.posY, blockData.data.filename, i.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)));
-            }
-        });
+        for (var i = 0; i < jsonPla.Stage.length; i++) {
+            jsonPla.Stage[i].forEach(function (j) {
+                if (d.pack.objs.contains(j.blockName)) {
+                    var objData = d.pack.objs.get(j.blockName);
+                    stage.items.push(stage.getId(), new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
+                }
+                else {
+                    var blockData = d.pack.blocks.get(j.blockName);
+                    stage.items.push(stage.getId(), new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
+                }
+            });
+        }
+        d.activeStageLayer = 0;
         var result = new stage.StageEffects();
+        result.skybox = "sky";
         // Todo: StageEffect
         return result;
     }
@@ -1212,12 +1228,24 @@ var stage;
      * stageLayer別のIdを格納
      */
     var prefabLayer;
+    /**
+     * アクティブなstageLayerを変えるほか、画面の切り替えも行います。
+     */
+    function changeActiveStageLayer(stageLayer) {
+        d.activeStageLayer = stageLayer;
+        // 描画
+        renderStage(stageLayer);
+    }
+    stage.changeActiveStageLayer = changeActiveStageLayer;
     var items;
     (function (items) {
+        /**
+         * 内部でpushStageLayerを呼び出します
+         */
         function push(id, p, stageLayer) {
             if (stageLayer === void 0) { stageLayer = 0; }
             prefabList.push(id.toString(), p);
-            prefabLayer[stageLayer].push(id);
+            pushStageLayer(stageLayer, id);
         }
         items.push = push;
         function getAll() {
@@ -1237,17 +1265,41 @@ var stage;
         }
         items.get = get;
         /**
-         * レイヤーごとにIdを取得
+         * レイヤーごとにItemを取得
          */
-        function getLayer(stageLayer) {
+        function getLayerItems(stageLayer) {
+            var ids = getLayerIds(stageLayer);
+            var result = new list();
+            ids.forEach(function (i) {
+                result.push(i.toString(), get(i));
+            });
+            return result;
+        }
+        items.getLayerItems = getLayerItems;
+        function pushStageLayer(stageLayer, id) {
+            if (typeof prefabLayer[stageLayer] === "undefined") {
+                prefabLayer[stageLayer] = [];
+            }
+            prefabLayer[stageLayer].push(id);
+        }
+        items.pushStageLayer = pushStageLayer;
+        function getLayerIds(stageLayer) {
+            if (typeof prefabLayer[stageLayer] === "undefined") {
+                prefabLayer[stageLayer] = [];
+            }
             return prefabLayer[stageLayer];
         }
-        items.getLayer = getLayer;
+        items.getLayerIds = getLayerIds;
+        function getAllLayer() {
+            return prefabLayer;
+        }
+        items.getAllLayer = getAllLayer;
     })(items = stage.items || (stage.items = {}));
     var maxId;
     function init() {
         prefabList = new list();
         blockAttrsList = new list();
+        prefabLayer = new Array();
         stage.header = "";
         stage.footer = "";
         maxId = 0;
@@ -1261,9 +1313,13 @@ var stage;
         maxId = 0;
     }
     stage.resetId = resetId;
-    function renderStage() {
+    /**
+     * ステージをstageLayerに基づき描画します。
+     */
+    function renderStage(renderStageLayer) {
+        if (renderStageLayer === void 0) { renderStageLayer = 0; }
         canvas.clear();
-        var l = items.getAll();
+        var l = items.getLayerItems(renderStageLayer).getAll();
         Object.keys(l).forEach(function (i) {
             var item = items.get(parseInt(i));
             var x = stage.scrollX + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridX), stage.toMousePos(item.gridW));
@@ -1287,7 +1343,7 @@ var stage;
         isResizeRequest = true;
         resizeTimerId = setTimeout(function () {
             isResizeRequest = false;
-            renderStage();
+            renderStage(d.activeStageLayer);
         }, 100);
     });
     var gridDetail = (function () {
@@ -1326,12 +1382,12 @@ var stage;
         return getPrefabFromGridDetails;
     })();
     stage.getPrefabFromGridDetails = getPrefabFromGridDetails;
-    function getPrefabFromGrid(grid) {
+    function getPrefabFromGrid(grid, stageLayer) {
         var result = new getPrefabFromGridDetails(false, -1, null);
         var breakException = {};
         // breakするため
         try {
-            Object.keys(items.getAll()).forEach(function (i) {
+            Object.keys(items.getLayerItems(stageLayer).getAll()).forEach(function (i) {
                 var item = items.get(parseInt(i));
                 if (grid.x >= item.gridX && grid.x < item.gridX + item.gridW &&
                     grid.y >= item.gridY && grid.y < item.gridY + item.gridH) {
@@ -1701,7 +1757,7 @@ var ui;
         var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse(document.getElementById("pla-io").value)));
         stage.stageEffects = effects;
         setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox).data.filename);
-        stage.renderStage();
+        stage.renderStage(d.activeStageLayer);
     }
     ui.clickImport = clickImport;
     function clickInsShowBtn(e) {
@@ -1806,7 +1862,7 @@ var ui;
     }
     ui.changeAttrInput = changeAttrInput;
     function changeActiveStageLayer(e) {
-        alert("hoge");
+        stage.changeActiveStageLayer(parseInt(e.target.value));
     }
     ui.changeActiveStageLayer = changeActiveStageLayer;
     init();

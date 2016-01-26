@@ -174,7 +174,7 @@ module compiler {
       }
       var nameAndblock = i.split("=");
       var items = nameAndblock[0].split(",");
-      result.Stage.push(new jsonPlanet.jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
+      result.Stage[0].push(new jsonPlanet.jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
     });
     return result;
   }

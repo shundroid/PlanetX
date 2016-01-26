@@ -84,10 +84,23 @@ module stage {
    */
   var prefabLayer:number[][];
   
+  /**
+   * アクティブなstageLayerを変えるほか、画面の切り替えも行います。
+   */
+  export function changeActiveStageLayer(stageLayer:number) {
+    d.activeStageLayer = stageLayer;
+    // 描画
+    renderStage(stageLayer);
+  }
+  
   export module items {
+    
+    /**
+     * 内部でpushStageLayerを呼び出します
+     */
     export function push(id:number, p:prefab, stageLayer:number=0) {
       prefabList.push(id.toString(), p);
-      prefabLayer[stageLayer].push(id);
+      pushStageLayer(stageLayer, id);
     }
     export function getAll() {
       return prefabList.getAll();
@@ -102,16 +115,37 @@ module stage {
       return prefabList.get(id.toString());
     }
     /**
-     * レイヤーごとにIdを取得
+     * レイヤーごとにItemを取得
      */
-    export function getLayer(stageLayer:number) {
+    export function getLayerItems(stageLayer:number) {
+      var ids = getLayerIds(stageLayer);
+      var result = new list<prefab>();
+      ids.forEach(i => {
+        result.push(i.toString(), get(i));
+      });
+      return result;
+    }
+    export function pushStageLayer(stageLayer: number, id: number) {
+      if (typeof prefabLayer[stageLayer] === "undefined") {
+        prefabLayer[stageLayer] = [];
+      }
+      prefabLayer[stageLayer].push(id);
+    }
+    export function getLayerIds(stageLayer: number) {
+      if (typeof prefabLayer[stageLayer] === "undefined") {
+        prefabLayer[stageLayer] = [];
+      }
       return prefabLayer[stageLayer];
+    }
+    export function getAllLayer() {
+      return prefabLayer;
     }
   }
   var maxId:number;
   function init() {
     prefabList = new list<prefab>();
     blockAttrsList = new list<list<string>>();
+    prefabLayer = new Array<Array<number>>();
     header = "";
     footer = "";
     maxId = 0;
@@ -125,9 +159,12 @@ module stage {
     maxId = 0;
   }
   
-  export function renderStage() {
+  /**
+   * ステージをstageLayerに基づき描画します。
+   */
+  export function renderStage(renderStageLayer: number = 0) {
     canvas.clear();
-    var l = items.getAll();
+    var l = items.getLayerItems(renderStageLayer).getAll();
     Object.keys(l).forEach(i => {
       var item = items.get(parseInt(i));
       var x = stage.scrollX + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridX), stage.toMousePos(item.gridW));
@@ -151,7 +188,7 @@ module stage {
     isResizeRequest = true;
     resizeTimerId = setTimeout(() => {
       isResizeRequest = false;
-      renderStage();
+      renderStage(d.activeStageLayer);
     }, 100);
   });
   export class gridDetail {
@@ -179,12 +216,12 @@ module stage {
       public prefab: prefab
     ) { }
   }
-  export function getPrefabFromGrid(grid:Vector2) {
+  export function getPrefabFromGrid(grid:Vector2, stageLayer: number) {
     var result = new getPrefabFromGridDetails(false, -1, null);
     var breakException = {};
     // breakするため
     try {
-      Object.keys(items.getAll()).forEach(i => {
+      Object.keys(items.getLayerItems(stageLayer).getAll()).forEach(i => {
         var item = items.get(parseInt(i));
         if (grid.x >= item.gridX && grid.x < item.gridX + item.gridW &&
           grid.y >= item.gridY && grid.y < item.gridY + item.gridH) {

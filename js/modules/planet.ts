@@ -16,11 +16,14 @@ module planet {
    */
   export function toJsonPlanet() {
     var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
-    var items:any = stage.items.getAll();
-    Object.keys(items).forEach(i => {
-      var item = stage.items.get(parseInt(i));
-      result.Stage.push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, i));
-    });
+    var items = stage.items.getAllLayer();
+    for (var i = 0; i < items.length; i++)  {
+      result.Stage[i] = [];
+      items[i].forEach(j => {
+        var item = stage.items.get(j);
+        result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
+      });
+    }
     return result;
   }
   
@@ -31,16 +34,20 @@ module planet {
   export function fromJsonPlanet(jsonPla: jsonPlanet.jsonPlanet) {
     stage.items.clear();
     stage.resetId();
-    jsonPla.Stage.forEach(i => {
-      if (d.pack.objs.contains(i.blockName)) {
-        let objData = d.pack.objs.get(i.blockName);
-        stage.items.push(stage.getId(), new prefab(i.posX, i.posY, objData.data.filename, i.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)));
-      } else {
-        let blockData = d.pack.blocks.get(i.blockName);
-        stage.items.push(stage.getId(), new prefab(i.posX, i.posY, blockData.data.filename, i.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)));
-      }
-    });
+    for (var i = 0; i < jsonPla.Stage.length; i++) {
+      jsonPla.Stage[i].forEach(j => {
+        if (d.pack.objs.contains(j.blockName)) {
+          let objData = d.pack.objs.get(j.blockName);
+          stage.items.push(stage.getId(), new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
+        } else {
+          let blockData = d.pack.blocks.get(j.blockName);
+          stage.items.push(stage.getId(), new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
+        }        
+      });
+    }
+    d.activeStageLayer = 0;
     var result = new stage.StageEffects();
+    result.skybox = "sky";
     // Todo: StageEffect
     return result;
   }

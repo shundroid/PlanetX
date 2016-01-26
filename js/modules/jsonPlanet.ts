@@ -46,22 +46,29 @@ module jsonPlanet {
   export class jsonPlanet {
     constructor(
       public JsonPlanetVersion:number,
-      public Stage:Array<jsonBlockItem> = []
+      public Stage:Array<Array<jsonBlockItem>> = []
     ) {}
     exportJson() {
       var result:any = {};
       result["JsonPlanetVersion"] = this.JsonPlanetVersion;
       result["Stage"] = [];
-      this.Stage.forEach(i => {
-        (<Array<any>>result["Stage"]).push(i.toArray());
-      });
+      for (var i = 0; i < this.Stage.length; i++) {
+        (<Array<any>>result["Stage"])[i] = [];
+        this.Stage[i].forEach(j => {
+          (<Array<any>>result["Stage"])[i].push(j.toArray());  
+        });
+      };
       return result;
     }
     static importJson(json:any) {
       var result = new jsonPlanet(json["JsonPlanetVersion"] || version.jsonPlanetVersion);
-      (<Array<any>>json["Stage"]).forEach(i => {
-        result.Stage.push(jsonBlockItem.fromArray(i));
-      });
+      var stage = (<Array<any>>json["Stage"]);
+      for (var i = 0; i < stage.length; i++) {
+        result.Stage[i] = [];
+        (<Array<any>>stage[i]).forEach(j => {
+          result.Stage[i].push(jsonBlockItem.fromArray(<Array<any>>j));          
+        })
+      };
       return result;
     }
   }

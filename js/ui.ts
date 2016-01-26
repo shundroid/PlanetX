@@ -130,7 +130,7 @@ module ui {
     var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
     stage.stageEffects = effects;
     setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox).data.filename);
-    stage.renderStage();
+    stage.renderStage(d.activeStageLayer);
   }
   
   export function clickInsShowBtn(e:MouseEvent) {
@@ -232,7 +232,7 @@ module ui {
     stage.blockAttrs.update(d.editingBlockId, (<HTMLElement>e.target).id.replace("ed-attr-", ""), (<HTMLInputElement>e.target).value);
   }
   export function changeActiveStageLayer(e:Event) {
-    alert("hoge");
+    stage.changeActiveStageLayer(parseInt((<HTMLInputElement>e.target).value));
   }
   init();
 }

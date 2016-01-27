@@ -59,7 +59,7 @@ var main;
                             stage.items.push(stage.getId(), pre, d.activeStageLayer);
                         }
                         else {
-                            stage.items.remove(detail.id);
+                            stage.items.remove(detail.id, d.activeStageLayer);
                             stage.renderStage(d.activeStageLayer);
                         }
                     }
@@ -103,7 +103,7 @@ var main;
                     if (e.eventName === "move" || e.eventName === "down") {
                         if (d.activeToolName === "brush") {
                             if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
-                                stage.items.remove(detail.id);
+                                stage.items.remove(detail.id, d.activeStageLayer);
                                 stage.renderStage(d.activeStageLayer);
                             }
                             if (!detail.contains) {
@@ -112,7 +112,7 @@ var main;
                             }
                         }
                         else if (d.activeToolName === "erase" && detail.contains) {
-                            stage.items.remove(detail.id);
+                            stage.items.remove(detail.id, d.activeStageLayer);
                             stage.renderStage(d.activeStageLayer);
                         }
                     }
@@ -1252,8 +1252,9 @@ var stage;
             return prefabList.getAll();
         }
         items.getAll = getAll;
-        function remove(id) {
-            return prefabList.remove(id.toString());
+        function remove(id, stageLayer) {
+            prefabLayer[stageLayer].splice(prefabLayer[stageLayer].indexOf(id), 1);
+            prefabList.remove(id.toString());
         }
         items.remove = remove;
         function clear() {

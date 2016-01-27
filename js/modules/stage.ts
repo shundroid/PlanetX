@@ -105,8 +105,9 @@ module stage {
     export function getAll() {
       return prefabList.getAll();
     }
-    export function remove(id:number) {
-      return prefabList.remove(id.toString());
+    export function remove(id:number, stageLayer: number) {
+      prefabLayer[stageLayer].splice(prefabLayer[stageLayer].indexOf(id), 1);
+      prefabList.remove(id.toString());
     }
     export function clear() {
       prefabList.clear();

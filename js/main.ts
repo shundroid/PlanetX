@@ -60,7 +60,7 @@ module main {
               canvas.render(d.selectImage, rect);
               stage.items.push(stage.getId(), pre, d.activeStageLayer);
             } else {
-              stage.items.remove(detail.id);
+              stage.items.remove(detail.id, d.activeStageLayer);
               stage.renderStage(d.activeStageLayer);
             }
           } else if (e.eventName === "hovering") {
@@ -102,7 +102,7 @@ module main {
           if (e.eventName === "move" || e.eventName === "down") {
             if (d.activeToolName === "brush") {
               if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
-                stage.items.remove(detail.id);
+                stage.items.remove(detail.id, d.activeStageLayer);
                 stage.renderStage(d.activeStageLayer);
               }
               if (!detail.contains) {
@@ -110,7 +110,7 @@ module main {
                 stage.items.push(stage.getId(), pre, d.activeStageLayer);
               }
             } else if (d.activeToolName === "erase" && detail.contains) {
-              stage.items.remove(detail.id);
+              stage.items.remove(detail.id, d.activeStageLayer);
               stage.renderStage(d.activeStageLayer);
             }
           }

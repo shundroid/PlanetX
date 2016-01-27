@@ -11,11 +11,34 @@
     "block/mv/down": { "name": "ムーブ（下）", "filename": "m_down.png" },
     "block/mv/left": { "name": "ムーブ（左）", "filename": "m_left.png" },
     "block/mv/up": { "name": "ムーブ（上）", "filename": "m_up.png" },
-    "block/bom": { "name": "消えるブロック", "filename": "bom.png" }
+    "block/bom": { "name": "消えるブロック", "filename": "bom.png" },
+    "block/brick": { "name": "レンガブロック", "filename": "brick.png" },
+    "block/plain": { "name": "普通のブロック", "filename": "normal.png" },
+    "block/shupon": { "name": "しゅぽんブロック", "filename": "shupon.png" },
+    "block/hat/1": { "name": "ワープブロック1", "filename": "bluehat.png" },
+    "block/hat/2": { "name": "ワープブロック2", "filename": "redhat.png" },
+    "block/tika/1": { "name": "ちかちか1", "filename": "tika1.png" },
+    "block/tika/2": { "name": "ちかちか2", "filename": "tika2.png" },
+    "items/coin": { "name": "コイン", "filename": "coin1.png" },
+    "monster/dende/1": { "name": "でんで1", "filename": "dende.png" },
+    "monster/dende/2": { "name": "でんで2", "filename": "dende2.png" },
+    "monster/dende/x": { "name": "でんでダンサー", "filename": "dende_dancer.png" },
+    "monster/sunsun": { "name": "太陽君", "filename": "sunsun.png" },
+    "monster/sunsun_anim": { "name": "動く太陽君", "filename": "sunsun_anim.png" },
+    "monster/toge/down": { "name": "とげ下向き", "filename": "toge/down.png" },
+    "monster/toge/left": { "name": "とげ左向き", "filename": "toge/left.png" },
+    "monster/toge/right": { "name": "とげ右向き", "filename": "toge/right.png" },
+    "monster/toge/up": { "name": "とげ上向き", "filename": "toge/up.png" },
+    "gimmick/brdg": { "name": "すりぬけブリッジ", "filename": "bridge.png" },
+    "gimmick/hashigo": { "name": "はしご", "filename": "hashigo.png" },
+    "gimmick/skeleton": { "name": "スケルトン", "filename": "skeleton.png" }
   },
   "objs": {
     "tree": { "width": 100, "height": 100, "filename": "tree.png", "name": "木", "type": "飾り"},
-    "@character": { "width": 50, "height": 100, "name": "ハルスター", "filename": "halstar.png" }
+    "@character": { "width": 50, "height": 100, "name": "ハルスター", "filename": "halstar.png" },
+    "gimmick/goal": { "width": 50, "height": 200, "name": "ゴール", "filename": "Goal.png" },
+    "gimmick/conveyer/left": { "width": 300, "height": 50, "name": "コンベア左へ", "filename": "c-left.png" },
+    "gimmick/conveyer/right": { "width": 300, "height": 50, "name": "コンベア右へ", "filename": "c-right.png" }
   },
   "descriptions": {
     "block": { "description": "ふつうのブロックです。", "type": "ブロック" }

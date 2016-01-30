@@ -21,7 +21,17 @@ module planet {
       result.Stage[i] = [];
       items[i].forEach(j => {
         var item = stage.items.get(j);
-        result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
+        if (stage.blockAttrs.containsBlock(j)) {
+          // attrがあるとき
+          var attr:{ [key: string]: string } = {};
+          var attrs = stage.blockAttrs.getBlock(j);
+          Object.keys(attrs).forEach(k => {
+            attr[attrs[parseInt(k)].attrName] = attrs[parseInt(k)].attrVal;
+          });
+          result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString(), attr));          
+        } else {
+          result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
+        }
       });
     }
     return result;

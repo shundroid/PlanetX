@@ -5,25 +5,13 @@ import version = require("./version");
  * 構造化した、jsonPlanet関連を提供します。
  */
 module jsonPlanet {
-  export class jsonBlockAttr {
-    constructor(
-      public blockMode?:string
-    ) {}
-    toJson() {
-      var result:any = {};
-      if (typeof this.blockMode !== "undefined") {
-        result["blockMode"] = this.blockMode;
-      }
-      return result;
-    }
-  }
   export class jsonBlockItem {
     constructor(
       public blockName:string,
       public posX:number,
       public posY:number,
       public name?:string,
-      public attr?:jsonBlockAttr
+      public attr?:{ [key: string]: string }
     ) {}
     toArray() {
       var result:Array<any> = [this.blockName, this.posX, this.posY];
@@ -33,7 +21,7 @@ module jsonPlanet {
         result.push("");
       }
       if (typeof this.attr !== "undefined") {
-        result.push(this.attr.toJson());
+        result.push(this.attr);
       }
       return result;
     }

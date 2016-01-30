@@ -659,20 +659,6 @@ var version = require("./version");
  */
 var jsonPlanet;
 (function (jsonPlanet_1) {
-    var jsonBlockAttr = (function () {
-        function jsonBlockAttr(blockMode) {
-            this.blockMode = blockMode;
-        }
-        jsonBlockAttr.prototype.toJson = function () {
-            var result = {};
-            if (typeof this.blockMode !== "undefined") {
-                result["blockMode"] = this.blockMode;
-            }
-            return result;
-        };
-        return jsonBlockAttr;
-    })();
-    jsonPlanet_1.jsonBlockAttr = jsonBlockAttr;
     var jsonBlockItem = (function () {
         function jsonBlockItem(blockName, posX, posY, name, attr) {
             this.blockName = blockName;
@@ -690,7 +676,7 @@ var jsonPlanet;
                 result.push("");
             }
             if (typeof this.attr !== "undefined") {
-                result.push(this.attr.toJson());
+                result.push(this.attr);
             }
             return result;
         };
@@ -925,7 +911,18 @@ var planet;
             result.Stage[i] = [];
             items[i].forEach(function (j) {
                 var item = stage.items.get(j);
-                result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
+                if (stage.blockAttrs.containsBlock(j)) {
+                    // attrがあるとき
+                    var attr = {};
+                    var attrs = stage.blockAttrs.getBlock(j);
+                    Object.keys(attrs).forEach(function (k) {
+                        attr[attrs[parseInt(k)].attrName] = attrs[parseInt(k)].attrVal;
+                    });
+                    result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString(), attr));
+                }
+                else {
+                    result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
+                }
             });
         }
         return result;

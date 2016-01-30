@@ -89,6 +89,9 @@ module stage {
     export function getAll() {
       return blockAttrsList;
     }
+    export function clear() {
+      blockAttrsList = {};
+    }
     
     // attrId関係
     export function getMaxAttrId(blockId: number) {

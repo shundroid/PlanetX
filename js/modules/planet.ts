@@ -1,6 +1,5 @@
 import stage = require("./stage");
 import prefab = require("./prefab");
-import compiler = require("./compiler");
 import d = require("./data");
 import jsonPlanet = require("./jsonPlanet");
 import version = require("./version");
@@ -43,16 +42,23 @@ module planet {
    */
   export function fromJsonPlanet(jsonPla: jsonPlanet.jsonPlanet) {
     stage.items.clear();
+    stage.blockAttrs.clear();
     stage.resetId();
     for (var i = 0; i < jsonPla.Stage.length; i++) {
       jsonPla.Stage[i].forEach(j => {
+        var id = stage.getId();
         if (d.pack.objs.contains(j.blockName)) {
           let objData = d.pack.objs.get(j.blockName);
-          stage.items.push(stage.getId(), new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
+          stage.items.push(id, new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
         } else {
           let blockData = d.pack.blocks.get(j.blockName);
-          stage.items.push(stage.getId(), new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
-        }        
+          stage.items.push(id, new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
+        }
+        if (typeof j.attr !== "undefined") {
+          Object.keys(j.attr).forEach(k => {
+            stage.blockAttrs.push(id, stage.blockAttrs.getMaxAttrId(id), new stage.Attr(k, j.attr[k]));
+          });
+        }
       });
     }
     d.activeStageLayer = 0;

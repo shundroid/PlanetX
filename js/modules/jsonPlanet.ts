@@ -28,6 +28,10 @@ module jsonPlanet {
     static fromArray(ar:Array<any>) {
       var result = new jsonBlockItem(<string>ar[0], <number>ar[1], <number>ar[2], <string>ar[3]);
       // Todo: Attr
+      if (typeof ar[4] !== "undefined") {
+        // attrが存在する場合
+        result.attr = <{[key: string]: string}>ar[4];
+      }
       return result;
     }
   }

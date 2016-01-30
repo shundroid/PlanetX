@@ -683,6 +683,10 @@ var jsonPlanet;
         jsonBlockItem.fromArray = function (ar) {
             var result = new jsonBlockItem(ar[0], ar[1], ar[2], ar[3]);
             // Todo: Attr
+            if (typeof ar[4] !== "undefined") {
+                // attrが存在する場合
+                result.attr = ar[4];
+            }
             return result;
         };
         return jsonBlockItem;
@@ -934,16 +938,23 @@ var planet;
      */
     function fromJsonPlanet(jsonPla) {
         stage.items.clear();
+        stage.blockAttrs.clear();
         stage.resetId();
         for (var i = 0; i < jsonPla.Stage.length; i++) {
             jsonPla.Stage[i].forEach(function (j) {
+                var id = stage.getId();
                 if (d.pack.objs.contains(j.blockName)) {
                     var objData = d.pack.objs.get(j.blockName);
-                    stage.items.push(stage.getId(), new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
+                    stage.items.push(id, new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
                 }
                 else {
                     var blockData = d.pack.blocks.get(j.blockName);
-                    stage.items.push(stage.getId(), new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
+                    stage.items.push(id, new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
+                }
+                if (typeof j.attr !== "undefined") {
+                    Object.keys(j.attr).forEach(function (k) {
+                        stage.blockAttrs.push(id, stage.blockAttrs.getMaxAttrId(id), new stage.Attr(k, j.attr[k]));
+                    });
                 }
             });
         }
@@ -1066,6 +1077,10 @@ var stage;
             return blockAttrsList;
         }
         blockAttrs.getAll = getAll;
+        function clear() {
+            blockAttrsList = {};
+        }
+        blockAttrs.clear = clear;
         // attrId関係
         function getMaxAttrId(blockId) {
             if (typeof blockAttrsList[blockId] === "undefined") {

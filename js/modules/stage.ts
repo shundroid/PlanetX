@@ -6,9 +6,10 @@ import d = require("./data");
 import rect = require("./classes/rect");
 import event = require("./event");
 import Vector2 = require("./classes/vector2");
-import blockAttributes = require("./classes/blockAttr/blockAttributes");
-import attribute = require("./classes/blockAttr/attribute");
+
 module stage {
+  
+  // StageEffect
   export class StageEffects {
     public skybox:string;
     constructor() {
@@ -16,68 +17,93 @@ module stage {
     }
   }
   export var stageEffects:StageEffects = new StageEffects();
+  
+  // 現在はほぼ使用していない
   export var header:string;
   export var footer:string;
   
-  var blockAttrsList:list<list<string>>;
+  // Todo: このクラスを分離
+  export class Attr {
+    constructor(
+      public attrName: string = "",
+      public attrVal: string = ""
+    ) { }
+  }
+  
+  // Attrをブロックごとに管理
+  var blockAttrsList:{[key: number]: {[key: number]: Attr}};
   export module blockAttrs {
-    export function setAll(lst:list<list<string>>) {
+    export function setAll(lst:{[key: string]: {[key: number]: Attr}}) {
       blockAttrsList = lst;
     }
-    export function push(blockId: number, attrName:string, value:string) {
-      var l:list<string>;
-      if (containsBlock(blockId)) {
-        l = getBlock(blockId);
-      } else {
-        l = new list<string>();
+    export function push(blockId: number, attrId: number, value:Attr) {
+      if (typeof blockAttrsList[blockId] === "undefined") {
+        blockAttrsList[blockId] = {};
       }
-      l.push(attrName, value);
-      blockAttrsList.push(blockId.toString(), l);
+      blockAttrsList[blockId][attrId] = value;
     }
-    export function update(blockId: number, attrName:string, value:string) {
-      var l = getBlock(blockId);
-      l.update(attrName, value);
-      blockAttrsList.update(blockId.toString(), l);
-    }
-    export function containsAttr(blockId: number, attrName:string) {
-      if (containsBlock(blockId)) {
-        var l = getBlock(blockId);
-        return l.contains(attrName);
+    
+    export function update(blockId: number, attrId: number, attr:{[key: string]: string}): void;
+    export function update(blockId: number, attrId: number, attr:Attr): void;
+    
+    export function update(blockId: number, attrId: number, attr:any): void {
+      if (attr instanceof Attr) {
+        // attrNameをAttrで指定するとき
+        blockAttrsList[blockId][attrId] = <Attr>attr;
       } else {
+        // attrName、attrValで指定するとき
+        var cur = blockAttrsList[blockId][attrId];
+        if (typeof attr["attrName"] !== "undefined") {
+          cur.attrName = attr["attrName"];
+        }
+        if (typeof attr["attrVal"] !== "undefined") {
+          cur.attrVal = attr["attrVal"];
+        }
+        blockAttrsList[blockId][attrId] = cur;
+      }
+    }
+    
+    export function containsAttr(blockId: number, attrId: number) {
+      // blockIdがundefinedのときは、エラーが出ないよう、falseを返しておく。
+      if (typeof blockAttrsList[blockId] === "undefined") {
         return false;
+      } else {
+        return typeof blockAttrsList[blockId][attrId] !== "undefined";
       }
     }
     export function containsBlock(blockId: number) {
-      return blockAttrsList.contains(blockId.toString());
+      return typeof blockAttrsList[blockId] !== "undefined";
     }
-    export function removeAttr(blockId: number, attrName:string) {
-      var l = getBlock(blockId);
-      l.remove(attrName);
-      blockAttrsList.update(blockId.toString(), l);
+    export function removeAttr(blockId: number, attrId: number) {
+      delete blockAttrsList[blockId][attrId];
     }
     export function removeBlock(blockId: number) {
-      blockAttrsList.remove(blockId.toString());
+      delete blockAttrsList[blockId];
     }
     export function getBlock(blockId: number) {
-      return blockAttrsList.get(blockId.toString());
+      return blockAttrsList[blockId];
     }
-    export function getAttr(blockId: number, attrName: string) {
-      return blockAttrsList.get(blockId.toString()).get(attrName);
+    export function getAttr(blockId: number, attrId: number) {
+      return blockAttrsList[blockId][attrId];
     }
     export function getAll() {
-      var l = blockAttrsList.getAll();
-      var result:any = {};
-      Object.keys(l).forEach(i => {
-        result[i] = blockAttrsList.get(i).getAll(); 
-      });
-      return result;
+      return blockAttrsList;
+    }
+    
+    // attrId関係
+    export function getMaxAttrId(blockId: number) {
+      if (typeof blockAttrsList[blockId] === "undefined") {
+        return 0;
+      } else {
+        return Object.keys(blockAttrsList[blockId]).length;
+      }
     }
   }
   
   /**
    * ステージ上のすべてのPrefabのリスト
    */
-  var prefabList:list<prefab>;
+  var prefabList:{[key: number]: prefab};
   
   /**
    * stageLayer別のIdを格納
@@ -99,21 +125,21 @@ module stage {
      * 内部でpushStageLayerを呼び出します
      */
     export function push(id:number, p:prefab, stageLayer:number=0) {
-      prefabList.push(id.toString(), p);
+      prefabList[id] =  p;
       pushStageLayer(stageLayer, id);
     }
-    export function getAll() {
-      return prefabList.getAll();
+    export function all() {
+      return prefabList;
     }
     export function remove(id:number, stageLayer: number) {
       prefabLayer[stageLayer].splice(prefabLayer[stageLayer].indexOf(id), 1);
-      prefabList.remove(id.toString());
+      delete prefabList[id];
     }
     export function clear() {
-      prefabList.clear();
+      prefabList = {};
     }
     export function get(id:number) {
-      return prefabList.get(id.toString());
+      return prefabList[id];
     }
     /**
      * レイヤーごとにItemを取得
@@ -144,8 +170,8 @@ module stage {
   }
   var maxId:number;
   function init() {
-    prefabList = new list<prefab>();
-    blockAttrsList = new list<list<string>>();
+    prefabList = {};
+    blockAttrsList = {};
     prefabLayer = new Array<Array<number>>();
     header = "";
     footer = "";

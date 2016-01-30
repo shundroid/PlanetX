@@ -194,7 +194,6 @@ module ui {
   }
   
   export function hideLoading() {
-    var elem = <HTMLElement>document.getElementsByClassName("loading")[0];
     anim.hideLoading();
   }
   
@@ -222,15 +221,13 @@ module ui {
   }
   
   export function clickAddAttr() {
-    var attrKey = (<HTMLSelectElement>document.getElementsByClassName("ed-attr")[0]).value;
-    if (!stage.blockAttrs.containsAttr(d.editingBlockId, attrKey)) {
-      editBlock.renderAttributeUI(attrKey);
-      stage.blockAttrs.push(d.editingBlockId, attrKey, "");
-    }
+    var attrId = stage.blockAttrs.getMaxAttrId(d.editingBlockId);
+    stage.blockAttrs.push(d.editingBlockId, attrId, new stage.Attr());
+    editBlock.renderAttributeUI(attrId);    
   }
-  export function changeAttrInput(e:Event) {
-    stage.blockAttrs.update(d.editingBlockId, (<HTMLElement>e.target).id.replace("ed-attr-", ""), (<HTMLInputElement>e.target).value);
-  }
+//  export function changeAttrInput(e:Event) {
+//    stage.blockAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")), (<HTMLInputElement>e.target).value);
+//  }
   export function changeActiveStageLayer(e:Event) {
     stage.changeActiveStageLayer(parseInt((<HTMLInputElement>e.target).value));
   }

@@ -132,9 +132,6 @@ footer.pla-footer .tray #tray-fullscreen {
 .pla-inspector #ins-header-footer .ins-content textarea {
   flex: 1;
 }
-.ed-attr-view section input {
-  width: 90%;
-}
 input[type="number"] {
   text-align: right;
 }

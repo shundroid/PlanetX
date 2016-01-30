@@ -38,17 +38,12 @@
     "@character": { "width": 50, "height": 100, "name": "ハルスター", "filename": "halstar.png" },
     "gimmick/goal": { "width": 50, "height": 200, "name": "ゴール", "filename": "Goal.png" },
     "gimmick/conveyer/left": { "width": 300, "height": 50, "name": "コンベア左へ", "filename": "c-left.png" },
-    "gimmick/conveyer/right": { "width": 300, "height": 50, "name": "コンベア右へ", "filename": "c-right.png" }
+    "gimmick/conveyer/right": { "width": 300, "height": 50, "name": "コンベア右へ", "filename": "c-right.png" },
+    "gimmick/dokan": { "width": 100, "height": 100, "name": "土管", "filename": "dokan.png" },
+    "system/dummy": { "width": 50, "height": 100, "filename": "dummy.png", "name": "ダミーハルスター" }
   },
   "descriptions": {
     "block": { "description": "ふつうのブロックです。", "type": "ブロック" }
-  },
-  "attributes": {
-    "sayblock": {
-      "label": "メッセージブロック",
-      "type": "text",
-      "placeholder": "ブロックが叩かれたときのメッセージ"
-    }
   },
   "skyboxes": {
     "sky": { "filename": "background.png", "label": "普通" }

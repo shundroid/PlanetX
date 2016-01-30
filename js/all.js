@@ -304,122 +304,10 @@ var Vector2 = (function () {
 })();
 module.exports = Vector2;
 },{}],11:[function(require,module,exports){
-var list = require("./classes/list");
-var prefabMini = require("./classes/prefabMini");
-var stage = require("./stage");
-var d = require("./data");
 var jsonPlanet = require("./jsonPlanet");
 var version = require("./version");
 var compiler;
 (function (compiler) {
-    function getLangAuto(oneLine) {
-        switch (oneLine) {
-            case "//:csv":
-                return compileLangs.CSV;
-                break;
-        }
-        return compileLangs.unknown;
-    }
-    compiler.getLangAuto = getLangAuto;
-    (function (compileLangs) {
-        compileLangs[compileLangs["CSV"] = 0] = "CSV";
-        compileLangs[compileLangs["JsWithPla"] = 1] = "JsWithPla";
-        compileLangs[compileLangs["yaml"] = 2] = "yaml";
-        compileLangs[compileLangs["unknown"] = 3] = "unknown";
-        compileLangs[compileLangs["auto"] = 4] = "auto";
-    })(compiler.compileLangs || (compiler.compileLangs = {}));
-    var compileLangs = compiler.compileLangs;
-    var centerLang = (function () {
-        function centerLang(prefabList, header, footer, effects, attrList) {
-            this.prefabList = prefabList;
-            this.header = header;
-            this.footer = footer;
-            this.effects = effects;
-            this.attrList = attrList;
-        }
-        ;
-        return centerLang;
-    })();
-    compiler.centerLang = centerLang;
-    function toCenterLang(mode, text) {
-        switch (mode) {
-            case compileLangs.CSV:
-                return CSV2CenterLang(text);
-                break;
-        }
-        return null;
-    }
-    compiler.toCenterLang = toCenterLang;
-    function CSV2CenterLang(text) {
-        var lines = text.replace(/;/g, "").split("\n");
-        var result = new list();
-        var header = [];
-        var footer = [];
-        var effects = new stage.StageEffects();
-        var mode = 0; // 0: normal, 1: header, 2: footer
-        var attrs = new list();
-        // Attr setup
-        var l = d.pack.attributes.getAll();
-        var attrFormatList = [];
-        Object.keys(l).forEach(function (i) {
-            var formatListItem = [];
-            attrFormatList.push(formatListItem.join(","));
-        });
-        lines.forEach(function (i) {
-            if (mode === 0) {
-                if (i === "//:header") {
-                    mode = 1;
-                }
-                else if (i === "//:footer") {
-                    mode = 2;
-                }
-                else {
-                    i = i.replace(/ /g, "");
-                    if (i === "")
-                        return;
-                    if (i.substring(0, 2) === "//")
-                        return;
-                    var items = i.split(",");
-                    if (items[0].substring(0, 1) === "*") {
-                        if (items[0] === "*skybox") {
-                            effects.skybox = items[1];
-                        }
-                        else {
-                            if (Object.keys(d.pack.attributes.getAll()).indexOf(items[1]) !== -1) {
-                                var lst;
-                                if (attrs.contains(items[2])) {
-                                    lst = attrs.get(items[2]);
-                                }
-                                else {
-                                    lst = new list();
-                                }
-                                lst.push(items[1], items[3]);
-                                attrs.push(items[2], lst);
-                            }
-                        }
-                        return;
-                    }
-                    result.push(i, new prefabMini(parseInt(items[1]), parseInt(items[2]), items[0]));
-                }
-            }
-            else if (mode === 1) {
-                if (i === "//:/header") {
-                    mode = 0;
-                    return;
-                }
-                header.push(i);
-            }
-            else if (mode === 2) {
-                if (i === "//:/footer") {
-                    mode = 0;
-                    return;
-                }
-                footer.push(i);
-            }
-        });
-        return new centerLang(result, header.join("\n"), footer.join("\n"), effects, attrs);
-    }
-    compiler.CSV2CenterLang = CSV2CenterLang;
     function old2CSV(old) {
         var lines = old.split("\n");
         var result = [];
@@ -526,7 +414,7 @@ var compiler;
     compiler.csv2Json = csv2Json;
 })(compiler || (compiler = {}));
 module.exports = compiler;
-},{"./classes/list":6,"./classes/prefabMini":7,"./data":12,"./jsonPlanet":20,"./stage":27,"./version":33}],12:[function(require,module,exports){
+},{"./jsonPlanet":20,"./version":33}],12:[function(require,module,exports){
 var list = require("./classes/list");
 var data = (function () {
     function data() {
@@ -552,6 +440,9 @@ module.exports = data;
 },{"./classes/list":6}],13:[function(require,module,exports){
 var d = require("./data");
 var stage = require("./stage");
+/**
+ * Inspector内、EditBlockのデータ化
+ */
 var editBlock;
 (function (editBlock_1) {
     var EditBlock = (function () {
@@ -576,62 +467,81 @@ var editBlock;
         return currentEditBlock;
     }
     editBlock_1.getCurrentEditBlock = getCurrentEditBlock;
+    /**
+     * editingのblockが変わった時など、InspectorのEditBlockを更新する必要があるときに呼び出してください。
+     * UIを変更します。
+     */
     function updateEditBlockUI() {
         document.getElementById("ed-name").textContent = "Name: " + currentEditBlock.blockName;
         document.getElementById("ed-pos").textContent = "Pos: " + currentEditBlock.blockPos.x + ", " + currentEditBlock.blockPos.y;
         document.getElementById("ed-id").textContent = "ID: " + currentEditBlock.blockId;
         document.getElementsByClassName("ed-attr-view")[0].innerHTML = "";
         if (stage.blockAttrs.containsBlock(d.editingBlockId)) {
-            var l = stage.blockAttrs.getBlock(d.editingBlockId).getAll();
+            var l = stage.blockAttrs.getBlock(d.editingBlockId);
             Object.keys(l).forEach(function (i) {
-                renderAttributeUI(i, stage.blockAttrs.getAttr(d.editingBlockId, i));
+                var attr = stage.blockAttrs.getAttr(d.editingBlockId, parseInt(i));
+                renderAttributeUI(parseInt(i), attr.attrVal, attr.attrName);
             });
         }
     }
     editBlock_1.updateEditBlockUI = updateEditBlockUI;
-    function renderAttributeUI(attrName, inputValue) {
-        var addAttr = d.pack.attributes.get(attrName);
-        var addElem = document.createElement("section");
-        addElem.id = "ed-attr-field-" + attrName;
-        var addInput = document.createElement("input");
-        addInput.type = addAttr.type;
-        addInput.id = "ed-attr-" + attrName;
-        if (typeof addAttr.placeholder !== "undefined") {
-            addInput.placeholder = addAttr.placeholder;
+    // Todo: [x] attrNameをattrIdに変える
+    // Todo: オーバーロード export function renderAttributeUI(attrId: number, attr: stage.Attr);
+    function renderAttributeUI(attrId, inputName, inputValue) {
+        // Attrをグループ化しておく
+        var elemGroup = document.createElement("section");
+        elemGroup.id = "ed-attr-field-" + attrId;
+        // attrのNameを指定するInput (途中)
+        var nameElem = document.createElement("input");
+        nameElem.type = "text";
+        nameElem.id = "ed-attr-name-" + attrId;
+        nameElem.classList.add("ed-attr-name");
+        nameElem.placeholder = "name";
+        if (typeof inputName !== "undefined") {
+            nameElem.value = inputName;
         }
+        nameElem.addEventListener("change", changeAttrName);
+        // valueに当たるInput
+        var valElem = document.createElement("input");
+        valElem.type = "text";
+        valElem.id = "ed-attr-" + attrId;
+        valElem.classList.add("ed-attr-val");
+        valElem.placeholder = "value";
         if (typeof inputValue !== "undefined") {
-            console.log("hoge");
-            addInput.value = inputValue;
+            valElem.value = inputValue;
         }
-        else if (typeof addAttr.defaultValue !== "undefined") {
-            addInput.value = addAttr.defaultValue;
-        }
-        else if (addInput.type === "number") {
-            addInput.value = "0";
-        }
-        addInput.addEventListener("change", changeAttrInput);
-        var addLabel = document.createElement("label");
-        addLabel.htmlFor = addInput.id;
-        addLabel.textContent = " " + addAttr.label + ": ";
+        // 値が変わったとき
+        valElem.addEventListener("change", changeAttrVal);
+        // attrの削除
         var removeButton = document.createElement("button");
         removeButton.innerHTML = '<i class="fa fa-minus"></i>';
         removeButton.classList.add("pla-btn");
-        removeButton.id = "ed-attr-remove-" + attrName;
+        removeButton.id = "ed-attr-remove-" + attrId;
         removeButton.addEventListener("click", clickRemoveAttr);
-        addElem.appendChild(removeButton);
-        addElem.appendChild(addLabel);
-        addElem.appendChild(addInput);
-        document.getElementsByClassName("ed-attr-view")[0].appendChild(addElem);
+        // elemGroupへ追加。順番に注意!
+        elemGroup.appendChild(removeButton);
+        elemGroup.appendChild(nameElem);
+        elemGroup.appendChild(document.createTextNode(":"));
+        elemGroup.appendChild(valElem);
+        // 最後にattr-viewにすべて追加
+        document.getElementsByClassName("ed-attr-view")[0].appendChild(elemGroup);
     }
     editBlock_1.renderAttributeUI = renderAttributeUI;
-    function changeAttrInput(e) {
-        stage.blockAttrs.update(d.editingBlockId, e.target.id.replace("ed-attr-", ""), e.target.value);
+    function changeAttrVal(e) {
+        console.log(stage.blockAttrs.getAll());
+        console.log(parseInt(e.target.id.replace("ed-attr-", "")));
+        // Todo: [x] blockAttrsで、inputNameかinputValかどちらかを変えられるように、オーバーロードを作る
+        stage.blockAttrs.update(d.editingBlockId, parseInt(e.target.id.replace("ed-attr-", "")), { attrVal: e.target.value });
     }
-    editBlock_1.changeAttrInput = changeAttrInput;
+    editBlock_1.changeAttrVal = changeAttrVal;
+    function changeAttrName(e) {
+        stage.blockAttrs.update(d.editingBlockId, parseInt(e.target.id.replace("ed-attr-name-", "")), { attrName: e.target.value });
+    }
+    editBlock_1.changeAttrName = changeAttrName;
     function clickRemoveAttr(e) {
-        var attrName = e.target.id.replace("ed-attr-remove-", "");
-        stage.blockAttrs.removeAttr(d.editingBlockId, attrName);
-        document.getElementsByClassName("ed-attr-view")[0].removeChild(document.getElementById("ed-attr-field-" + attrName));
+        var attrId = parseInt(e.target.id.replace("ed-attr-remove-", ""));
+        stage.blockAttrs.removeAttr(d.editingBlockId, attrId);
+        document.getElementsByClassName("ed-attr-view")[0].removeChild(document.getElementById("ed-attr-field-" + attrId));
     }
     editBlock_1.clickRemoveAttr = clickRemoveAttr;
 })(editBlock || (editBlock = {}));
@@ -873,7 +783,6 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var list = require("./../classes/list");
-var attrList = require("./../classes/blockAttr/attrList");
 var pack;
 (function (pack) {
     function getPackPath(packName) {
@@ -903,11 +812,11 @@ var pack;
                 var cur = data["descriptions"][i];
                 _this.descriptions.push(i, new desInfo(cur));
             });
-            this.attributes = new attrList();
-            Object.keys(data["attributes"]).forEach(function (i) {
-                var cur = data["attributes"][i];
-                _this.attributes.push(i, cur);
-            });
+            // this.attributes = new attrList();
+            // Object.keys((<any>data)["attributes"]).forEach(i => {
+            //   var cur = <attribute>(<any>data)["attributes"][i];
+            //   this.attributes.push(i, cur);
+            // });
             this.skyboxes = new skyboxInfoList();
             Object.keys(data["skyboxes"]).forEach(function (i) {
                 _this.skyboxes.push(i, new skyboxInfo(data["skyboxes"][i]));
@@ -994,10 +903,9 @@ var pack;
     pack.skyboxInfoList = skyboxInfoList;
 })(pack || (pack = {}));
 module.exports = pack;
-},{"./../classes/blockAttr/attrList":3,"./../classes/list":6}],25:[function(require,module,exports){
+},{"./../classes/list":6}],25:[function(require,module,exports){
 var stage = require("./stage");
 var prefab = require("./prefab");
-var compiler = require("./compiler");
 var d = require("./data");
 var jsonPlanet = require("./jsonPlanet");
 var version = require("./version");
@@ -1049,80 +957,9 @@ var planet;
         return result;
     }
     planet.fromJsonPlanet = fromJsonPlanet;
-    /**
-     * 非推奨
-     */
-    function exportText() {
-        var result = [];
-        result.push("//:csv");
-        // header
-        if (stage.header.replace(/ /g, "").replace(/\n/g, "") !== "") {
-            result.push("//:header");
-            var hLines = stage.header.split("\n");
-            hLines.forEach(function (i) {
-                result.push(i);
-            });
-            result.push("//:/header");
-        }
-        // effects
-        result.push(["*skybox", stage.stageEffects.skybox].join(","));
-        // blocks
-        var items = stage.items.getAll();
-        Object.keys(items).forEach(function (i) {
-            var item = stage.items.get(parseInt(i));
-            result.push([[item.blockName, item.gridX, item.gridY].join(","), i].join("="));
-        });
-        // attributes
-        var atts = stage.blockAttrs.getAll();
-        if (atts) {
-            Object.keys(atts).forEach(function (i) {
-                var attr = stage.blockAttrs.getBlock(parseInt(i)).getAll();
-                Object.keys(attr).forEach(function (j) {
-                    result.push(["*custom", j, i, stage.blockAttrs.getBlock(parseInt(i)).get(j)].join(","));
-                });
-            });
-        }
-        // footer
-        if (stage.footer.replace(/ /g, "").replace(/\n/g, "") !== "") {
-            result.push("//:footer");
-            var fLines = stage.footer.split("\n");
-            fLines.forEach(function (i) {
-                result.push(i);
-            });
-            result.push("//:/footer");
-        }
-        return result.join("\n");
-    }
-    planet.exportText = exportText;
-    /**
-     * 非推奨
-     */
-    function importText(file) {
-        stage.items.clear();
-        stage.resetId();
-        var centerLang = compiler.toCenterLang(compiler.getLangAuto(file.split("\n")[0]), file);
-        stage.header = centerLang.header;
-        stage.footer = centerLang.footer;
-        var clang = centerLang.prefabList.getAll();
-        var result = centerLang.effects;
-        Object.keys(clang).forEach(function (i) {
-            var item = centerLang.prefabList.get(i);
-            if (d.pack.objs.contains(item.blockName)) {
-                var objData = d.pack.objs.get(item.blockName);
-                stage.items.push(stage.getId(), new prefab(item.x, item.y, objData.data.filename, item.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)));
-            }
-            else {
-                var blockData = d.pack.blocks.get(item.blockName);
-                stage.items.push(stage.getId(), new prefab(item.x, item.y, blockData.data.filename, item.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)));
-            }
-        });
-        stage.blockAttrs.setAll(centerLang.attrList);
-        return result;
-    }
-    planet.importText = importText;
 })(planet || (planet = {}));
 module.exports = planet;
-},{"./compiler":11,"./data":12,"./jsonPlanet":20,"./prefab":26,"./stage":27,"./version":33}],26:[function(require,module,exports){
+},{"./data":12,"./jsonPlanet":20,"./prefab":26,"./stage":27,"./version":33}],26:[function(require,module,exports){
 var prefab = (function () {
     function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
         this.gridX = gridX;
@@ -1145,6 +982,7 @@ var event = require("./event");
 var Vector2 = require("./classes/vector2");
 var stage;
 (function (stage) {
+    // StageEffect
     var StageEffects = (function () {
         function StageEffects() {
             this.skybox = "";
@@ -1153,6 +991,18 @@ var stage;
     })();
     stage.StageEffects = StageEffects;
     stage.stageEffects = new StageEffects();
+    // Todo: このクラスを分離
+    var Attr = (function () {
+        function Attr(attrName, attrVal) {
+            if (attrName === void 0) { attrName = ""; }
+            if (attrVal === void 0) { attrVal = ""; }
+            this.attrName = attrName;
+            this.attrVal = attrVal;
+        }
+        return Attr;
+    })();
+    stage.Attr = Attr;
+    // Attrをブロックごとに管理
     var blockAttrsList;
     var blockAttrs;
     (function (blockAttrs) {
@@ -1160,65 +1010,75 @@ var stage;
             blockAttrsList = lst;
         }
         blockAttrs.setAll = setAll;
-        function push(blockId, attrName, value) {
-            var l;
-            if (containsBlock(blockId)) {
-                l = getBlock(blockId);
+        function push(blockId, attrId, value) {
+            if (typeof blockAttrsList[blockId] === "undefined") {
+                blockAttrsList[blockId] = {};
             }
-            else {
-                l = new list();
-            }
-            l.push(attrName, value);
-            blockAttrsList.push(blockId.toString(), l);
+            blockAttrsList[blockId][attrId] = value;
         }
         blockAttrs.push = push;
-        function update(blockId, attrName, value) {
-            var l = getBlock(blockId);
-            l.update(attrName, value);
-            blockAttrsList.update(blockId.toString(), l);
-        }
-        blockAttrs.update = update;
-        function containsAttr(blockId, attrName) {
-            if (containsBlock(blockId)) {
-                var l = getBlock(blockId);
-                return l.contains(attrName);
+        function update(blockId, attrId, attr) {
+            if (attr instanceof Attr) {
+                // attrNameをAttrで指定するとき
+                blockAttrsList[blockId][attrId] = attr;
             }
             else {
+                // attrName、attrValで指定するとき
+                var cur = blockAttrsList[blockId][attrId];
+                if (typeof attr["attrName"] !== "undefined") {
+                    cur.attrName = attr["attrName"];
+                }
+                if (typeof attr["attrVal"] !== "undefined") {
+                    cur.attrVal = attr["attrVal"];
+                }
+                blockAttrsList[blockId][attrId] = cur;
+            }
+        }
+        blockAttrs.update = update;
+        function containsAttr(blockId, attrId) {
+            // blockIdがundefinedのときは、エラーが出ないよう、falseを返しておく。
+            if (typeof blockAttrsList[blockId] === "undefined") {
                 return false;
+            }
+            else {
+                return typeof blockAttrsList[blockId][attrId] !== "undefined";
             }
         }
         blockAttrs.containsAttr = containsAttr;
         function containsBlock(blockId) {
-            return blockAttrsList.contains(blockId.toString());
+            return typeof blockAttrsList[blockId] !== "undefined";
         }
         blockAttrs.containsBlock = containsBlock;
-        function removeAttr(blockId, attrName) {
-            var l = getBlock(blockId);
-            l.remove(attrName);
-            blockAttrsList.update(blockId.toString(), l);
+        function removeAttr(blockId, attrId) {
+            delete blockAttrsList[blockId][attrId];
         }
         blockAttrs.removeAttr = removeAttr;
         function removeBlock(blockId) {
-            blockAttrsList.remove(blockId.toString());
+            delete blockAttrsList[blockId];
         }
         blockAttrs.removeBlock = removeBlock;
         function getBlock(blockId) {
-            return blockAttrsList.get(blockId.toString());
+            return blockAttrsList[blockId];
         }
         blockAttrs.getBlock = getBlock;
-        function getAttr(blockId, attrName) {
-            return blockAttrsList.get(blockId.toString()).get(attrName);
+        function getAttr(blockId, attrId) {
+            return blockAttrsList[blockId][attrId];
         }
         blockAttrs.getAttr = getAttr;
         function getAll() {
-            var l = blockAttrsList.getAll();
-            var result = {};
-            Object.keys(l).forEach(function (i) {
-                result[i] = blockAttrsList.get(i).getAll();
-            });
-            return result;
+            return blockAttrsList;
         }
         blockAttrs.getAll = getAll;
+        // attrId関係
+        function getMaxAttrId(blockId) {
+            if (typeof blockAttrsList[blockId] === "undefined") {
+                return 0;
+            }
+            else {
+                return Object.keys(blockAttrsList[blockId]).length;
+            }
+        }
+        blockAttrs.getMaxAttrId = getMaxAttrId;
     })(blockAttrs = stage.blockAttrs || (stage.blockAttrs = {}));
     /**
      * ステージ上のすべてのPrefabのリスト
@@ -1244,25 +1104,25 @@ var stage;
          */
         function push(id, p, stageLayer) {
             if (stageLayer === void 0) { stageLayer = 0; }
-            prefabList.push(id.toString(), p);
+            prefabList[id] = p;
             pushStageLayer(stageLayer, id);
         }
         items.push = push;
-        function getAll() {
-            return prefabList.getAll();
+        function all() {
+            return prefabList;
         }
-        items.getAll = getAll;
+        items.all = all;
         function remove(id, stageLayer) {
             prefabLayer[stageLayer].splice(prefabLayer[stageLayer].indexOf(id), 1);
-            prefabList.remove(id.toString());
+            delete prefabList[id];
         }
         items.remove = remove;
         function clear() {
-            prefabList.clear();
+            prefabList = {};
         }
         items.clear = clear;
         function get(id) {
-            return prefabList.get(id.toString());
+            return prefabList[id];
         }
         items.get = get;
         /**
@@ -1298,8 +1158,8 @@ var stage;
     })(items = stage.items || (stage.items = {}));
     var maxId;
     function init() {
-        prefabList = new list();
-        blockAttrsList = new list();
+        prefabList = {};
+        blockAttrsList = {};
         prefabLayer = new Array();
         stage.header = "";
         stage.footer = "";
@@ -1824,7 +1684,6 @@ var ui;
     }
     ui.changeLoadingStatus = changeLoadingStatus;
     function hideLoading() {
-        var elem = document.getElementsByClassName("loading")[0];
         anim.hideLoading();
     }
     ui.hideLoading = hideLoading;
@@ -1851,17 +1710,14 @@ var ui;
     }
     ui.changeSkybox = changeSkybox;
     function clickAddAttr() {
-        var attrKey = document.getElementsByClassName("ed-attr")[0].value;
-        if (!stage.blockAttrs.containsAttr(d.editingBlockId, attrKey)) {
-            editBlock.renderAttributeUI(attrKey);
-            stage.blockAttrs.push(d.editingBlockId, attrKey, "");
-        }
+        var attrId = stage.blockAttrs.getMaxAttrId(d.editingBlockId);
+        stage.blockAttrs.push(d.editingBlockId, attrId, new stage.Attr());
+        editBlock.renderAttributeUI(attrId);
     }
     ui.clickAddAttr = clickAddAttr;
-    function changeAttrInput(e) {
-        stage.blockAttrs.update(d.editingBlockId, e.target.id.replace("ed-attr-", ""), e.target.value);
-    }
-    ui.changeAttrInput = changeAttrInput;
+    //  export function changeAttrInput(e:Event) {
+    //    stage.blockAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")), (<HTMLInputElement>e.target).value);
+    //  }
     function changeActiveStageLayer(e) {
         stage.changeActiveStageLayer(parseInt(e.target.value));
     }

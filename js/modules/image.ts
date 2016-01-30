@@ -6,7 +6,6 @@ function image(url:string, isNoJaggy?:boolean, size?:Vector2):HTMLImageElement {
     var width = (a.width + size.x) / 2;
     var height = (a.height + size.y) / 2;
     var newC:HTMLCanvasElement, ctx:CanvasRenderingContext2D;
-    var saveURL:string;
     newC = document.createElement("canvas");
     newC.width = width;
     newC.height = height;

@@ -1,9 +1,9 @@
 var webpack = require("webpack");
 var settings = require("./webpack-settings");
 var exp = {
-  entry: [
-    "./js/main.ts"
-  ],
+  entry: {
+    ts: "./js/main.ts"
+  },
   output: {
     path: settings.distDir,
     filename: settings.distFile
@@ -13,7 +13,8 @@ var exp = {
   },
   module: {
     loaders: [
-      { test: /\.ts(x?)$/, loader: 'ts-loader' }
+      { test: /\.ts(x?)$/, loader: 'ts-loader' },
+      { test: /\.less/, loader: 'style!css!less' }
     ]
   },
   plugins: [

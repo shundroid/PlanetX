@@ -21,6 +21,8 @@
     "del": "^2.2.0",
     "gulp-find-glob": "^1.0.1",
     "gulp-uglify": "^1.5.1",
+    "jade-loader": "^0.8.0",
+    "less-loader": "^2.2.2",
     "minimist": "^1.2.0",
     "ts-loader": "^0.8.0",
     "tsify": "^0.13.1",

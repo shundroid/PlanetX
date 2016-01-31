@@ -1,3 +1,6 @@
+/**
+ * Todo: 必要性
+ */
 module util {
   interface oI {
     [index: string]:any;

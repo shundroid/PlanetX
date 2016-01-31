@@ -1,5 +1,5 @@
 import list = require("./classes/list");
-import prefab = require("./prefab");
+import prefab = require("./classes/prefab");
 import canvas = require("./canvas");
 import image = require("./image");
 import d = require("./data");
@@ -7,6 +7,9 @@ import rect = require("./classes/rect");
 import event = require("./event");
 import Vector2 = require("./classes/vector2");
 
+/**
+ * 現在のStage情報を保存します。
+ */
 module stage {
   
   // StageEffect

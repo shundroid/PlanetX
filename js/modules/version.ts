@@ -1,3 +1,6 @@
+/**
+ * Planetのバージョン情報
+ */
 module version {
   export const version:string = "v1.0";
   export const author:string = "shundroid";

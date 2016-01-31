@@ -1,4 +1,8 @@
 import list = require("./classes/list");
+
+/**
+ * 廃止の方向で・・
+ */
 module event {
   var eventHandlers = new list<Array<(e:any, eventName:string)=>void>>();
   export function addEventListener(eventName:string, fn:(e:any, eventName:string)=>void) {

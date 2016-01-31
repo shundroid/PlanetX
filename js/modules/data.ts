@@ -2,6 +2,9 @@ import list = require("./classes/list");
 import packManager = require("./packUtil/packManager");
 import TrayBlockDetails = require("./classes/trayBlockDetails");
 
+/**
+ * Planetの情報を保存します。
+ */
 class data {
   static trayItemDataURLs:list<string>;
   static defaultPackName:string;
@@ -17,7 +20,7 @@ class data {
   static editingBlockId:number;
   static activeStageLayer:number;
   
-  /*
+  /**
    * 全ての Data メンバーを、初期化します。
    */
   static dataInit() {

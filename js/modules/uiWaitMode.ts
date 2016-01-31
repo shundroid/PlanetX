@@ -1,3 +1,6 @@
+/**
+ * Todo: 必要性
+ */
 module uiWaitMode {
   export function start() {
     document.getElementById("pla-canvas").style.cursor = "wait";

@@ -1,4 +1,8 @@
 import el = require("./elem");
+
+/**
+ * .ev-XXと定義された要素に、イベントをつけます。
+ */
 module evElems { 
   export function set(listenerNamespace:any) {
     el.forEachforQuery(".ev-btn", (i) => {

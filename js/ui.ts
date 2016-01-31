@@ -5,7 +5,6 @@ import initDOM = require("./modules/initDOM");
 import event = require("./modules/event");
 import oI = require("./modules/objIndex");
 import el = require("./modules/elem");
-import compiler = require("./modules/compiler");
 import importJS = require("./modules/importJS");
 import u = require("./modules/util");
 import list = require("./modules/classes/list");
@@ -20,6 +19,9 @@ import anim = require("./modules/ui/anim");
 import editBlock = require("./modules/editBlock");
 import jsonPlanet = require("./modules/jsonPlanet");
 
+/**
+ * UIに関する処理を行います。
+ */
 module ui {
   export var canvas: HTMLCanvasElement; 
   function init() {

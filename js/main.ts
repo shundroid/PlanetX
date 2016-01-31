@@ -8,13 +8,16 @@ import stage = require("./modules/stage");
 import d = require("./modules/data");
 import makeDataUrl = require("./modules/makePrefabDataUrls");
 import tray = require("./modules/tray");
-import prefab = require("./modules/prefab");
+import prefab = require("./modules/classes/prefab");
 import Vector2 = require("./modules/classes/vector2");
 import Rect = require("./modules/classes/rect");
 import canvas = require("./modules/canvas");
 import editBlock = require("./modules/editBlock");
 import fGuide = require("./modules/ui/focusGuide");
 
+/**
+ * メインとなる処理を行います
+ */
 module main {
 
   function init() {

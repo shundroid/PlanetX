@@ -1269,7 +1269,7 @@ var tray;
                 var item = list[i];
                 var li = document.createElement("div");
                 li.classList.add("tray-list", "tray-list-block");
-                li.addEventListener("click", function (e) { event.raiseEvent("ui_clickTray", e); });
+                li.addEventListener("mousedown", function (e) { event.raiseEvent("ui_clickTray", e); });
                 var img = document.createElement("img");
                 img.src = packManager.getPackPath(d.defaultPackName) + d.pack.blocks.get(item).data.filename;
                 img.onload = function () {
@@ -1506,7 +1506,7 @@ var ui;
         document.getElementById("pla-ver").innerHTML = "Planet " + v.version + " by " + v.author;
         el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
         el.addEventListenerforQuery(".io-hf", "change", changeHeaderorFooterValue);
-        el.addEventListenerforQuery(".tray-list-tool", "click", clickTrayTool);
+        el.addEventListenerforQuery(".tray-list-tool", "mousedown", clickTrayTool);
         document.head.appendChild(importJS("bower_components/move.js/move.js"));
         window.onbeforeunload = function (event) {
             event.returnValue = "ページを移動しますか？";

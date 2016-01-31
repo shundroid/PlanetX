@@ -32,7 +32,7 @@ module tray {
         var item = list[i];
         var li = document.createElement("div");
         li.classList.add("tray-list", "tray-list-block");
-        li.addEventListener("click", (e) => { event.raiseEvent("ui_clickTray", e); });
+        li.addEventListener("mousedown", (e) => { event.raiseEvent("ui_clickTray", e); });
         var img = document.createElement("img");
         img.src = packManager.getPackPath(d.defaultPackName) + d.pack.blocks.get(item).data.filename;
         img.onload = () => {

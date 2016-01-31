@@ -33,6 +33,7 @@ Firefox 45.0で確認しています。
 - CSS flexible box
 - `Object.defineProperty()`
 - Promise
+- CSS PointerEvents
   
 ## 開発について
 | 種類 | 言語 |

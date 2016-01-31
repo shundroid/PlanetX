@@ -13,6 +13,7 @@ import Vector2 = require("./modules/classes/vector2");
 import Rect = require("./modules/classes/rect");
 import canvas = require("./modules/canvas");
 import editBlock = require("./modules/editBlock");
+import fGuide = require("./modules/ui/focusGuide");
 
 module main {
 
@@ -59,9 +60,10 @@ module main {
       var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
       var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY));
       var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
+      fGuide.hide();
       switch (d.activeToolName) {
         case "pencil":
-          if (e.eventName === "mousedown") {
+          if (e.eventName === "down") {
             if (!detail.contains) {
               canvas.render(d.selectImage, rect);
               stage.items.push(stage.getId(), pre);
@@ -69,10 +71,12 @@ module main {
               stage.items.remove(detail.id);
               stage.renderStage();
             }
+          } else if (e.eventName === "hovering") {
+            fGuide.focus(new Vector2(rect.x, rect.y), new Vector2(rect.width, rect.height), detail.contains ? "rgba(240,0,0,0.6)" : "rgba(0,240,0,0.6)");
           }
           break;
         case "choice":
-          if (e.eventName === "mousedown") {
+          if (e.eventName === "down") {
             // オブジェクトに対応させる
             if (detail.prefab) {
               if (d.pack.objs.contains(detail.prefab.blockName)) {
@@ -87,7 +91,7 @@ module main {
           }
           break;
         case "hand":
-          if (e.eventName === "mousemove") {
+          if (e.eventName === "move") {
             stage.scrollX += e.mousePos.x - stage.scrollBeforeX;
             stage.scrollY += e.mousePos.y - stage.scrollBeforeY;
             stage.renderStage();
@@ -96,14 +100,14 @@ module main {
           stage.scrollBeforeY = e.mousePos.y;
           break;
         case "edit":
-          if (e.eventName === "mousedown" && detail.contains) {
+          if (e.eventName === "down" && detail.contains) {
             ui.showInspector("edit-block");
             d.editingBlockId = detail.id;
             editBlock.updateEditBlock(new editBlock.EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
           }
           break;
         default:
-          if (e.eventName === "mousemove" || e.eventName === "mousedown") {
+          if (e.eventName === "move" || e.eventName === "down") {
             if (d.activeToolName === "brush") {
               if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
                 stage.items.remove(detail.id);

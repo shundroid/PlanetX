@@ -37,9 +37,9 @@ module ui {
       }
       changeActiveBlock(target.dataset["block"]);
     });
-    event.addEventListener("ui_mousedownCanvas|ui_mousemoveanddownCanvas|ui_mouseupCanvas", (e:MouseEvent) => {
+    event.addEventListener("ui_downCanvas|ui_moveCanvas|ui_upCanvas|ui_hoveringCanvas", function (e:MouseEvent, eventName:string) {
       var g = stage.getGridPosFromMousePos(new Vector2(e.clientX, e.clientY));
-      event.raiseEvent("gridCanvas", new stage.gridDetail(g, e.type, new Vector2(e.clientX, e.clientY)));
+      event.raiseEvent("gridCanvas", new stage.gridDetail(g, eventName.replace("ui_", "").replace("Canvas", ""), new Vector2(e.clientX, e.clientY)));
     });
     event.addEventListener("initedPack", () => {
       // SkyboxMode
@@ -82,19 +82,20 @@ module ui {
   export function setupCanvas() {
     canvas = <HTMLCanvasElement>document.getElementById("pla-canvas");
     canvas.addEventListener("mousedown", (e) => {
-      event.raiseEvent("ui_mousedownCanvas", e);
+      event.raiseEvent("ui_downCanvas", e);
     });
     canvas.addEventListener("mousemove", (e) => {
       if (e.buttons === 1) {
-        event.raiseEvent("ui_mousemoveanddownCanvas", e);
+        event.raiseEvent("ui_moveCanvas", e);
+      } else {
+        event.raiseEvent("ui_hoveringCanvas", e);
       }
     });
     canvas.addEventListener("mouseup", (e) => {
-      event.raiseEvent("ui_mouseupCanvas", e);
+      event.raiseEvent("ui_upCanvas", e);
     });
   }
   export function togglefullScreen(e:MouseEvent) {
-    console.log(d.isFullscreenTray);
     if (!d.isFullscreenTray) {
       closeInspector();
       anim.showTrayFull();

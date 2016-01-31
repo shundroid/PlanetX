@@ -18,21 +18,13 @@ import fGuide = require("./modules/ui/focusGuide");
 module main {
 
   function init() {
-    d.trayItemDataURLs = new list<string>();
-    d.defaultPackName = "oa";
-    //d.pack = new packManager.packModule({});
-    d.defaultGridSize = 25;
-    d.defaultBlockSize = 50;
-    d.activeToolName = "pencil";
-    d.isObjMode = false;
-    d.isFullscreenTray = false;
-    d.isShowInspector = false;
+    d.dataInit();
   }
   init();
   
   initDOM(() => {
     ui.setupCanvas();
-    packLoader(d.defaultPackName).then(i => {
+    packLoader(d.defaultPackName).then((i:any) => {
       d.pack = new packManager.packModule(i);
       event.raiseEvent("packLoaded", null);
       stage.stageEffects.skybox = d.pack.editor.defaultSkybox;
@@ -58,7 +50,7 @@ module main {
     });
     event.addEventListener("gridCanvas", (e:stage.gridDetail) => {
       var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
-      var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY));
+      var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY), d.activeStageLayer);
       var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
       fGuide.hide();
       switch (d.activeToolName) {
@@ -66,10 +58,10 @@ module main {
           if (e.eventName === "down") {
             if (!detail.contains) {
               canvas.render(d.selectImage, rect);
-              stage.items.push(stage.getId(), pre);
+              stage.items.push(stage.getId(), pre, d.activeStageLayer);
             } else {
-              stage.items.remove(detail.id);
-              stage.renderStage();
+              stage.items.remove(detail.id, d.activeStageLayer);
+              stage.renderStage(d.activeStageLayer);
             }
           } else if (e.eventName === "hovering") {
             fGuide.focus(new Vector2(rect.x, rect.y), new Vector2(rect.width, rect.height), detail.contains ? "rgba(240,0,0,0.6)" : "rgba(0,240,0,0.6)");
@@ -94,7 +86,7 @@ module main {
           if (e.eventName === "move") {
             stage.scrollX += e.mousePos.x - stage.scrollBeforeX;
             stage.scrollY += e.mousePos.y - stage.scrollBeforeY;
-            stage.renderStage();
+            stage.renderStage(d.activeStageLayer);
           }
           stage.scrollBeforeX = e.mousePos.x;
           stage.scrollBeforeY = e.mousePos.y;
@@ -110,16 +102,16 @@ module main {
           if (e.eventName === "move" || e.eventName === "down") {
             if (d.activeToolName === "brush") {
               if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
-                stage.items.remove(detail.id);
-                stage.renderStage();
+                stage.items.remove(detail.id, d.activeStageLayer);
+                stage.renderStage(d.activeStageLayer);
               }
               if (!detail.contains) {
                 canvas.render(d.selectImage, rect);
-                stage.items.add(stage.getId(), pre);
+                stage.items.push(stage.getId(), pre, d.activeStageLayer);
               }
             } else if (d.activeToolName === "erase" && detail.contains) {
-              stage.items.remove(detail.id);
-              stage.renderStage();
+              stage.items.remove(detail.id, d.activeStageLayer);
+              stage.renderStage(d.activeStageLayer);
             }
           }
           break;

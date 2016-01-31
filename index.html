@@ -17,13 +17,6 @@
       <div id="ins-io" class="ins-article">
         <h1>Import / Export</h1>
         <div class="ins-content">
-          <select>
-            <option value="csv">csv</option>
-            <option value="json">json</option>
-            <option value="jsPla">jsWithPlaLib</option>
-            <option value="yaml">yaml</option>
-            <option value="in:auto">Auto (Import Only)</option>
-          </select>
           <textarea id="pla-io" data-default="" class="ev-input"></textarea>
           <div class="pla-btngroup">
             <button id="io-export" data-bl="Export" data-listener="clickExport" class="pla-btn bl bl-top ev-btn"><i class="fa fa-upload"></i></button>
@@ -50,13 +43,15 @@
             <li>
               <button data-ins="preferences" class="pla-btn ins-show-btn">Editor Preferences</button>
             </li>
-          </ul><span id="pla-ver"></span>
+          </ul>
+          <!-- stageLayer用-->Active Layer:&nbsp;
+          <input id="slayer-active-number" type="number" data-default="0" min="0" data-change="changeActiveStageLayer" class="ev-input"><span id="pla-ver"></span>
         </div>
       </div>
       <div id="ins-conv-old-file" class="ins-article">
         <h1>Convert old file</h1>
-        <div class="ins-content"><span>Old:</span><br>
-          <textarea id="conv-old" data-default="" class="ta-no-resize ev-input"></textarea><span>New:</span><br>
+        <div class="ins-content">Old:<br>
+          <textarea id="conv-old" data-default="" class="ta-no-resize ev-input"></textarea>New:<br>
           <textarea id="conv-new" readonly data-default="" class="ta-no-resize ev-input"></textarea>
           <div>
             <button id="conv" data-bl="convert" data-listener="clickConvertOldFile" class="pla-btn bl bl-top ev-btn"><i class="fa fa-exchange"></i></button>
@@ -65,8 +60,8 @@
       </div>
       <div id="ins-header-footer" class="ins-article">
         <h1>Header / Footer</h1>
-        <div class="ins-content"><span>Header:</span><br>
-          <textarea id="io-header" data-default="" class="io-hf ta-no-resize ev-input"></textarea><span>Footer:</span><br>
+        <div class="ins-content">Header:<br>
+          <textarea id="io-header" data-default="" class="io-hf ta-no-resize ev-input"></textarea>Footer:<br>
           <textarea id="io-footer" data-default="" class="io-hf ta-no-resize ev-input"></textarea>
         </div>
       </div>
@@ -74,8 +69,8 @@
         <h1>Stage Effect</h1>
         <div class="ins-content">
           <ul>
-            <li><span>Skybox:</span>
-              <select id="stg-skybox" data-items="skyboxes" data-change="changeSkybox" class="pack-select"></select>
+            <li>Skybox:
+              <select id="stg-skybox" data-items="skyboxes" data-change="changeSkybox" class="pack-select ev-input"></select>
             </li>
           </ul>
         </div>
@@ -88,7 +83,7 @@
         <h1>Edit a Block</h1>
         <div class="ins-content"><span id="ed-name"><br></span><span id="ed-pos"><br></span><span id="ed-id"><br></span>
           <div class="pla-btngroup">
-            <select data-items="attributes" class="ed-attr pack-select"></select>
+            <!-- select.ed-attr.pack-select.ev-input(data-items="attributes")-->
             <button data-listener="clickAddAttr" class="pla-btn ev-btn"><i class="fa fa-plus"></i></button>
           </div>
           <div class="ed-attr-view"></div>

@@ -251,90 +251,6 @@ var jsonPlanet = require("./jsonPlanet");
 var version = require("./version");
 var compiler;
 (function (compiler) {
-    function old2CSV(old) {
-        var lines = old.split("\n");
-        var result = [];
-        var id = 0;
-        var mode = -1; // -1: system_header, 0: header, 1: normal, 2: footer, 3: return
-        var count = 0;
-        result.push("//:csv");
-        lines.forEach(function (i) {
-            if (i === "")
-                return;
-            if (mode === -1) {
-                count++;
-                if (count === 5) {
-                    mode++;
-                }
-            }
-            else if (mode === 0) {
-                if (count === 5 && i === "// stageCTRL::edit not_header") {
-                    mode++;
-                }
-                else if (count === 5) {
-                    result.push("//:header");
-                    result.push(i);
-                    count++;
-                }
-                else {
-                    if (i === "// stageCTRL::edit /header") {
-                        result.push("//:/header");
-                        mode++;
-                    }
-                    else {
-                        result.push(i);
-                    }
-                }
-            }
-            else if (mode === 1) {
-                if (i === "// stageCTRL::edit footer") {
-                    mode++;
-                    count = 10;
-                    return;
-                }
-                else if (i === "// stageCTRL::edit not_footer") {
-                    mode += 2;
-                    return;
-                }
-                if (i.substring(0, 1) === "*") {
-                    if (i.indexOf("*skybox,") !== -1) {
-                        result.push(i);
-                    }
-                    else {
-                        result.push(i); //TODO
-                    }
-                    return;
-                }
-                if (i.substring(0, 1) === ":")
-                    return;
-                i = i.replace(/ /g, "");
-                if (i.substring(0, 2) === "//")
-                    return;
-                i = i.split("=")[0];
-                var items = i.split(",");
-                items[2] = (-parseInt(items[2])).toString();
-                result.push([[items[0], items[1], items[2]].join(","), id++].join("="));
-            }
-            else if (mode === 2) {
-                if (count === 10) {
-                    count++;
-                    result.push("//:footer");
-                    result.push(i);
-                }
-                else {
-                    if (i === "// stageCTRL::edit /footer") {
-                        result.push("//:/footer");
-                        mode++;
-                    }
-                    else {
-                        result.push(i);
-                    }
-                }
-            }
-        });
-        return result.join("\n");
-    }
-    compiler.old2CSV = old2CSV;
     function csv2Json(csv) {
         var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
         var lines = csv.split("\n");
@@ -1112,8 +1028,6 @@ var stage;
         prefabList = {};
         blockAttrsList = {};
         prefabLayer = new Array();
-        stage.header = "";
-        stage.footer = "";
         maxId = 0;
     }
     init();
@@ -1505,7 +1419,6 @@ var ui;
         evElems.set(ui);
         document.getElementById("pla-ver").innerHTML = "Planet " + v.version + " by " + v.author;
         el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
-        el.addEventListenerforQuery(".io-hf", "change", changeHeaderorFooterValue);
         el.addEventListenerforQuery(".tray-list-tool", "mousedown", clickTrayTool);
         document.head.appendChild(importJS("bower_components/move.js/move.js"));
         window.onbeforeunload = function (event) {
@@ -1576,16 +1489,6 @@ var ui;
         showInspector(e.target.dataset["ins"]);
     }
     ui.clickInsShowBtn = clickInsShowBtn;
-    function changeHeaderorFooterValue(e) {
-        var elem = e.target;
-        if (elem.id === "io-header") {
-            stage.header = elem.value;
-        }
-        else if (elem.id === "io-footer") {
-            stage.footer = elem.value;
-        }
-    }
-    ui.changeHeaderorFooterValue = changeHeaderorFooterValue;
     function clickTrayTool(e) {
         var elem = e.target;
         if (elem.nodeName === "I") {

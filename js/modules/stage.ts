@@ -18,10 +18,6 @@ module stage {
   }
   export var stageEffects:StageEffects = new StageEffects();
   
-  // 現在はほぼ使用していない
-  export var header:string;
-  export var footer:string;
-  
   // Todo: このクラスを分離
   export class Attr {
     constructor(
@@ -176,8 +172,6 @@ module stage {
     prefabList = {};
     blockAttrsList = {};
     prefabLayer = new Array<Array<number>>();
-    header = "";
-    footer = "";
     maxId = 0;
   }
   init();

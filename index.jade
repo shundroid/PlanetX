@@ -26,7 +26,6 @@ html(lang="ja")
           ul
             li: button.pla-btn.ins-show-btn(data-ins="stage-effect") Stage Effect
             li: button.pla-btn.ins-show-btn(data-ins="io") Import / Export
-            li: button.pla-btn.ins-show-btn(data-ins="header-footer") Header / Footer
             li: button.pla-btn.ins-show-btn(data-ins="conv-old-file") Convert old file
             li: button.pla-btn.ins-show-btn(data-ins="preferences") Editor Preferences
           // stageLayer用
@@ -43,15 +42,6 @@ html(lang="ja")
           br
           textarea#conv-new.ta-no-resize.ev-input(readonly, data-default="")
           div: button.pla-btn.bl.bl-top.ev-btn#conv(data-bl="convert", data-listener="clickConvertOldFile"): i.fa.fa-exchange
-      .ins-article#ins-header-footer
-        h1 Header / Footer
-        .ins-content
-          | Header:
-          br
-          textarea.io-hf#io-header.ta-no-resize.ev-input(data-default="")
-          | Footer:
-          br
-          textarea.io-hf#io-footer.ta-no-resize.ev-input(data-default="")
       .ins-article#ins-stage-effect
         h1 Stage Effect
         .ins-content

@@ -122,7 +122,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/rect":4,"./modules/classes/vector2":6,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":15,"./modules/makePrefabDataUrls":17,"./modules/packUtil/packLoader":18,"./modules/packUtil/packManager":19,"./modules/prefab":21,"./modules/stage":22,"./modules/tray":23,"./modules/ui/focusGuide":26,"./ui":29}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/rect":4,"./modules/classes/vector2":6,"./modules/data":7,"./modules/editBlock":8,"./modules/event":11,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":17,"./modules/packUtil/packManager":18,"./modules/prefab":20,"./modules/stage":21,"./modules/tray":22,"./modules/ui/focusGuide":25,"./ui":28}],2:[function(require,module,exports){
 /// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
 var initDOM = require("./initDOM");
 var canvas;
@@ -173,7 +173,7 @@ var canvas;
     canvas_1.clear = clear;
 })(canvas || (canvas = {}));
 module.exports = canvas;
-},{"./initDOM":15}],3:[function(require,module,exports){
+},{"./initDOM":14}],3:[function(require,module,exports){
 var List = (function () {
     function List() {
         this.data = {};
@@ -247,33 +247,6 @@ var Vector2 = (function () {
 })();
 module.exports = Vector2;
 },{}],7:[function(require,module,exports){
-var jsonPlanet = require("./jsonPlanet");
-var version = require("./version");
-var compiler;
-(function (compiler) {
-    function csv2Json(csv) {
-        var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
-        var lines = csv.split("\n");
-        lines.forEach(function (i) {
-            if (i === "") {
-                return;
-            }
-            if (i.substring(0, 1) === "*") {
-                return;
-            }
-            if (i.substring(0, 2) === "//") {
-                return;
-            }
-            var nameAndblock = i.split("=");
-            var items = nameAndblock[0].split(",");
-            result.Stage[0].push(new jsonPlanet.jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
-        });
-        return result;
-    }
-    compiler.csv2Json = csv2Json;
-})(compiler || (compiler = {}));
-module.exports = compiler;
-},{"./jsonPlanet":16,"./version":28}],8:[function(require,module,exports){
 var list = require("./classes/list");
 var data = (function () {
     function data() {
@@ -296,7 +269,7 @@ var data = (function () {
     return data;
 })();
 module.exports = data;
-},{"./classes/list":3}],9:[function(require,module,exports){
+},{"./classes/list":3}],8:[function(require,module,exports){
 var d = require("./data");
 var stage = require("./stage");
 /**
@@ -403,7 +376,7 @@ var editBlock;
     editBlock_1.clickRemoveAttr = clickRemoveAttr;
 })(editBlock || (editBlock = {}));
 module.exports = editBlock;
-},{"./data":8,"./stage":22}],10:[function(require,module,exports){
+},{"./data":7,"./stage":21}],9:[function(require,module,exports){
 var elem;
 (function (elem) {
     function addEventListenerforQuery(query, eventName, listener) {
@@ -418,7 +391,7 @@ var elem;
     elem.forEachforQuery = forEachforQuery;
 })(elem || (elem = {}));
 module.exports = elem;
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var el = require("./elem");
 var evElems;
 (function (evElems) {
@@ -439,7 +412,7 @@ var evElems;
     evElems.set = set;
 })(evElems || (evElems = {}));
 module.exports = evElems;
-},{"./elem":10}],12:[function(require,module,exports){
+},{"./elem":9}],11:[function(require,module,exports){
 var list = require("./classes/list");
 var event;
 (function (event) {
@@ -470,7 +443,7 @@ var event;
     event.raiseEvent = raiseEvent;
 })(event || (event = {}));
 module.exports = event;
-},{"./classes/list":3}],13:[function(require,module,exports){
+},{"./classes/list":3}],12:[function(require,module,exports){
 function image(url, isNoJaggy, size) {
     var a = new Image();
     a.src = url;
@@ -491,14 +464,14 @@ function image(url, isNoJaggy, size) {
     }
 }
 module.exports = image;
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 function importJS(src) {
     var elem = document.createElement("script");
     elem.src = src;
     return elem;
 }
 module.exports = importJS;
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var handlerList = new Array();
 function add(fn) {
     handlerList.push(fn);
@@ -509,7 +482,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 module.exports = add;
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var version = require("./version");
 /**
  * 構造化した、jsonPlanet関連を提供します。
@@ -580,12 +553,34 @@ var jsonPlanet;
             ;
             return result;
         };
+        /**
+         * 昔はCSVを使っていたものです・・
+         */
+        jsonPlanet.fromCSV = function (csv) {
+            var result = new jsonPlanet(version.jsonPlanetVersion);
+            var lines = csv.split("\n");
+            lines.forEach(function (i) {
+                if (i === "") {
+                    return;
+                }
+                if (i.substring(0, 1) === "*") {
+                    return;
+                }
+                if (i.substring(0, 2) === "//") {
+                    return;
+                }
+                var nameAndblock = i.split("=");
+                var items = nameAndblock[0].split(",");
+                result.Stage[0].push(new jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
+            });
+            return result;
+        };
         return jsonPlanet;
     })();
     jsonPlanet_1.jsonPlanet = jsonPlanet;
 })(jsonPlanet || (jsonPlanet = {}));
 module.exports = jsonPlanet;
-},{"./version":28}],17:[function(require,module,exports){
+},{"./version":27}],16:[function(require,module,exports){
 var d = require("./data");
 var list = require("./classes/list");
 var packManager = require("./packUtil/packManager");
@@ -605,7 +600,7 @@ function makeDataUrl() {
     return result;
 }
 module.exports = makeDataUrl;
-},{"./classes/list":3,"./classes/vector2":6,"./data":8,"./image":13,"./packUtil/packManager":19}],18:[function(require,module,exports){
+},{"./classes/list":3,"./classes/vector2":6,"./data":7,"./image":12,"./packUtil/packManager":18}],17:[function(require,module,exports){
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
 var packManager = require("./packManager");
 function load(packName) {
@@ -621,7 +616,7 @@ function load(packName) {
     });
 }
 module.exports = load;
-},{"./packManager":19}],19:[function(require,module,exports){
+},{"./packManager":18}],18:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -748,7 +743,7 @@ var pack;
     pack.skyboxInfoList = skyboxInfoList;
 })(pack || (pack = {}));
 module.exports = pack;
-},{"./../classes/list":3}],20:[function(require,module,exports){
+},{"./../classes/list":3}],19:[function(require,module,exports){
 var stage = require("./stage");
 var prefab = require("./prefab");
 var d = require("./data");
@@ -822,7 +817,7 @@ var planet;
     planet.fromJsonPlanet = fromJsonPlanet;
 })(planet || (planet = {}));
 module.exports = planet;
-},{"./data":8,"./jsonPlanet":16,"./prefab":21,"./stage":22,"./version":28}],21:[function(require,module,exports){
+},{"./data":7,"./jsonPlanet":15,"./prefab":20,"./stage":21,"./version":27}],20:[function(require,module,exports){
 var prefab = (function () {
     function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
         this.gridX = gridX;
@@ -835,7 +830,7 @@ var prefab = (function () {
     return prefab;
 })();
 module.exports = prefab;
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var list = require("./classes/list");
 var canvas = require("./canvas");
 var image = require("./image");
@@ -1146,7 +1141,7 @@ var stage;
     stage.toDrawRect = toDrawRect;
 })(stage || (stage = {}));
 module.exports = stage;
-},{"./canvas":2,"./classes/list":3,"./classes/rect":4,"./classes/vector2":6,"./data":8,"./event":12,"./image":13}],23:[function(require,module,exports){
+},{"./canvas":2,"./classes/list":3,"./classes/rect":4,"./classes/vector2":6,"./data":7,"./event":11,"./image":12}],22:[function(require,module,exports){
 var image = require("./image");
 var TrayBlockDetails = require("./classes/trayBlockDetails");
 var d = require("./data");
@@ -1238,7 +1233,7 @@ var tray;
     tray.initTrayObj = initTrayObj;
 })(tray || (tray = {}));
 module.exports = tray;
-},{"./classes/trayBlockDetails":5,"./data":8,"./event":12,"./image":13,"./packUtil/packManager":19,"./uiWaitMode":24}],24:[function(require,module,exports){
+},{"./classes/trayBlockDetails":5,"./data":7,"./event":11,"./image":12,"./packUtil/packManager":18,"./uiWaitMode":23}],23:[function(require,module,exports){
 var uiWaitMode;
 (function (uiWaitMode) {
     function start() {
@@ -1251,7 +1246,7 @@ var uiWaitMode;
     uiWaitMode.end = end;
 })(uiWaitMode || (uiWaitMode = {}));
 module.exports = uiWaitMode;
-},{}],25:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 /// <reference path="../../definitely/move.d.ts" />
 var anim;
 (function (anim) {
@@ -1289,7 +1284,7 @@ var anim;
     anim.hideLoading = hideLoading;
 })(anim || (anim = {}));
 module.exports = anim;
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var initDOM = require("./../initDOM");
 var focusGuide;
 (function (focusGuide) {
@@ -1317,7 +1312,7 @@ var focusGuide;
     focusGuide.hide = hide;
 })(focusGuide || (focusGuide = {}));
 module.exports = focusGuide;
-},{"./../initDOM":15}],27:[function(require,module,exports){
+},{"./../initDOM":14}],26:[function(require,module,exports){
 var util;
 (function (util) {
     function obj2SelectElem(obj) {
@@ -1337,7 +1332,7 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],28:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var version;
 (function (version_1) {
     version_1.version = "v1.0";
@@ -1345,14 +1340,13 @@ var version;
     version_1.jsonPlanetVersion = 0.1;
 })(version || (version = {}));
 module.exports = version;
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
 var initDOM = require("./modules/initDOM");
 var event = require("./modules/event");
 var el = require("./modules/elem");
-var compiler = require("./modules/compiler");
 var importJS = require("./modules/importJS");
 var u = require("./modules/util");
 var Vector2 = require("./modules/classes/vector2");
@@ -1555,7 +1549,7 @@ var ui;
     });
     function clickConvertOldFile() {
         document.getElementById("conv-new").value =
-            JSON.stringify(compiler.csv2Json(document.getElementById("conv-old").value).exportJson());
+            JSON.stringify(jsonPlanet.jsonPlanet.fromCSV(document.getElementById("conv-old").value).exportJson());
     }
     ui.clickConvertOldFile = clickConvertOldFile;
     function changeSkybox(e) {
@@ -1579,4 +1573,4 @@ var ui;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":6,"./modules/compiler":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/importJS":14,"./modules/initDOM":15,"./modules/jsonPlanet":16,"./modules/packUtil/packManager":19,"./modules/planet":20,"./modules/stage":22,"./modules/tray":23,"./modules/ui/anim":25,"./modules/util":27,"./modules/version":28}]},{},[1]);
+},{"./modules/classes/vector2":6,"./modules/data":7,"./modules/editBlock":8,"./modules/elem":9,"./modules/evElems":10,"./modules/event":11,"./modules/importJS":13,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/packUtil/packManager":18,"./modules/planet":19,"./modules/stage":21,"./modules/tray":22,"./modules/ui/anim":24,"./modules/util":26,"./modules/version":27}]},{},[1]);

@@ -18,6 +18,7 @@ import v = require("./modules/version");
 import evElems = require("./modules/evElems");
 import anim = require("./modules/ui/anim");
 import editBlock = require("./modules/editBlock");
+import jsonPlanet = require("./modules/jsonPlanet");
 
 module ui {
   export var canvas: HTMLCanvasElement; 
@@ -56,12 +57,13 @@ module ui {
       el.forEachforQuery(".pack-select", (i) => {
         var elem = <HTMLSelectElement>i;
         elem.innerHTML = u.obj2SelectElem((<list<any>>(<any>d.pack)[elem.dataset["items"]]).toSimple());
-        if (elem.dataset["change"]) {
-          elem.addEventListener("change", (<any>ui)[elem.dataset["change"]]);
-        }
-        if (elem.dataset["default"]) {
-          elem.value = elem.dataset["default"];
-        }
+        // ev-inputで実装
+//        if (elem.dataset["change"]) {
+//          elem.addEventListener("change", (<any>ui)[elem.dataset["change"]]);
+//        }
+//        if (elem.dataset["default"]) {
+//          elem.value = elem.dataset["default"];
+//        }
       });
       (<HTMLSelectElement>document.getElementById("stg-skybox")).value = d.pack.editor.defaultSkybox;
     });
@@ -121,13 +123,14 @@ module ui {
   }
   
   export function clickExport() {
-    (<HTMLTextAreaElement>document.getElementById("pla-io")).value = planet.exportText();
+    (<HTMLTextAreaElement>document.getElementById("pla-io")).value = JSON.stringify(planet.toJsonPlanet().exportJson());
   }
   export function clickImport() {
-    var effects = planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
+    //var effects = planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
+    var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
     stage.stageEffects = effects;
     setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox).data.filename);
-    stage.renderStage();
+    stage.renderStage(d.activeStageLayer);
   }
   
   export function clickInsShowBtn(e:MouseEvent) {
@@ -162,10 +165,10 @@ module ui {
   }
   
   export function initTrayBlock() {
-    return new Promise((resolve) => {
+    return new Promise((resolve:any) => {
       tray.initTrayBlock((numerator, denominator) => {
         changeLoadingStatus(`loading tray-block : ${numerator.toString()} / ${denominator.toString()}`);
-      }).then((ul) => {
+      }).then((ul:any) => {
         (<Array<HTMLDivElement>>ul).forEach(i => {
           document.getElementsByClassName("tray-items")[0].appendChild(i);
         });
@@ -191,7 +194,6 @@ module ui {
   }
   
   export function hideLoading() {
-    var elem = <HTMLElement>document.getElementsByClassName("loading")[0];
     anim.hideLoading();
   }
   
@@ -210,7 +212,7 @@ module ui {
   
   export function clickConvertOldFile() {
     (<HTMLTextAreaElement>document.getElementById("conv-new")).value = 
-      compiler.old2CSV((<HTMLTextAreaElement>document.getElementById("conv-old")).value);
+      JSON.stringify(compiler.csv2Json((<HTMLTextAreaElement>document.getElementById("conv-old")).value).exportJson());
   }
   
   export function changeSkybox(e:Event) {
@@ -219,14 +221,15 @@ module ui {
   }
   
   export function clickAddAttr() {
-    var attrKey = (<HTMLSelectElement>document.getElementsByClassName("ed-attr")[0]).value;
-    if (!stage.blockAttrs.containsAttr(d.editingBlockId, attrKey)) {
-      editBlock.renderAttributeUI(attrKey);
-      stage.blockAttrs.push(d.editingBlockId, attrKey, "");
-    }
+    var attrId = stage.blockAttrs.getMaxAttrId(d.editingBlockId);
+    stage.blockAttrs.push(d.editingBlockId, attrId, new stage.Attr());
+    editBlock.renderAttributeUI(attrId);    
   }
-  export function changeAttrInput(e:Event) {
-    stage.blockAttrs.update(d.editingBlockId, (<HTMLElement>e.target).id.replace("ed-attr-", ""), (<HTMLInputElement>e.target).value);
+//  export function changeAttrInput(e:Event) {
+//    stage.blockAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")), (<HTMLInputElement>e.target).value);
+//  }
+  export function changeActiveStageLayer(e:Event) {
+    stage.changeActiveStageLayer(parseInt((<HTMLInputElement>e.target).value));
   }
   init();
 }

@@ -11,7 +11,7 @@ module pack {
     blocks: list<blockInfo>;
     objs: list<objInfo>;
     descriptions: list<desInfo>;
-    attributes:attrList;
+    // attributes:attrList;
     skyboxes:skyboxInfoList;
     editor:packEditorInfo;
     constructor(data:Object) {
@@ -34,11 +34,11 @@ module pack {
         var cur = (<any>data)["descriptions"][i];
         this.descriptions.push(i, new desInfo(cur));
       });
-      this.attributes = new attrList();
-      Object.keys((<any>data)["attributes"]).forEach(i => {
-        var cur = <attribute>(<any>data)["attributes"][i];
-        this.attributes.push(i, cur);
-      });
+      // this.attributes = new attrList();
+      // Object.keys((<any>data)["attributes"]).forEach(i => {
+      //   var cur = <attribute>(<any>data)["attributes"][i];
+      //   this.attributes.push(i, cur);
+      // });
       this.skyboxes = new skyboxInfoList();
       Object.keys((<any>data)["skyboxes"]).forEach(i => {
         this.skyboxes.push(i, new skyboxInfo((<any>data)["skyboxes"][i]));

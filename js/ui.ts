@@ -73,7 +73,7 @@ module ui {
     document.getElementById("pla-ver").innerHTML = `Planet ${v.version} by ${v.author}`;
     el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
     el.addEventListenerforQuery(".io-hf", "change", changeHeaderorFooterValue);
-    el.addEventListenerforQuery(".tray-list-tool", "click", clickTrayTool);
+    el.addEventListenerforQuery(".tray-list-tool", "mousedown", clickTrayTool);
     document.head.appendChild(importJS("bower_components/move.js/move.js"));
     window.onbeforeunload = (event) => {
       event.returnValue = "ページを移動しますか？";

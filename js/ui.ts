@@ -72,7 +72,6 @@ module ui {
     evElems.set(ui);
     document.getElementById("pla-ver").innerHTML = `Planet ${v.version} by ${v.author}`;
     el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
-    el.addEventListenerforQuery(".io-hf", "change", changeHeaderorFooterValue);
     el.addEventListenerforQuery(".tray-list-tool", "mousedown", clickTrayTool);
     document.head.appendChild(importJS("bower_components/move.js/move.js"));
     window.onbeforeunload = (event) => {
@@ -135,15 +134,6 @@ module ui {
   
   export function clickInsShowBtn(e:MouseEvent) {
     showInspector((<HTMLElement>e.target).dataset["ins"]);
-  }
-  
-  export function changeHeaderorFooterValue(e:MouseEvent) {
-    var elem = <HTMLTextAreaElement>e.target;
-    if (elem.id === "io-header") {
-      stage.header = elem.value;
-    } else if (elem.id === "io-footer") {
-      stage.footer = elem.value;
-    }
   }
   
   export function clickTrayTool(e:MouseEvent) {
@@ -212,7 +202,7 @@ module ui {
   
   export function clickConvertOldFile() {
     (<HTMLTextAreaElement>document.getElementById("conv-new")).value = 
-      JSON.stringify(compiler.csv2Json((<HTMLTextAreaElement>document.getElementById("conv-old")).value).exportJson());
+      JSON.stringify(jsonPlanet.jsonPlanet.fromCSV((<HTMLTextAreaElement>document.getElementById("conv-old")).value).exportJson());
   }
   
   export function changeSkybox(e:Event) {

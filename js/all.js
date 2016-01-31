@@ -122,7 +122,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/rect":8,"./modules/classes/vector2":10,"./modules/data":12,"./modules/editBlock":13,"./modules/event":16,"./modules/initDOM":19,"./modules/makePrefabDataUrls":21,"./modules/packUtil/packLoader":23,"./modules/packUtil/packManager":24,"./modules/prefab":26,"./modules/stage":27,"./modules/tray":28,"./modules/ui/focusGuide":31,"./ui":34}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/rect":4,"./modules/classes/vector2":6,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":15,"./modules/makePrefabDataUrls":17,"./modules/packUtil/packLoader":18,"./modules/packUtil/packManager":19,"./modules/prefab":21,"./modules/stage":22,"./modules/tray":23,"./modules/ui/focusGuide":26,"./ui":29}],2:[function(require,module,exports){
 /// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
 var initDOM = require("./initDOM");
 var canvas;
@@ -173,53 +173,7 @@ var canvas;
     canvas_1.clear = clear;
 })(canvas || (canvas = {}));
 module.exports = canvas;
-},{"./initDOM":19}],3:[function(require,module,exports){
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-var list = require("./../list");
-var attrList = (function (_super) {
-    __extends(attrList, _super);
-    function attrList() {
-        _super.apply(this, arguments);
-    }
-    attrList.prototype.toSimple = function () {
-        var _this = this;
-        var list = this.getAll();
-        var result = {};
-        Object.keys(list).forEach(function (i) {
-            result[_this.get(i).label] = i;
-        });
-        return result;
-    };
-    return attrList;
-})(list);
-module.exports = attrList;
-},{"./../list":6}],4:[function(require,module,exports){
-var attribute = (function () {
-    function attribute(label, type, placeholder, defaultValue) {
-        this.label = label;
-        this.type = type;
-        this.placeholder = placeholder;
-        this.defaultValue = defaultValue;
-    }
-    return attribute;
-})();
-module.exports = attribute;
-},{}],5:[function(require,module,exports){
-var blockAttributes = (function () {
-    function blockAttributes(blockId, attr, attrValue // 結局はstringになる。
-        ) {
-        this.blockId = blockId;
-        this.attr = attr;
-        this.attrValue = attrValue;
-    }
-    return blockAttributes;
-})();
-module.exports = blockAttributes;
-},{}],6:[function(require,module,exports){
+},{"./initDOM":15}],3:[function(require,module,exports){
 var List = (function () {
     function List() {
         this.data = {};
@@ -251,18 +205,7 @@ var List = (function () {
     return List;
 })();
 module.exports = List;
-},{}],7:[function(require,module,exports){
-var prefabMini = (function () {
-    function prefabMini(x, y, blockName) {
-        this.x = x;
-        this.y = y;
-        this.blockName = blockName;
-    }
-    ;
-    return prefabMini;
-})();
-module.exports = prefabMini;
-},{}],8:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var rect = (function () {
     function rect(x, y, width, height) {
         this.x = x;
@@ -273,7 +216,7 @@ var rect = (function () {
     return rect;
 })();
 module.exports = rect;
-},{}],9:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var TrayBlockDetails = (function () {
     function TrayBlockDetails(blockName, fileName, label, // 表示するときのブロック名
         width, height) {
@@ -286,7 +229,7 @@ var TrayBlockDetails = (function () {
     return TrayBlockDetails;
 })();
 module.exports = TrayBlockDetails;
-},{}],10:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var Vector2 = (function () {
     function Vector2(x, y) {
         this.x = x;
@@ -303,7 +246,7 @@ var Vector2 = (function () {
     return Vector2;
 })();
 module.exports = Vector2;
-},{}],11:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var jsonPlanet = require("./jsonPlanet");
 var version = require("./version");
 var compiler;
@@ -414,7 +357,7 @@ var compiler;
     compiler.csv2Json = csv2Json;
 })(compiler || (compiler = {}));
 module.exports = compiler;
-},{"./jsonPlanet":20,"./version":33}],12:[function(require,module,exports){
+},{"./jsonPlanet":16,"./version":28}],8:[function(require,module,exports){
 var list = require("./classes/list");
 var data = (function () {
     function data() {
@@ -437,7 +380,7 @@ var data = (function () {
     return data;
 })();
 module.exports = data;
-},{"./classes/list":6}],13:[function(require,module,exports){
+},{"./classes/list":3}],9:[function(require,module,exports){
 var d = require("./data");
 var stage = require("./stage");
 /**
@@ -480,7 +423,7 @@ var editBlock;
             var l = stage.blockAttrs.getBlock(d.editingBlockId);
             Object.keys(l).forEach(function (i) {
                 var attr = stage.blockAttrs.getAttr(d.editingBlockId, parseInt(i));
-                renderAttributeUI(parseInt(i), attr.attrVal, attr.attrName);
+                renderAttributeUI(parseInt(i), attr.attrName, attr.attrVal);
             });
         }
     }
@@ -500,7 +443,7 @@ var editBlock;
         if (typeof inputName !== "undefined") {
             nameElem.value = inputName;
         }
-        nameElem.addEventListener("change", changeAttrName);
+        nameElem.addEventListener("keydown", changeAttrName);
         // valueに当たるInput
         var valElem = document.createElement("input");
         valElem.type = "text";
@@ -510,8 +453,7 @@ var editBlock;
         if (typeof inputValue !== "undefined") {
             valElem.value = inputValue;
         }
-        // 値が変わったとき
-        valElem.addEventListener("change", changeAttrVal);
+        valElem.addEventListener("keydown", changeAttrVal);
         // attrの削除
         var removeButton = document.createElement("button");
         removeButton.innerHTML = '<i class="fa fa-minus"></i>';
@@ -528,8 +470,7 @@ var editBlock;
     }
     editBlock_1.renderAttributeUI = renderAttributeUI;
     function changeAttrVal(e) {
-        console.log(stage.blockAttrs.getAll());
-        console.log(parseInt(e.target.id.replace("ed-attr-", "")));
+        console.log("hg!!");
         // Todo: [x] blockAttrsで、inputNameかinputValかどちらかを変えられるように、オーバーロードを作る
         stage.blockAttrs.update(d.editingBlockId, parseInt(e.target.id.replace("ed-attr-", "")), { attrVal: e.target.value });
     }
@@ -546,7 +487,7 @@ var editBlock;
     editBlock_1.clickRemoveAttr = clickRemoveAttr;
 })(editBlock || (editBlock = {}));
 module.exports = editBlock;
-},{"./data":12,"./stage":27}],14:[function(require,module,exports){
+},{"./data":8,"./stage":22}],10:[function(require,module,exports){
 var elem;
 (function (elem) {
     function addEventListenerforQuery(query, eventName, listener) {
@@ -561,7 +502,7 @@ var elem;
     elem.forEachforQuery = forEachforQuery;
 })(elem || (elem = {}));
 module.exports = elem;
-},{}],15:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var el = require("./elem");
 var evElems;
 (function (evElems) {
@@ -582,7 +523,7 @@ var evElems;
     evElems.set = set;
 })(evElems || (evElems = {}));
 module.exports = evElems;
-},{"./elem":14}],16:[function(require,module,exports){
+},{"./elem":10}],12:[function(require,module,exports){
 var list = require("./classes/list");
 var event;
 (function (event) {
@@ -613,7 +554,7 @@ var event;
     event.raiseEvent = raiseEvent;
 })(event || (event = {}));
 module.exports = event;
-},{"./classes/list":6}],17:[function(require,module,exports){
+},{"./classes/list":3}],13:[function(require,module,exports){
 function image(url, isNoJaggy, size) {
     var a = new Image();
     a.src = url;
@@ -634,14 +575,14 @@ function image(url, isNoJaggy, size) {
     }
 }
 module.exports = image;
-},{}],18:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 function importJS(src) {
     var elem = document.createElement("script");
     elem.src = src;
     return elem;
 }
 module.exports = importJS;
-},{}],19:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var handlerList = new Array();
 function add(fn) {
     handlerList.push(fn);
@@ -652,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 module.exports = add;
-},{}],20:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var version = require("./version");
 /**
  * 構造化した、jsonPlanet関連を提供します。
@@ -728,7 +669,7 @@ var jsonPlanet;
     jsonPlanet_1.jsonPlanet = jsonPlanet;
 })(jsonPlanet || (jsonPlanet = {}));
 module.exports = jsonPlanet;
-},{"./version":33}],21:[function(require,module,exports){
+},{"./version":28}],17:[function(require,module,exports){
 var d = require("./data");
 var list = require("./classes/list");
 var packManager = require("./packUtil/packManager");
@@ -748,9 +689,7 @@ function makeDataUrl() {
     return result;
 }
 module.exports = makeDataUrl;
-},{"./classes/list":6,"./classes/vector2":10,"./data":12,"./image":17,"./packUtil/packManager":24}],22:[function(require,module,exports){
-
-},{}],23:[function(require,module,exports){
+},{"./classes/list":3,"./classes/vector2":6,"./data":8,"./image":13,"./packUtil/packManager":19}],18:[function(require,module,exports){
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
 var packManager = require("./packManager");
 function load(packName) {
@@ -766,7 +705,7 @@ function load(packName) {
     });
 }
 module.exports = load;
-},{"./packManager":24}],24:[function(require,module,exports){
+},{"./packManager":19}],19:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -893,7 +832,7 @@ var pack;
     pack.skyboxInfoList = skyboxInfoList;
 })(pack || (pack = {}));
 module.exports = pack;
-},{"./../classes/list":6}],25:[function(require,module,exports){
+},{"./../classes/list":3}],20:[function(require,module,exports){
 var stage = require("./stage");
 var prefab = require("./prefab");
 var d = require("./data");
@@ -967,7 +906,7 @@ var planet;
     planet.fromJsonPlanet = fromJsonPlanet;
 })(planet || (planet = {}));
 module.exports = planet;
-},{"./data":12,"./jsonPlanet":20,"./prefab":26,"./stage":27,"./version":33}],26:[function(require,module,exports){
+},{"./data":8,"./jsonPlanet":16,"./prefab":21,"./stage":22,"./version":28}],21:[function(require,module,exports){
 var prefab = (function () {
     function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
         this.gridX = gridX;
@@ -980,7 +919,7 @@ var prefab = (function () {
     return prefab;
 })();
 module.exports = prefab;
-},{}],27:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var list = require("./classes/list");
 var canvas = require("./canvas");
 var image = require("./image");
@@ -1293,7 +1232,7 @@ var stage;
     stage.toDrawRect = toDrawRect;
 })(stage || (stage = {}));
 module.exports = stage;
-},{"./canvas":2,"./classes/list":6,"./classes/rect":8,"./classes/vector2":10,"./data":12,"./event":16,"./image":17}],28:[function(require,module,exports){
+},{"./canvas":2,"./classes/list":3,"./classes/rect":4,"./classes/vector2":6,"./data":8,"./event":12,"./image":13}],23:[function(require,module,exports){
 var image = require("./image");
 var TrayBlockDetails = require("./classes/trayBlockDetails");
 var d = require("./data");
@@ -1385,7 +1324,7 @@ var tray;
     tray.initTrayObj = initTrayObj;
 })(tray || (tray = {}));
 module.exports = tray;
-},{"./classes/trayBlockDetails":9,"./data":12,"./event":16,"./image":17,"./packUtil/packManager":24,"./uiWaitMode":29}],29:[function(require,module,exports){
+},{"./classes/trayBlockDetails":5,"./data":8,"./event":12,"./image":13,"./packUtil/packManager":19,"./uiWaitMode":24}],24:[function(require,module,exports){
 var uiWaitMode;
 (function (uiWaitMode) {
     function start() {
@@ -1398,7 +1337,7 @@ var uiWaitMode;
     uiWaitMode.end = end;
 })(uiWaitMode || (uiWaitMode = {}));
 module.exports = uiWaitMode;
-},{}],30:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /// <reference path="../../definitely/move.d.ts" />
 var anim;
 (function (anim) {
@@ -1436,7 +1375,7 @@ var anim;
     anim.hideLoading = hideLoading;
 })(anim || (anim = {}));
 module.exports = anim;
-},{}],31:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var initDOM = require("./../initDOM");
 var focusGuide;
 (function (focusGuide) {
@@ -1464,7 +1403,7 @@ var focusGuide;
     focusGuide.hide = hide;
 })(focusGuide || (focusGuide = {}));
 module.exports = focusGuide;
-},{"./../initDOM":19}],32:[function(require,module,exports){
+},{"./../initDOM":15}],27:[function(require,module,exports){
 var util;
 (function (util) {
     function obj2SelectElem(obj) {
@@ -1484,7 +1423,7 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],33:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 var version;
 (function (version_1) {
     version_1.version = "v1.0";
@@ -1492,7 +1431,7 @@ var version;
     version_1.jsonPlanetVersion = 0.1;
 })(version || (version = {}));
 module.exports = version;
-},{}],34:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
@@ -1737,4 +1676,4 @@ var ui;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":10,"./modules/compiler":11,"./modules/data":12,"./modules/editBlock":13,"./modules/elem":14,"./modules/evElems":15,"./modules/event":16,"./modules/importJS":18,"./modules/initDOM":19,"./modules/jsonPlanet":20,"./modules/packUtil/packManager":24,"./modules/planet":25,"./modules/stage":27,"./modules/tray":28,"./modules/ui/anim":30,"./modules/util":32,"./modules/version":33}]},{},[1,2,4,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,30,31,29,32,33,34]);
+},{"./modules/classes/vector2":6,"./modules/compiler":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/importJS":14,"./modules/initDOM":15,"./modules/jsonPlanet":16,"./modules/packUtil/packManager":19,"./modules/planet":20,"./modules/stage":22,"./modules/tray":23,"./modules/ui/anim":25,"./modules/util":27,"./modules/version":28}]},{},[1]);

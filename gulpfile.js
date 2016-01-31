@@ -60,9 +60,9 @@ function runBrowserify(watch, min) {
     }).bundle();
     console.log("source...");
     if (isMin) {
-      f.pipe(source("./all.js")).pipe(gulp.dest("./js/"));
-    } else {
       f.pipe(source("./all.min.js")).pipe(streamify(uglify())).pipe(gulp.dest("./js/"));
+    } else {
+      f.pipe(source("./all.js")).pipe(gulp.dest("./js/"));
     }
   }
   if (isWatch) {

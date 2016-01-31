@@ -38,7 +38,7 @@ module editBlock {
       var l = stage.blockAttrs.getBlock(d.editingBlockId);
       Object.keys(l).forEach(i => {
         var attr = stage.blockAttrs.getAttr(d.editingBlockId, parseInt(i));
-        renderAttributeUI(parseInt(i), attr.attrVal, attr.attrName);
+        renderAttributeUI(parseInt(i), attr.attrName, attr.attrVal);
       });
     }
   }
@@ -59,7 +59,7 @@ module editBlock {
     if (typeof inputName !== "undefined") {
       nameElem.value = inputName;
     }
-    nameElem.addEventListener("change", changeAttrName);
+    nameElem.addEventListener("keydown", changeAttrName);
 
     // valueに当たるInput
     var valElem = document.createElement("input");
@@ -70,10 +70,8 @@ module editBlock {
     if (typeof inputValue !== "undefined") {
       valElem.value = inputValue;
     }
-
-    // 値が変わったとき
-    valElem.addEventListener("change", changeAttrVal);
-
+    valElem.addEventListener("keydown", changeAttrVal);
+    
     // attrの削除
     var removeButton = document.createElement("button");
     removeButton.innerHTML = '<i class="fa fa-minus"></i>';
@@ -91,8 +89,7 @@ module editBlock {
   }
   
   export function changeAttrVal(e:Event) {
-    console.log(stage.blockAttrs.getAll());
-    console.log(parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")));
+    console.log("hg!!");
     // Todo: [x] blockAttrsで、inputNameかinputValかどちらかを変えられるように、オーバーロードを作る
     stage.blockAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")), { attrVal: (<HTMLInputElement>e.target).value });
   }

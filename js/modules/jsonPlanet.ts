@@ -37,30 +37,43 @@ module jsonPlanet {
   }
   export class jsonPlanet {
     constructor(
-      public JsonPlanetVersion:number,
-      public Stage:Array<Array<jsonBlockItem>> = []
+      public jsonPlanetVersion:number,
+      public stage:Array<Array<jsonBlockItem>> = [],
+      public skyboxes: Array<string> = []
     ) {}
     exportJson() {
       var result:any = {};
-      result["JsonPlanetVersion"] = this.JsonPlanetVersion;
-      result["Stage"] = [];
-      for (var i = 0; i < this.Stage.length; i++) {
-        (<Array<any>>result["Stage"])[i] = [];
-        this.Stage[i].forEach(j => {
-          (<Array<any>>result["Stage"])[i].push(j.toArray());  
+      result["jsonPlanetVersion"] = this.jsonPlanetVersion;
+      if (this.skyboxes !== []) {
+        result["skyboxes"] = this.skyboxes;
+      }
+      result["stage"] = [];
+      for (var i = 0; i < this.stage.length; i++) {
+        (<Array<any>>result["stage"])[i] = [];
+        this.stage[i].forEach(j => {
+          (<Array<any>>result["stage"])[i].push(j.toArray());  
         });
       };
       return result;
     }
     static importJson(json:any) {
-      var result = new jsonPlanet(json["JsonPlanetVersion"] || version.jsonPlanetVersion);
-      var stage = (<Array<any>>json["Stage"]);
+      var result = new jsonPlanet(json["jsonPlanetVersion"] || version.jsonPlanetVersion);
+      
+      // stage
+      var stage = (<Array<any>>json["stage"]);
       for (var i = 0; i < stage.length; i++) {
-        result.Stage[i] = [];
+        result.stage[i] = [];
         (<Array<any>>stage[i]).forEach(j => {
-          result.Stage[i].push(jsonBlockItem.fromArray(<Array<any>>j));          
+          result.stage[i].push(jsonBlockItem.fromArray(<Array<any>>j));          
         })
       };
+      
+      // skyboxes
+      var skyboxes = (<Array<string>>json["skyboxes"]);
+      var skyboxCounter = 0;
+      skyboxes.forEach(i => {
+        result.skyboxes[skyboxCounter++] = i;
+      });
       return result;
     }
     /**
@@ -81,7 +94,7 @@ module jsonPlanet {
         }
         var nameAndblock = i.split("=");
         var items = nameAndblock[0].split(",");
-        result.Stage[0].push(new jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
+        result.stage[0].push(new jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
       });
       return result;
     }

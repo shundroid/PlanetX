@@ -8,12 +8,15 @@ var stage = require("./modules/stage");
 var d = require("./modules/data");
 var makeDataUrl = require("./modules/makePrefabDataUrls");
 var tray = require("./modules/tray");
-var prefab = require("./modules/prefab");
+var prefab = require("./modules/classes/prefab");
 var Vector2 = require("./modules/classes/vector2");
 var Rect = require("./modules/classes/rect");
 var canvas = require("./modules/canvas");
 var editBlock = require("./modules/editBlock");
 var fGuide = require("./modules/ui/focusGuide");
+/**
+ * メインとなる処理を行います
+ */
 var main;
 (function (main) {
     function init() {
@@ -25,7 +28,7 @@ var main;
         packLoader(d.defaultPackName).then(function (i) {
             d.pack = new packManager.packModule(i);
             event.raiseEvent("packLoaded", null);
-            stage.stageEffects.skybox = d.pack.editor.defaultSkybox;
+            stage.stageEffects.skyboxes = [d.pack.editor.defaultSkybox];
             ui.setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(d.pack.editor.defaultSkybox).data.filename);
             event.raiseEvent("initedPack", null);
             event.raiseEvent("initedUI", null);
@@ -122,9 +125,12 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/rect":4,"./modules/classes/vector2":6,"./modules/data":7,"./modules/editBlock":8,"./modules/event":11,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":17,"./modules/packUtil/packManager":18,"./modules/prefab":20,"./modules/stage":21,"./modules/tray":22,"./modules/ui/focusGuide":25,"./ui":28}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/prefab":4,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":17,"./modules/packUtil/packManager":18,"./modules/stage":20,"./modules/tray":21,"./modules/ui/focusGuide":24,"./ui":27}],2:[function(require,module,exports){
 /// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
 var initDOM = require("./initDOM");
+/**
+ * Canvasへの描画に関係する処理を行います。
+ */
 var canvas;
 (function (canvas_1) {
     var canvas;
@@ -206,6 +212,19 @@ var List = (function () {
 })();
 module.exports = List;
 },{}],4:[function(require,module,exports){
+var prefab = (function () {
+    function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
+        this.gridX = gridX;
+        this.gridY = gridY;
+        this.fileName = fileName;
+        this.blockName = blockName;
+        this.gridW = gridW;
+        this.gridH = gridH;
+    }
+    return prefab;
+})();
+module.exports = prefab;
+},{}],5:[function(require,module,exports){
 var rect = (function () {
     function rect(x, y, width, height) {
         this.x = x;
@@ -216,7 +235,7 @@ var rect = (function () {
     return rect;
 })();
 module.exports = rect;
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var TrayBlockDetails = (function () {
     function TrayBlockDetails(blockName, fileName, label, // 表示するときのブロック名
         width, height) {
@@ -229,7 +248,7 @@ var TrayBlockDetails = (function () {
     return TrayBlockDetails;
 })();
 module.exports = TrayBlockDetails;
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var Vector2 = (function () {
     function Vector2(x, y) {
         this.x = x;
@@ -246,12 +265,15 @@ var Vector2 = (function () {
     return Vector2;
 })();
 module.exports = Vector2;
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var list = require("./classes/list");
+/**
+ * Planetの情報を保存します。
+ */
 var data = (function () {
     function data() {
     }
-    /*
+    /**
      * 全ての Data メンバーを、初期化します。
      */
     data.dataInit = function () {
@@ -269,7 +291,7 @@ var data = (function () {
     return data;
 })();
 module.exports = data;
-},{"./classes/list":3}],8:[function(require,module,exports){
+},{"./classes/list":3}],9:[function(require,module,exports){
 var d = require("./data");
 var stage = require("./stage");
 /**
@@ -376,7 +398,10 @@ var editBlock;
     editBlock_1.clickRemoveAttr = clickRemoveAttr;
 })(editBlock || (editBlock = {}));
 module.exports = editBlock;
-},{"./data":7,"./stage":21}],9:[function(require,module,exports){
+},{"./data":8,"./stage":20}],10:[function(require,module,exports){
+/**
+ * #41 lodashとかでかぶるかな・・
+ */
 var elem;
 (function (elem) {
     function addEventListenerforQuery(query, eventName, listener) {
@@ -391,8 +416,11 @@ var elem;
     elem.forEachforQuery = forEachforQuery;
 })(elem || (elem = {}));
 module.exports = elem;
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var el = require("./elem");
+/**
+ * .ev-XXと定義された要素に、イベントをつけます。
+ */
 var evElems;
 (function (evElems) {
     function set(listenerNamespace) {
@@ -412,8 +440,11 @@ var evElems;
     evElems.set = set;
 })(evElems || (evElems = {}));
 module.exports = evElems;
-},{"./elem":9}],11:[function(require,module,exports){
+},{"./elem":10}],12:[function(require,module,exports){
 var list = require("./classes/list");
+/**
+ * 廃止の方向で・・
+ */
 var event;
 (function (event) {
     var eventHandlers = new list();
@@ -443,7 +474,10 @@ var event;
     event.raiseEvent = raiseEvent;
 })(event || (event = {}));
 module.exports = event;
-},{"./classes/list":3}],12:[function(require,module,exports){
+},{"./classes/list":3}],13:[function(require,module,exports){
+/**
+ * 画像処理系はここにまとめたい。(makePrefabDataUrls.ts)
+ */
 function image(url, isNoJaggy, size) {
     var a = new Image();
     a.src = url;
@@ -464,15 +498,11 @@ function image(url, isNoJaggy, size) {
     }
 }
 module.exports = image;
-},{}],13:[function(require,module,exports){
-function importJS(src) {
-    var elem = document.createElement("script");
-    elem.src = src;
-    return elem;
-}
-module.exports = importJS;
 },{}],14:[function(require,module,exports){
 var handlerList = new Array();
+/**
+ * DOMContentLoadedのタイミングで呼ばれます。
+ */
 function add(fn) {
     handlerList.push(fn);
 }
@@ -523,34 +553,46 @@ var jsonPlanet;
     })();
     jsonPlanet_1.jsonBlockItem = jsonBlockItem;
     var jsonPlanet = (function () {
-        function jsonPlanet(JsonPlanetVersion, Stage) {
-            if (Stage === void 0) { Stage = []; }
-            this.JsonPlanetVersion = JsonPlanetVersion;
-            this.Stage = Stage;
+        function jsonPlanet(jsonPlanetVersion, stage, skyboxes) {
+            if (stage === void 0) { stage = []; }
+            if (skyboxes === void 0) { skyboxes = []; }
+            this.jsonPlanetVersion = jsonPlanetVersion;
+            this.stage = stage;
+            this.skyboxes = skyboxes;
         }
         jsonPlanet.prototype.exportJson = function () {
             var result = {};
-            result["JsonPlanetVersion"] = this.JsonPlanetVersion;
-            result["Stage"] = [];
-            for (var i = 0; i < this.Stage.length; i++) {
-                result["Stage"][i] = [];
-                this.Stage[i].forEach(function (j) {
-                    result["Stage"][i].push(j.toArray());
+            result["jsonPlanetVersion"] = this.jsonPlanetVersion;
+            if (this.skyboxes !== []) {
+                result["skyboxes"] = this.skyboxes;
+            }
+            result["stage"] = [];
+            for (var i = 0; i < this.stage.length; i++) {
+                result["stage"][i] = [];
+                this.stage[i].forEach(function (j) {
+                    result["stage"][i].push(j.toArray());
                 });
             }
             ;
             return result;
         };
         jsonPlanet.importJson = function (json) {
-            var result = new jsonPlanet(json["JsonPlanetVersion"] || version.jsonPlanetVersion);
-            var stage = json["Stage"];
+            var result = new jsonPlanet(json["jsonPlanetVersion"] || version.jsonPlanetVersion);
+            // stage
+            var stage = json["stage"];
             for (var i = 0; i < stage.length; i++) {
-                result.Stage[i] = [];
+                result.stage[i] = [];
                 stage[i].forEach(function (j) {
-                    result.Stage[i].push(jsonBlockItem.fromArray(j));
+                    result.stage[i].push(jsonBlockItem.fromArray(j));
                 });
             }
             ;
+            // skyboxes
+            var skyboxes = json["skyboxes"];
+            var skyboxCounter = 0;
+            skyboxes.forEach(function (i) {
+                result.skyboxes[skyboxCounter++] = i;
+            });
             return result;
         };
         /**
@@ -571,7 +613,7 @@ var jsonPlanet;
                 }
                 var nameAndblock = i.split("=");
                 var items = nameAndblock[0].split(",");
-                result.Stage[0].push(new jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
+                result.stage[0].push(new jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
             });
             return result;
         };
@@ -580,12 +622,15 @@ var jsonPlanet;
     jsonPlanet_1.jsonPlanet = jsonPlanet;
 })(jsonPlanet || (jsonPlanet = {}));
 module.exports = jsonPlanet;
-},{"./version":27}],16:[function(require,module,exports){
+},{"./version":26}],16:[function(require,module,exports){
 var d = require("./data");
 var list = require("./classes/list");
 var packManager = require("./packUtil/packManager");
 var Vector2 = require("./classes/vector2");
 var image = require("./image");
+/**
+ * Todo: 必要性 -> image.tsとの統合
+ */
 function makeDataUrl() {
     var result = new list();
     var blockList = d.pack.blocks.getAll();
@@ -600,7 +645,7 @@ function makeDataUrl() {
     return result;
 }
 module.exports = makeDataUrl;
-},{"./classes/list":3,"./classes/vector2":6,"./data":7,"./image":12,"./packUtil/packManager":18}],17:[function(require,module,exports){
+},{"./classes/list":3,"./classes/vector2":7,"./data":8,"./image":13,"./packUtil/packManager":18}],17:[function(require,module,exports){
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
 var packManager = require("./packManager");
 function load(packName) {
@@ -745,7 +790,7 @@ var pack;
 module.exports = pack;
 },{"./../classes/list":3}],19:[function(require,module,exports){
 var stage = require("./stage");
-var prefab = require("./prefab");
+var prefab = require("./classes/prefab");
 var d = require("./data");
 var jsonPlanet = require("./jsonPlanet");
 var version = require("./version");
@@ -760,9 +805,12 @@ var planet;
      */
     function toJsonPlanet() {
         var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
+        Object.keys(stage.stageEffects.skyboxes).forEach(function (i) {
+            result.skyboxes.push(stage.stageEffects.skyboxes[parseInt(i)]);
+        });
         var items = stage.items.getAllLayer();
         for (var i = 0; i < items.length; i++) {
-            result.Stage[i] = [];
+            result.stage[i] = [];
             items[i].forEach(function (j) {
                 var item = stage.items.get(j);
                 if (stage.blockAttrs.containsBlock(j)) {
@@ -772,10 +820,10 @@ var planet;
                     Object.keys(attrs).forEach(function (k) {
                         attr[attrs[parseInt(k)].attrName] = attrs[parseInt(k)].attrVal;
                     });
-                    result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString(), attr));
+                    result.stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString(), attr));
                 }
                 else {
-                    result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
+                    result.stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
                 }
             });
         }
@@ -790,8 +838,8 @@ var planet;
         stage.items.clear();
         stage.blockAttrs.clear();
         stage.resetId();
-        for (var i = 0; i < jsonPla.Stage.length; i++) {
-            jsonPla.Stage[i].forEach(function (j) {
+        for (var i = 0; i < jsonPla.stage.length; i++) {
+            jsonPla.stage[i].forEach(function (j) {
                 var id = stage.getId();
                 if (d.pack.objs.contains(j.blockName)) {
                     var objData = d.pack.objs.get(j.blockName);
@@ -810,27 +858,14 @@ var planet;
         }
         d.activeStageLayer = 0;
         var result = new stage.StageEffects();
-        result.skybox = "sky";
-        // Todo: StageEffect
+        // skyboxes
+        result.skyboxes = jsonPla.skyboxes;
         return result;
     }
     planet.fromJsonPlanet = fromJsonPlanet;
 })(planet || (planet = {}));
 module.exports = planet;
-},{"./data":7,"./jsonPlanet":15,"./prefab":20,"./stage":21,"./version":27}],20:[function(require,module,exports){
-var prefab = (function () {
-    function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
-        this.gridX = gridX;
-        this.gridY = gridY;
-        this.fileName = fileName;
-        this.blockName = blockName;
-        this.gridW = gridW;
-        this.gridH = gridH;
-    }
-    return prefab;
-})();
-module.exports = prefab;
-},{}],21:[function(require,module,exports){
+},{"./classes/prefab":4,"./data":8,"./jsonPlanet":15,"./stage":20,"./version":26}],20:[function(require,module,exports){
 var list = require("./classes/list");
 var canvas = require("./canvas");
 var image = require("./image");
@@ -838,12 +873,15 @@ var d = require("./data");
 var rect = require("./classes/rect");
 var event = require("./event");
 var Vector2 = require("./classes/vector2");
+/**
+ * 現在のStage情報を保存します。
+ */
 var stage;
 (function (stage) {
     // StageEffect
     var StageEffects = (function () {
         function StageEffects() {
-            this.skybox = "";
+            this.skyboxes = [""];
         }
         return StageEffects;
     })();
@@ -1141,7 +1179,7 @@ var stage;
     stage.toDrawRect = toDrawRect;
 })(stage || (stage = {}));
 module.exports = stage;
-},{"./canvas":2,"./classes/list":3,"./classes/rect":4,"./classes/vector2":6,"./data":7,"./event":11,"./image":12}],22:[function(require,module,exports){
+},{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":8,"./event":12,"./image":13}],21:[function(require,module,exports){
 var image = require("./image");
 var TrayBlockDetails = require("./classes/trayBlockDetails");
 var d = require("./data");
@@ -1149,9 +1187,7 @@ var uiWaitMode = require("./uiWaitMode");
 var event = require("./event");
 var packManager = require("./packUtil/packManager");
 /**
- * pla:module
- * | [x] ui
- * | [x] controller
+ * Tray（UI下部分）のUI、Controllerを構成します。
  */
 var tray;
 (function (tray) {
@@ -1233,7 +1269,10 @@ var tray;
     tray.initTrayObj = initTrayObj;
 })(tray || (tray = {}));
 module.exports = tray;
-},{"./classes/trayBlockDetails":5,"./data":7,"./event":11,"./image":12,"./packUtil/packManager":18,"./uiWaitMode":23}],23:[function(require,module,exports){
+},{"./classes/trayBlockDetails":6,"./data":8,"./event":12,"./image":13,"./packUtil/packManager":18,"./uiWaitMode":22}],22:[function(require,module,exports){
+/**
+ * Todo: 必要性
+ */
 var uiWaitMode;
 (function (uiWaitMode) {
     function start() {
@@ -1246,7 +1285,7 @@ var uiWaitMode;
     uiWaitMode.end = end;
 })(uiWaitMode || (uiWaitMode = {}));
 module.exports = uiWaitMode;
-},{}],24:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /// <reference path="../../definitely/move.d.ts" />
 var anim;
 (function (anim) {
@@ -1284,7 +1323,7 @@ var anim;
     anim.hideLoading = hideLoading;
 })(anim || (anim = {}));
 module.exports = anim;
-},{}],25:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var initDOM = require("./../initDOM");
 var focusGuide;
 (function (focusGuide) {
@@ -1312,7 +1351,10 @@ var focusGuide;
     focusGuide.hide = hide;
 })(focusGuide || (focusGuide = {}));
 module.exports = focusGuide;
-},{"./../initDOM":14}],26:[function(require,module,exports){
+},{"./../initDOM":14}],25:[function(require,module,exports){
+/**
+ * Todo: 必要性
+ */
 var util;
 (function (util) {
     function obj2SelectElem(obj) {
@@ -1332,7 +1374,10 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],27:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
+/**
+ * Planetのバージョン情報
+ */
 var version;
 (function (version_1) {
     version_1.version = "v1.0";
@@ -1340,14 +1385,13 @@ var version;
     version_1.jsonPlanetVersion = 0.1;
 })(version || (version = {}));
 module.exports = version;
-},{}],28:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
 var initDOM = require("./modules/initDOM");
 var event = require("./modules/event");
 var el = require("./modules/elem");
-var importJS = require("./modules/importJS");
 var u = require("./modules/util");
 var Vector2 = require("./modules/classes/vector2");
 var tray = require("./modules/tray");
@@ -1359,6 +1403,9 @@ var evElems = require("./modules/evElems");
 var anim = require("./modules/ui/anim");
 var editBlock = require("./modules/editBlock");
 var jsonPlanet = require("./modules/jsonPlanet");
+/**
+ * UIに関する処理を行います。
+ */
 var ui;
 (function (ui) {
     function init() {
@@ -1414,7 +1461,10 @@ var ui;
         document.getElementById("pla-ver").innerHTML = "Planet " + v.version + " by " + v.author;
         el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
         el.addEventListenerforQuery(".tray-list-tool", "mousedown", clickTrayTool);
-        document.head.appendChild(importJS("bower_components/move.js/move.js"));
+        // movejsを読む
+        var movejs = document.createElement("script");
+        movejs.src = "bower_components/move.js/move.js";
+        document.head.appendChild(movejs);
         window.onbeforeunload = function (event) {
             event.returnValue = "ページを移動しますか？";
         };
@@ -1472,11 +1522,11 @@ var ui;
     }
     ui.clickExport = clickExport;
     function clickImport() {
-        //var effects = planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
+        // fromJSONPlanet内で、d.activeStageLayerは0になる。
         var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse(document.getElementById("pla-io").value)));
         stage.stageEffects = effects;
-        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox).data.filename);
-        stage.renderStage(d.activeStageLayer);
+        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
+        stage.renderStage(0);
     }
     ui.clickImport = clickImport;
     function clickInsShowBtn(e) {
@@ -1553,8 +1603,8 @@ var ui;
     }
     ui.clickConvertOldFile = clickConvertOldFile;
     function changeSkybox(e) {
-        stage.stageEffects.skybox = e.target.value;
-        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
+        stage.stageEffects.skyboxes[d.activeStageLayer] = e.target.value;
+        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
     }
     ui.changeSkybox = changeSkybox;
     function clickAddAttr() {
@@ -1568,9 +1618,14 @@ var ui;
     //  }
     function changeActiveStageLayer(e) {
         stage.changeActiveStageLayer(parseInt(e.target.value));
+        if (typeof stage.stageEffects.skyboxes[d.activeStageLayer] === "undefined") {
+            stage.stageEffects.skyboxes[d.activeStageLayer] = d.pack.editor.defaultSkybox;
+        }
+        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
+        document.getElementById("stg-skybox").value = stage.stageEffects.skyboxes[d.activeStageLayer];
     }
     ui.changeActiveStageLayer = changeActiveStageLayer;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":6,"./modules/data":7,"./modules/editBlock":8,"./modules/elem":9,"./modules/evElems":10,"./modules/event":11,"./modules/importJS":13,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/packUtil/packManager":18,"./modules/planet":19,"./modules/stage":21,"./modules/tray":22,"./modules/ui/anim":24,"./modules/util":26,"./modules/version":27}]},{},[1]);
+},{"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/packUtil/packManager":18,"./modules/planet":19,"./modules/stage":20,"./modules/tray":21,"./modules/ui/anim":23,"./modules/util":25,"./modules/version":26}]},{},[1]);

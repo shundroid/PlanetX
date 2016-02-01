@@ -3,6 +3,10 @@ import list = require("./classes/list");
 import packManager = require("./packUtil/packManager");
 import Vector2 = require("./classes/vector2");
 import image = require("./image");
+
+/**
+ * Todo: 必要性 -> image.tsとの統合
+ */
 function makeDataUrl() {
   var result = new list<string>();
   var blockList = d.pack.blocks.getAll();

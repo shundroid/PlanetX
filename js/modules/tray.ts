@@ -6,9 +6,7 @@ import event = require("./event");
 import packManager = require("./packUtil/packManager");
 
 /**
- * pla:module
- * | [x] ui
- * | [x] controller
+ * Tray（UI下部分）のUI、Controllerを構成します。
  */
 module tray {
   export function updateActiveBlock(blockName:string, fileName:string, label:string, width?:number, height?:number) {

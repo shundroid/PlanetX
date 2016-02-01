@@ -1,4 +1,8 @@
 import Vector2 = require("./classes/vector2");
+
+/**
+ * 画像処理系はここにまとめたい。(makePrefabDataUrls.ts)
+ */
 function image(url:string, isNoJaggy?:boolean, size?:Vector2):HTMLImageElement {
   var a = new Image();
   a.src = url;

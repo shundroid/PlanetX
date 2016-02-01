@@ -3,10 +3,7 @@
 import d = require("./modules/data");
 import initDOM = require("./modules/initDOM");
 import event = require("./modules/event");
-import oI = require("./modules/objIndex");
 import el = require("./modules/elem");
-import compiler = require("./modules/compiler");
-import importJS = require("./modules/importJS");
 import u = require("./modules/util");
 import list = require("./modules/classes/list");
 import Vector2 = require("./modules/classes/vector2");
@@ -20,6 +17,9 @@ import anim = require("./modules/ui/anim");
 import editBlock = require("./modules/editBlock");
 import jsonPlanet = require("./modules/jsonPlanet");
 
+/**
+ * UIに関する処理を行います。
+ */
 module ui {
   export var canvas: HTMLCanvasElement; 
   function init() {
@@ -73,7 +73,11 @@ module ui {
     document.getElementById("pla-ver").innerHTML = `Planet ${v.version} by ${v.author}`;
     el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
     el.addEventListenerforQuery(".tray-list-tool", "mousedown", clickTrayTool);
-    document.head.appendChild(importJS("bower_components/move.js/move.js"));
+    
+    // movejsを読む
+    var movejs = document.createElement("script");
+    movejs.src = "bower_components/move.js/move.js"
+    document.head.appendChild(movejs);
     window.onbeforeunload = (event) => {
       event.returnValue = "ページを移動しますか？";
     };
@@ -125,11 +129,11 @@ module ui {
     (<HTMLTextAreaElement>document.getElementById("pla-io")).value = JSON.stringify(planet.toJsonPlanet().exportJson());
   }
   export function clickImport() {
-    //var effects = planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
+    // fromJSONPlanet内で、d.activeStageLayerは0になる。
     var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
     stage.stageEffects = effects;
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox).data.filename);
-    stage.renderStage(d.activeStageLayer);
+    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
+    stage.renderStage(0);
   }
   
   export function clickInsShowBtn(e:MouseEvent) {
@@ -193,7 +197,7 @@ module ui {
   }
  
   event.addEventListener("clickTrayToolbtn", (name:string) => {
-    var btnName2InspectorName:oI = {
+    var btnName2InspectorName:{[key: string]: string} = {
       "io": "io",
       "setting": "inspector"
     };
@@ -206,8 +210,8 @@ module ui {
   }
   
   export function changeSkybox(e:Event) {
-    stage.stageEffects.skybox = (<HTMLSelectElement>e.target).value;
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
+    stage.stageEffects.skyboxes[d.activeStageLayer] = (<HTMLSelectElement>e.target).value;
+    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
   }
   
   export function clickAddAttr() {
@@ -220,6 +224,11 @@ module ui {
 //  }
   export function changeActiveStageLayer(e:Event) {
     stage.changeActiveStageLayer(parseInt((<HTMLInputElement>e.target).value));
+    if (typeof stage.stageEffects.skyboxes[d.activeStageLayer] === "undefined") {
+      stage.stageEffects.skyboxes[d.activeStageLayer] = d.pack.editor.defaultSkybox;
+    }
+    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename); 
+    (<HTMLSelectElement>document.getElementById("stg-skybox")).value = stage.stageEffects.skyboxes[d.activeStageLayer];
   }
   init();
 }

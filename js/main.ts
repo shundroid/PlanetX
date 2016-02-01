@@ -8,13 +8,16 @@ import stage = require("./modules/stage");
 import d = require("./modules/data");
 import makeDataUrl = require("./modules/makePrefabDataUrls");
 import tray = require("./modules/tray");
-import prefab = require("./modules/prefab");
+import prefab = require("./modules/classes/prefab");
 import Vector2 = require("./modules/classes/vector2");
 import Rect = require("./modules/classes/rect");
 import canvas = require("./modules/canvas");
 import editBlock = require("./modules/editBlock");
 import fGuide = require("./modules/ui/focusGuide");
 
+/**
+ * メインとなる処理を行います
+ */
 module main {
 
   function init() {
@@ -27,7 +30,7 @@ module main {
     packLoader(d.defaultPackName).then((i:any) => {
       d.pack = new packManager.packModule(i);
       event.raiseEvent("packLoaded", null);
-      stage.stageEffects.skybox = d.pack.editor.defaultSkybox;
+      stage.stageEffects.skyboxes = [d.pack.editor.defaultSkybox];
       ui.setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(d.pack.editor.defaultSkybox).data.filename);
       event.raiseEvent("initedPack", null);
       event.raiseEvent("initedUI", null);

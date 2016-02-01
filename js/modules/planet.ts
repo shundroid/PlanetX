@@ -15,9 +15,12 @@ module planet {
    */
   export function toJsonPlanet() {
     var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
+    Object.keys(stage.stageEffects.skyboxes).forEach(i => {
+      result.skyboxes.push(stage.stageEffects.skyboxes[parseInt(i)]);
+    });
     var items = stage.items.getAllLayer();
     for (var i = 0; i < items.length; i++)  {
-      result.Stage[i] = [];
+      result.stage[i] = [];
       items[i].forEach(j => {
         var item = stage.items.get(j);
         if (stage.blockAttrs.containsBlock(j)) {
@@ -27,9 +30,9 @@ module planet {
           Object.keys(attrs).forEach(k => {
             attr[attrs[parseInt(k)].attrName] = attrs[parseInt(k)].attrVal;
           });
-          result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString(), attr));          
+          result.stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString(), attr));          
         } else {
-          result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
+          result.stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
         }
       });
     }
@@ -44,8 +47,8 @@ module planet {
     stage.items.clear();
     stage.blockAttrs.clear();
     stage.resetId();
-    for (var i = 0; i < jsonPla.Stage.length; i++) {
-      jsonPla.Stage[i].forEach(j => {
+    for (var i = 0; i < jsonPla.stage.length; i++) {
+      jsonPla.stage[i].forEach(j => {
         var id = stage.getId();
         if (d.pack.objs.contains(j.blockName)) {
           let objData = d.pack.objs.get(j.blockName);
@@ -63,7 +66,7 @@ module planet {
     }
     d.activeStageLayer = 0;
     var result = new stage.StageEffects();
-    result.skybox[0] = "sky";
+    result.skyboxes[0] = d.pack.editor.defaultSkybox;
     // Todo: StageEffect
     return result;
   }

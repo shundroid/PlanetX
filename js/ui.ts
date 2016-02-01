@@ -132,7 +132,7 @@ module ui {
     // fromJSONPlanet内で、d.activeStageLayerは0になる。
     var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
     stage.stageEffects = effects;
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox[0]).data.filename);
+    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
     stage.renderStage(0);
   }
   
@@ -210,8 +210,8 @@ module ui {
   }
   
   export function changeSkybox(e:Event) {
-    stage.stageEffects.skybox[d.activeStageLayer] = (<HTMLSelectElement>e.target).value;
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox[d.activeStageLayer]).data.filename);
+    stage.stageEffects.skyboxes[d.activeStageLayer] = (<HTMLSelectElement>e.target).value;
+    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
   }
   
   export function clickAddAttr() {
@@ -224,12 +224,12 @@ module ui {
 //  }
   export function changeActiveStageLayer(e:Event) {
     stage.changeActiveStageLayer(parseInt((<HTMLInputElement>e.target).value));
-    if (typeof stage.stageEffects.skybox[d.activeStageLayer] === "undefined") {
-      stage.stageEffects.skybox[d.activeStageLayer] = d.pack.editor.defaultSkybox;
+    if (typeof stage.stageEffects.skyboxes[d.activeStageLayer] === "undefined") {
+      stage.stageEffects.skyboxes[d.activeStageLayer] = d.pack.editor.defaultSkybox;
     }
-    console.log(stage.stageEffects.skybox);
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox[d.activeStageLayer]).data.filename); 
-    (<HTMLSelectElement>document.getElementById("stg-skybox")).value = stage.stageEffects.skybox[d.activeStageLayer];
+    console.log(stage.stageEffects.skyboxes);
+    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename); 
+    (<HTMLSelectElement>document.getElementById("stg-skybox")).value = stage.stageEffects.skyboxes[d.activeStageLayer];
   }
   init();
 }

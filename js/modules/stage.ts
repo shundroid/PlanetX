@@ -14,9 +14,9 @@ module stage {
   
   // StageEffect
   export class StageEffects {
-    public skybox:{[key: number]: string};
+    public skyboxes:{[key: number]: string};
     constructor() {
-      this.skybox = { 0: "" };
+      this.skyboxes = { 0: "" };
     }
   }
   export var stageEffects:StageEffects = new StageEffects();

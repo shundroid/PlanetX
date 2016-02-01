@@ -28,7 +28,7 @@ var main;
         packLoader(d.defaultPackName).then(function (i) {
             d.pack = new packManager.packModule(i);
             event.raiseEvent("packLoaded", null);
-            stage.stageEffects.skybox = { "0": d.pack.editor.defaultSkybox };
+            stage.stageEffects.skyboxes = { 0: d.pack.editor.defaultSkybox };
             ui.setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(d.pack.editor.defaultSkybox).data.filename);
             event.raiseEvent("initedPack", null);
             event.raiseEvent("initedUI", null);
@@ -553,31 +553,36 @@ var jsonPlanet;
     })();
     jsonPlanet_1.jsonBlockItem = jsonBlockItem;
     var jsonPlanet = (function () {
-        function jsonPlanet(JsonPlanetVersion, Stage) {
-            if (Stage === void 0) { Stage = []; }
-            this.JsonPlanetVersion = JsonPlanetVersion;
-            this.Stage = Stage;
+        function jsonPlanet(jsonPlanetVersion, stage, skyboxes) {
+            if (stage === void 0) { stage = []; }
+            if (skyboxes === void 0) { skyboxes = []; }
+            this.jsonPlanetVersion = jsonPlanetVersion;
+            this.stage = stage;
+            this.skyboxes = skyboxes;
         }
         jsonPlanet.prototype.exportJson = function () {
             var result = {};
-            result["JsonPlanetVersion"] = this.JsonPlanetVersion;
-            result["Stage"] = [];
-            for (var i = 0; i < this.Stage.length; i++) {
-                result["Stage"][i] = [];
-                this.Stage[i].forEach(function (j) {
-                    result["Stage"][i].push(j.toArray());
+            result["jsonPlanetVersion"] = this.jsonPlanetVersion;
+            if (this.skyboxes !== []) {
+                result["skyboxes"] = this.skyboxes;
+            }
+            result["stage"] = [];
+            for (var i = 0; i < this.stage.length; i++) {
+                result["stage"][i] = [];
+                this.stage[i].forEach(function (j) {
+                    result["stage"][i].push(j.toArray());
                 });
             }
             ;
             return result;
         };
         jsonPlanet.importJson = function (json) {
-            var result = new jsonPlanet(json["JsonPlanetVersion"] || version.jsonPlanetVersion);
-            var stage = json["Stage"];
+            var result = new jsonPlanet(json["jsonPlanetVersion"] || version.jsonPlanetVersion);
+            var stage = json["stage"];
             for (var i = 0; i < stage.length; i++) {
-                result.Stage[i] = [];
+                result.stage[i] = [];
                 stage[i].forEach(function (j) {
-                    result.Stage[i].push(jsonBlockItem.fromArray(j));
+                    result.stage[i].push(jsonBlockItem.fromArray(j));
                 });
             }
             ;
@@ -601,7 +606,7 @@ var jsonPlanet;
                 }
                 var nameAndblock = i.split("=");
                 var items = nameAndblock[0].split(",");
-                result.Stage[0].push(new jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
+                result.stage[0].push(new jsonBlockItem(items[0], parseInt(items[1]), parseInt(items[2]), nameAndblock[1]));
             });
             return result;
         };
@@ -793,9 +798,12 @@ var planet;
      */
     function toJsonPlanet() {
         var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
+        Object.keys(stage.stageEffects.skyboxes).forEach(function (i) {
+            result.skyboxes.push(stage.stageEffects.skyboxes[parseInt(i)]);
+        });
         var items = stage.items.getAllLayer();
         for (var i = 0; i < items.length; i++) {
-            result.Stage[i] = [];
+            result.stage[i] = [];
             items[i].forEach(function (j) {
                 var item = stage.items.get(j);
                 if (stage.blockAttrs.containsBlock(j)) {
@@ -805,10 +813,10 @@ var planet;
                     Object.keys(attrs).forEach(function (k) {
                         attr[attrs[parseInt(k)].attrName] = attrs[parseInt(k)].attrVal;
                     });
-                    result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString(), attr));
+                    result.stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString(), attr));
                 }
                 else {
-                    result.Stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
+                    result.stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
                 }
             });
         }
@@ -823,8 +831,8 @@ var planet;
         stage.items.clear();
         stage.blockAttrs.clear();
         stage.resetId();
-        for (var i = 0; i < jsonPla.Stage.length; i++) {
-            jsonPla.Stage[i].forEach(function (j) {
+        for (var i = 0; i < jsonPla.stage.length; i++) {
+            jsonPla.stage[i].forEach(function (j) {
                 var id = stage.getId();
                 if (d.pack.objs.contains(j.blockName)) {
                     var objData = d.pack.objs.get(j.blockName);
@@ -843,7 +851,7 @@ var planet;
         }
         d.activeStageLayer = 0;
         var result = new stage.StageEffects();
-        result.skybox[0] = "sky";
+        result.skyboxes[0] = d.pack.editor.defaultSkybox;
         // Todo: StageEffect
         return result;
     }
@@ -866,7 +874,7 @@ var stage;
     // StageEffect
     var StageEffects = (function () {
         function StageEffects() {
-            this.skybox = { 0: "" };
+            this.skyboxes = { 0: "" };
         }
         return StageEffects;
     })();
@@ -1510,7 +1518,7 @@ var ui;
         // fromJSONPlanet内で、d.activeStageLayerは0になる。
         var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse(document.getElementById("pla-io").value)));
         stage.stageEffects = effects;
-        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox[0]).data.filename);
+        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
         stage.renderStage(0);
     }
     ui.clickImport = clickImport;
@@ -1588,8 +1596,8 @@ var ui;
     }
     ui.clickConvertOldFile = clickConvertOldFile;
     function changeSkybox(e) {
-        stage.stageEffects.skybox[d.activeStageLayer] = e.target.value;
-        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox[d.activeStageLayer]).data.filename);
+        stage.stageEffects.skyboxes[d.activeStageLayer] = e.target.value;
+        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
     }
     ui.changeSkybox = changeSkybox;
     function clickAddAttr() {
@@ -1603,12 +1611,12 @@ var ui;
     //  }
     function changeActiveStageLayer(e) {
         stage.changeActiveStageLayer(parseInt(e.target.value));
-        if (typeof stage.stageEffects.skybox[d.activeStageLayer] === "undefined") {
-            stage.stageEffects.skybox[d.activeStageLayer] = d.pack.editor.defaultSkybox;
+        if (typeof stage.stageEffects.skyboxes[d.activeStageLayer] === "undefined") {
+            stage.stageEffects.skyboxes[d.activeStageLayer] = d.pack.editor.defaultSkybox;
         }
-        console.log(stage.stageEffects.skybox);
-        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox[d.activeStageLayer]).data.filename);
-        document.getElementById("stg-skybox").value = stage.stageEffects.skybox[d.activeStageLayer];
+        console.log(stage.stageEffects.skyboxes);
+        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
+        document.getElementById("stg-skybox").value = stage.stageEffects.skyboxes[d.activeStageLayer];
     }
     ui.changeActiveStageLayer = changeActiveStageLayer;
     init();

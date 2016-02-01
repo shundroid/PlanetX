@@ -58,6 +58,8 @@ module jsonPlanet {
     }
     static importJson(json:any) {
       var result = new jsonPlanet(json["jsonPlanetVersion"] || version.jsonPlanetVersion);
+      
+      // stage
       var stage = (<Array<any>>json["stage"]);
       for (var i = 0; i < stage.length; i++) {
         result.stage[i] = [];
@@ -65,6 +67,13 @@ module jsonPlanet {
           result.stage[i].push(jsonBlockItem.fromArray(<Array<any>>j));          
         })
       };
+      
+      // skyboxes
+      var skyboxes = (<Array<string>>json["skyboxes"]);
+      var skyboxCounter = 0;
+      skyboxes.forEach(i => {
+        result.skyboxes[skyboxCounter++] = i;
+      });
       return result;
     }
     /**

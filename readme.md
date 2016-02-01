@@ -50,17 +50,12 @@ Firefox 45.0で確認しています。
 
 #### 普通に実行する
 ```bash
-gulp browserify --dev
+gulp brify
 ```
 
-`--dev`は、つけるとall.jsを圧縮しない。
-
-#### watchify
-```bash
-gulp w-browserify --dev
-```
-
-`--dev`は、つけるとall.jsを圧縮しない。
+#### Taskのオプション
+- `--min`は、つけると uglify をし、all.min.js として出す。
+- `--watch`は、つけると watchify する。
 
 ### ブラウザでの確認
 サーバーサイドスクリプトは使用してないが、Ajaxを使用している。  

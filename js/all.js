@@ -28,7 +28,7 @@ var main;
         packLoader(d.defaultPackName).then(function (i) {
             d.pack = new packManager.packModule(i);
             event.raiseEvent("packLoaded", null);
-            stage.stageEffects.skyboxes = { 0: d.pack.editor.defaultSkybox };
+            stage.stageEffects.skyboxes = [d.pack.editor.defaultSkybox];
             ui.setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(d.pack.editor.defaultSkybox).data.filename);
             event.raiseEvent("initedPack", null);
             event.raiseEvent("initedUI", null);
@@ -578,6 +578,7 @@ var jsonPlanet;
         };
         jsonPlanet.importJson = function (json) {
             var result = new jsonPlanet(json["jsonPlanetVersion"] || version.jsonPlanetVersion);
+            // stage
             var stage = json["stage"];
             for (var i = 0; i < stage.length; i++) {
                 result.stage[i] = [];
@@ -586,6 +587,12 @@ var jsonPlanet;
                 });
             }
             ;
+            // skyboxes
+            var skyboxes = json["skyboxes"];
+            var skyboxCounter = 0;
+            skyboxes.forEach(function (i) {
+                result.skyboxes[skyboxCounter++] = i;
+            });
             return result;
         };
         /**
@@ -851,8 +858,8 @@ var planet;
         }
         d.activeStageLayer = 0;
         var result = new stage.StageEffects();
-        result.skyboxes[0] = d.pack.editor.defaultSkybox;
-        // Todo: StageEffect
+        // skyboxes
+        result.skyboxes = jsonPla.skyboxes;
         return result;
     }
     planet.fromJsonPlanet = fromJsonPlanet;
@@ -874,7 +881,7 @@ var stage;
     // StageEffect
     var StageEffects = (function () {
         function StageEffects() {
-            this.skyboxes = { 0: "" };
+            this.skyboxes = [""];
         }
         return StageEffects;
     })();
@@ -1614,7 +1621,6 @@ var ui;
         if (typeof stage.stageEffects.skyboxes[d.activeStageLayer] === "undefined") {
             stage.stageEffects.skyboxes[d.activeStageLayer] = d.pack.editor.defaultSkybox;
         }
-        console.log(stage.stageEffects.skyboxes);
         setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
         document.getElementById("stg-skybox").value = stage.stageEffects.skyboxes[d.activeStageLayer];
     }

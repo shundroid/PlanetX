@@ -66,8 +66,9 @@ module planet {
     }
     d.activeStageLayer = 0;
     var result = new stage.StageEffects();
-    result.skyboxes[0] = d.pack.editor.defaultSkybox;
-    // Todo: StageEffect
+    // skyboxes
+    result.skyboxes = jsonPla.skyboxes;
+    
     return result;
   }
   

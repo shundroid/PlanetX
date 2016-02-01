@@ -227,7 +227,6 @@ module ui {
     if (typeof stage.stageEffects.skyboxes[d.activeStageLayer] === "undefined") {
       stage.stageEffects.skyboxes[d.activeStageLayer] = d.pack.editor.defaultSkybox;
     }
-    console.log(stage.stageEffects.skyboxes);
     setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename); 
     (<HTMLSelectElement>document.getElementById("stg-skybox")).value = stage.stageEffects.skyboxes[d.activeStageLayer];
   }

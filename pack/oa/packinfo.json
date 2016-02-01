@@ -46,10 +46,13 @@
     "block": { "description": "ふつうのブロックです。", "type": "ブロック" }
   },
   "skyboxes": {
-    "sky": { "filename": "background.png", "label": "普通" }
+    "sunny": { "filename": "skyboxes/sunny.png", "label": "青空" },
+    "sunset": { "filename": "skyboxes/sunset.png", "label": "夕方" },
+    "doukutsu": { "filename": "skyboxes/doukutsu.png", "label": "洞窟" },
+    "night": { "filename": "skyboxes/night.png", "label": "夜" }
   },
   "editor": {
-    "defaultSkybox": "sky",
+    "defaultSkybox": "sunny",
     "defaultBlock": "block/block",
     "skyboxMode": "repeat",
     "skyboxSize": "400px"

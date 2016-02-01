@@ -63,7 +63,7 @@ module planet {
     }
     d.activeStageLayer = 0;
     var result = new stage.StageEffects();
-    result.skybox = "sky";
+    result.skybox[0] = "sky";
     // Todo: StageEffect
     return result;
   }

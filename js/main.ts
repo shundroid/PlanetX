@@ -30,7 +30,7 @@ module main {
     packLoader(d.defaultPackName).then((i:any) => {
       d.pack = new packManager.packModule(i);
       event.raiseEvent("packLoaded", null);
-      stage.stageEffects.skybox = d.pack.editor.defaultSkybox;
+      stage.stageEffects.skybox = { 0: d.pack.editor.defaultSkybox };
       ui.setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(d.pack.editor.defaultSkybox).data.filename);
       event.raiseEvent("initedPack", null);
       event.raiseEvent("initedUI", null);

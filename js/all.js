@@ -28,7 +28,7 @@ var main;
         packLoader(d.defaultPackName).then(function (i) {
             d.pack = new packManager.packModule(i);
             event.raiseEvent("packLoaded", null);
-            stage.stageEffects.skybox = d.pack.editor.defaultSkybox;
+            stage.stageEffects.skybox = { "0": d.pack.editor.defaultSkybox };
             ui.setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(d.pack.editor.defaultSkybox).data.filename);
             event.raiseEvent("initedPack", null);
             event.raiseEvent("initedUI", null);
@@ -125,7 +125,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/prefab":4,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":15,"./modules/makePrefabDataUrls":17,"./modules/packUtil/packLoader":18,"./modules/packUtil/packManager":19,"./modules/stage":22,"./modules/tray":23,"./modules/ui/focusGuide":26,"./ui":29}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/prefab":4,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":17,"./modules/packUtil/packManager":18,"./modules/stage":20,"./modules/tray":21,"./modules/ui/focusGuide":24,"./ui":27}],2:[function(require,module,exports){
 /// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
 var initDOM = require("./initDOM");
 /**
@@ -179,7 +179,7 @@ var canvas;
     canvas_1.clear = clear;
 })(canvas || (canvas = {}));
 module.exports = canvas;
-},{"./initDOM":15}],3:[function(require,module,exports){
+},{"./initDOM":14}],3:[function(require,module,exports){
 var List = (function () {
     function List() {
         this.data = {};
@@ -398,7 +398,7 @@ var editBlock;
     editBlock_1.clickRemoveAttr = clickRemoveAttr;
 })(editBlock || (editBlock = {}));
 module.exports = editBlock;
-},{"./data":8,"./stage":22}],10:[function(require,module,exports){
+},{"./data":8,"./stage":20}],10:[function(require,module,exports){
 /**
  * #41 lodashとかでかぶるかな・・
  */
@@ -499,13 +499,6 @@ function image(url, isNoJaggy, size) {
 }
 module.exports = image;
 },{}],14:[function(require,module,exports){
-function importJS(src) {
-    var elem = document.createElement("script");
-    elem.src = src;
-    return elem;
-}
-module.exports = importJS;
-},{}],15:[function(require,module,exports){
 var handlerList = new Array();
 /**
  * DOMContentLoadedのタイミングで呼ばれます。
@@ -519,7 +512,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 module.exports = add;
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var version = require("./version");
 /**
  * 構造化した、jsonPlanet関連を提供します。
@@ -617,14 +610,14 @@ var jsonPlanet;
     jsonPlanet_1.jsonPlanet = jsonPlanet;
 })(jsonPlanet || (jsonPlanet = {}));
 module.exports = jsonPlanet;
-},{"./version":28}],17:[function(require,module,exports){
+},{"./version":26}],16:[function(require,module,exports){
 var d = require("./data");
 var list = require("./classes/list");
 var packManager = require("./packUtil/packManager");
 var Vector2 = require("./classes/vector2");
 var image = require("./image");
 /**
- * Todo: 必要性
+ * Todo: 必要性 -> image.tsとの統合
  */
 function makeDataUrl() {
     var result = new list();
@@ -640,7 +633,7 @@ function makeDataUrl() {
     return result;
 }
 module.exports = makeDataUrl;
-},{"./classes/list":3,"./classes/vector2":7,"./data":8,"./image":13,"./packUtil/packManager":19}],18:[function(require,module,exports){
+},{"./classes/list":3,"./classes/vector2":7,"./data":8,"./image":13,"./packUtil/packManager":18}],17:[function(require,module,exports){
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
 var packManager = require("./packManager");
 function load(packName) {
@@ -656,7 +649,7 @@ function load(packName) {
     });
 }
 module.exports = load;
-},{"./packManager":19}],19:[function(require,module,exports){
+},{"./packManager":18}],18:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -783,9 +776,9 @@ var pack;
     pack.skyboxInfoList = skyboxInfoList;
 })(pack || (pack = {}));
 module.exports = pack;
-},{"./../classes/list":3}],20:[function(require,module,exports){
+},{"./../classes/list":3}],19:[function(require,module,exports){
 var stage = require("./stage");
-var prefab = require("./prefab");
+var prefab = require("./classes/prefab");
 var d = require("./data");
 var jsonPlanet = require("./jsonPlanet");
 var version = require("./version");
@@ -850,27 +843,14 @@ var planet;
         }
         d.activeStageLayer = 0;
         var result = new stage.StageEffects();
-        result.skybox = "sky";
+        result.skybox[0] = "sky";
         // Todo: StageEffect
         return result;
     }
     planet.fromJsonPlanet = fromJsonPlanet;
 })(planet || (planet = {}));
 module.exports = planet;
-},{"./data":8,"./jsonPlanet":16,"./prefab":21,"./stage":22,"./version":28}],21:[function(require,module,exports){
-var prefab = (function () {
-    function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
-        this.gridX = gridX;
-        this.gridY = gridY;
-        this.fileName = fileName;
-        this.blockName = blockName;
-        this.gridW = gridW;
-        this.gridH = gridH;
-    }
-    return prefab;
-})();
-module.exports = prefab;
-},{}],22:[function(require,module,exports){
+},{"./classes/prefab":4,"./data":8,"./jsonPlanet":15,"./stage":20,"./version":26}],20:[function(require,module,exports){
 var list = require("./classes/list");
 var canvas = require("./canvas");
 var image = require("./image");
@@ -886,7 +866,7 @@ var stage;
     // StageEffect
     var StageEffects = (function () {
         function StageEffects() {
-            this.skybox = "";
+            this.skybox = { 0: "" };
         }
         return StageEffects;
     })();
@@ -1184,7 +1164,7 @@ var stage;
     stage.toDrawRect = toDrawRect;
 })(stage || (stage = {}));
 module.exports = stage;
-},{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":8,"./event":12,"./image":13}],23:[function(require,module,exports){
+},{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":8,"./event":12,"./image":13}],21:[function(require,module,exports){
 var image = require("./image");
 var TrayBlockDetails = require("./classes/trayBlockDetails");
 var d = require("./data");
@@ -1274,7 +1254,7 @@ var tray;
     tray.initTrayObj = initTrayObj;
 })(tray || (tray = {}));
 module.exports = tray;
-},{"./classes/trayBlockDetails":6,"./data":8,"./event":12,"./image":13,"./packUtil/packManager":19,"./uiWaitMode":24}],24:[function(require,module,exports){
+},{"./classes/trayBlockDetails":6,"./data":8,"./event":12,"./image":13,"./packUtil/packManager":18,"./uiWaitMode":22}],22:[function(require,module,exports){
 /**
  * Todo: 必要性
  */
@@ -1290,7 +1270,7 @@ var uiWaitMode;
     uiWaitMode.end = end;
 })(uiWaitMode || (uiWaitMode = {}));
 module.exports = uiWaitMode;
-},{}],25:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /// <reference path="../../definitely/move.d.ts" />
 var anim;
 (function (anim) {
@@ -1328,7 +1308,7 @@ var anim;
     anim.hideLoading = hideLoading;
 })(anim || (anim = {}));
 module.exports = anim;
-},{}],26:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var initDOM = require("./../initDOM");
 var focusGuide;
 (function (focusGuide) {
@@ -1356,7 +1336,7 @@ var focusGuide;
     focusGuide.hide = hide;
 })(focusGuide || (focusGuide = {}));
 module.exports = focusGuide;
-},{"./../initDOM":15}],27:[function(require,module,exports){
+},{"./../initDOM":14}],25:[function(require,module,exports){
 /**
  * Todo: 必要性
  */
@@ -1379,7 +1359,7 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],28:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /**
  * Planetのバージョン情報
  */
@@ -1390,14 +1370,13 @@ var version;
     version_1.jsonPlanetVersion = 0.1;
 })(version || (version = {}));
 module.exports = version;
-},{}],29:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
 var initDOM = require("./modules/initDOM");
 var event = require("./modules/event");
 var el = require("./modules/elem");
-var importJS = require("./modules/importJS");
 var u = require("./modules/util");
 var Vector2 = require("./modules/classes/vector2");
 var tray = require("./modules/tray");
@@ -1467,7 +1446,10 @@ var ui;
         document.getElementById("pla-ver").innerHTML = "Planet " + v.version + " by " + v.author;
         el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
         el.addEventListenerforQuery(".tray-list-tool", "mousedown", clickTrayTool);
-        document.head.appendChild(importJS("bower_components/move.js/move.js"));
+        // movejsを読む
+        var movejs = document.createElement("script");
+        movejs.src = "bower_components/move.js/move.js";
+        document.head.appendChild(movejs);
         window.onbeforeunload = function (event) {
             event.returnValue = "ページを移動しますか？";
         };
@@ -1525,11 +1507,11 @@ var ui;
     }
     ui.clickExport = clickExport;
     function clickImport() {
-        //var effects = planet.importText((<HTMLTextAreaElement>document.getElementById("pla-io")).value);
+        // fromJSONPlanet内で、d.activeStageLayerは0になる。
         var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse(document.getElementById("pla-io").value)));
         stage.stageEffects = effects;
-        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox).data.filename);
-        stage.renderStage(d.activeStageLayer);
+        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skybox[0]).data.filename);
+        stage.renderStage(0);
     }
     ui.clickImport = clickImport;
     function clickInsShowBtn(e) {
@@ -1606,8 +1588,8 @@ var ui;
     }
     ui.clickConvertOldFile = clickConvertOldFile;
     function changeSkybox(e) {
-        stage.stageEffects.skybox = e.target.value;
-        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox).data.filename);
+        stage.stageEffects.skybox[d.activeStageLayer] = e.target.value;
+        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox[d.activeStageLayer]).data.filename);
     }
     ui.changeSkybox = changeSkybox;
     function clickAddAttr() {
@@ -1621,9 +1603,15 @@ var ui;
     //  }
     function changeActiveStageLayer(e) {
         stage.changeActiveStageLayer(parseInt(e.target.value));
+        if (typeof stage.stageEffects.skybox[d.activeStageLayer] === "undefined") {
+            stage.stageEffects.skybox[d.activeStageLayer] = d.pack.editor.defaultSkybox;
+        }
+        console.log(stage.stageEffects.skybox);
+        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skybox[d.activeStageLayer]).data.filename);
+        document.getElementById("stg-skybox").value = stage.stageEffects.skybox[d.activeStageLayer];
     }
     ui.changeActiveStageLayer = changeActiveStageLayer;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/importJS":14,"./modules/initDOM":15,"./modules/jsonPlanet":16,"./modules/packUtil/packManager":19,"./modules/planet":20,"./modules/stage":22,"./modules/tray":23,"./modules/ui/anim":25,"./modules/util":27,"./modules/version":28}]},{},[1]);
+},{"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/packUtil/packManager":18,"./modules/planet":19,"./modules/stage":20,"./modules/tray":21,"./modules/ui/anim":23,"./modules/util":25,"./modules/version":26}]},{},[1]);

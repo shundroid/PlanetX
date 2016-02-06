@@ -80,7 +80,7 @@ module jsonPlanet {
      * 昔はCSVを使っていたものです・・
      */
     static fromCSV(csv:string):jsonPlanet {
-      var result = new jsonPlanet(version.jsonPlanetVersion);
+      var result = new jsonPlanet(version.jsonPlanetVersion, [[]]);
       var lines = csv.split("\n");
       lines.forEach(i => {
         if (i === "") {

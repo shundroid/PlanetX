@@ -1,7 +1,6 @@
 import image = require("./image");
 import TrayBlockDetails = require("./classes/trayBlockDetails");
 import d = require("./data");
-import uiWaitMode = require("./uiWaitMode");
 import event = require("./event");
 import packManager = require("./packUtil/packManager");
 
@@ -17,10 +16,6 @@ module tray {
   }
   export function updateSelectImage() {
     d.selectImage = image(d.trayItemDataURLs.get(d.selectBlock.blockName));
-    uiWaitMode.start();
-    d.selectImage.onload = () => {
-      uiWaitMode.end();
-    }
   }
   export function initTrayBlock(finishedOne:(numerator: number, denominator: number)=>void) {
     return new Promise(resolve => {

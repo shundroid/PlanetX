@@ -125,7 +125,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/prefab":4,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":17,"./modules/packUtil/packManager":18,"./modules/stage":20,"./modules/tray":21,"./modules/ui/focusGuide":24,"./ui":27}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/prefab":4,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":17,"./modules/packUtil/packManager":18,"./modules/stage":20,"./modules/tray":21,"./modules/ui/focusGuide":23,"./ui":26}],2:[function(require,module,exports){
 /// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
 var initDOM = require("./initDOM");
 /**
@@ -599,7 +599,7 @@ var jsonPlanet;
          * 昔はCSVを使っていたものです・・
          */
         jsonPlanet.fromCSV = function (csv) {
-            var result = new jsonPlanet(version.jsonPlanetVersion);
+            var result = new jsonPlanet(version.jsonPlanetVersion, [[]]);
             var lines = csv.split("\n");
             lines.forEach(function (i) {
                 if (i === "") {
@@ -622,7 +622,7 @@ var jsonPlanet;
     jsonPlanet_1.jsonPlanet = jsonPlanet;
 })(jsonPlanet || (jsonPlanet = {}));
 module.exports = jsonPlanet;
-},{"./version":26}],16:[function(require,module,exports){
+},{"./version":25}],16:[function(require,module,exports){
 var d = require("./data");
 var list = require("./classes/list");
 var packManager = require("./packUtil/packManager");
@@ -865,7 +865,7 @@ var planet;
     planet.fromJsonPlanet = fromJsonPlanet;
 })(planet || (planet = {}));
 module.exports = planet;
-},{"./classes/prefab":4,"./data":8,"./jsonPlanet":15,"./stage":20,"./version":26}],20:[function(require,module,exports){
+},{"./classes/prefab":4,"./data":8,"./jsonPlanet":15,"./stage":20,"./version":25}],20:[function(require,module,exports){
 var list = require("./classes/list");
 var canvas = require("./canvas");
 var image = require("./image");
@@ -1183,7 +1183,6 @@ module.exports = stage;
 var image = require("./image");
 var TrayBlockDetails = require("./classes/trayBlockDetails");
 var d = require("./data");
-var uiWaitMode = require("./uiWaitMode");
 var event = require("./event");
 var packManager = require("./packUtil/packManager");
 /**
@@ -1200,10 +1199,6 @@ var tray;
     tray.updateActiveBlock = updateActiveBlock;
     function updateSelectImage() {
         d.selectImage = image(d.trayItemDataURLs.get(d.selectBlock.blockName));
-        uiWaitMode.start();
-        d.selectImage.onload = function () {
-            uiWaitMode.end();
-        };
     }
     tray.updateSelectImage = updateSelectImage;
     function initTrayBlock(finishedOne) {
@@ -1269,23 +1264,7 @@ var tray;
     tray.initTrayObj = initTrayObj;
 })(tray || (tray = {}));
 module.exports = tray;
-},{"./classes/trayBlockDetails":6,"./data":8,"./event":12,"./image":13,"./packUtil/packManager":18,"./uiWaitMode":22}],22:[function(require,module,exports){
-/**
- * Todo: 必要性
- */
-var uiWaitMode;
-(function (uiWaitMode) {
-    function start() {
-        document.getElementById("pla-canvas").style.cursor = "wait";
-    }
-    uiWaitMode.start = start;
-    function end() {
-        document.getElementById("pla-canvas").style.cursor = "crosshair";
-    }
-    uiWaitMode.end = end;
-})(uiWaitMode || (uiWaitMode = {}));
-module.exports = uiWaitMode;
-},{}],23:[function(require,module,exports){
+},{"./classes/trayBlockDetails":6,"./data":8,"./event":12,"./image":13,"./packUtil/packManager":18}],22:[function(require,module,exports){
 /// <reference path="../../definitely/move.d.ts" />
 var anim;
 (function (anim) {
@@ -1323,7 +1302,7 @@ var anim;
     anim.hideLoading = hideLoading;
 })(anim || (anim = {}));
 module.exports = anim;
-},{}],24:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 var initDOM = require("./../initDOM");
 var focusGuide;
 (function (focusGuide) {
@@ -1351,7 +1330,7 @@ var focusGuide;
     focusGuide.hide = hide;
 })(focusGuide || (focusGuide = {}));
 module.exports = focusGuide;
-},{"./../initDOM":14}],25:[function(require,module,exports){
+},{"./../initDOM":14}],24:[function(require,module,exports){
 /**
  * Todo: 必要性
  */
@@ -1374,7 +1353,7 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /**
  * Planetのバージョン情報
  */
@@ -1385,7 +1364,7 @@ var version;
     version_1.jsonPlanetVersion = 0.1;
 })(version || (version = {}));
 module.exports = version;
-},{}],27:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
@@ -1628,4 +1607,4 @@ var ui;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/packUtil/packManager":18,"./modules/planet":19,"./modules/stage":20,"./modules/tray":21,"./modules/ui/anim":23,"./modules/util":25,"./modules/version":26}]},{},[1]);
+},{"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/packUtil/packManager":18,"./modules/planet":19,"./modules/stage":20,"./modules/tray":21,"./modules/ui/anim":22,"./modules/util":24,"./modules/version":25}]},{},[1]);

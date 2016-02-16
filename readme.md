@@ -1,6 +1,9 @@
 # Planet
 Planet v1.0 by shundroid
 
+Azure build branch  
+[http://planet-maker.azurewebsites.net/](http://planet-maker.azurewebsites.net)  
+
 ## What's this?
 HTML5でできた、2Dアクションゲーム用ステージ作成ツール。  
 （今、Planetに対応したアクションゲームをUnityで作成中）  

@@ -1,0 +1,28 @@
+{
+  "name": "balloon",
+  "authors": [
+    "shundroid"
+  ],
+  "description": "A simple css tooltip library",
+  "main": "balloon.css",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "https://github.com/shundroid/balloon",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "3c1cd9842e",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "3c1cd9842eaa38f202ea23411d7d18e6949c3df7"
+  },
+  "_source": "git://github.com/shundroid/balloon.git",
+  "_target": "*",
+  "_originalSource": "balloon",
+  "_direct": true
+}

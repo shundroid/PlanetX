@@ -3,14 +3,11 @@ import initDOM from "./modules/initDOM";
 import packLoader = require("./modules/packUtil/packLoader");
 import packManager = require("./modules/packUtil/packManager");
 import event = require("./modules/event");
-import list from "./modules/classes/list";
 import stage = require("./modules/stage");
 import d = require("./modules/data");
 import makeDataUrl = require("./modules/makePrefabDataUrls");
 import tray = require("./modules/tray");
-import prefab = require("./modules/classes/prefab");
-import Vector2 from "./modules/classes/vector2";
-import Rect from "./modules/classes/rect";
+import prefab from "./modules/classes/prefab";
 import canvas = require("./modules/canvas");
 import editBlock = require("./modules/editBlock");
 import fGuide = require("./modules/ui/focusGuide");
@@ -18,6 +15,11 @@ import fGuide = require("./modules/ui/focusGuide");
 // packModel 関連
 import {packModel} from "./modules/model/pack";
 import setPack from "./modules/model/pack";
+
+// クラス
+import Vector2 from "./modules/classes/vector2";
+import Rect from "./modules/classes/rect";
+import list from "./modules/classes/list";
 
 /**
  * メインとなる処理を行います

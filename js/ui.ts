@@ -5,18 +5,20 @@ import initDOM from "./modules/initDOM";
 import event = require("./modules/event");
 import el = require("./modules/elem");
 import u = require("./modules/util");
-import list from "./modules/classes/list";
-import Vector2 from "./modules/classes/vector2";
 import tray = require("./modules/tray");
 import packManager = require("./modules/packUtil/packManager");
 import planet = require("./modules/planet");
 import stage = require("./modules/stage");
-import v = require("./modules/version");
+import * as v from "./modules/version";
 import evElems = require("./modules/evElems");
 import anim = require("./modules/ui/anim");
 import editBlock = require("./modules/editBlock");
 import jsonPlanet = require("./modules/jsonPlanet");
 import {packModel} from "./modules/model/pack";
+
+// クラス
+import list from "./modules/classes/list";
+import Vector2 from "./modules/classes/vector2";
 
 /**
  * UIに関する処理を行います。

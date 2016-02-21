@@ -8,15 +8,16 @@ var stage = require("./modules/stage");
 var d = require("./modules/data");
 var makeDataUrl = require("./modules/makePrefabDataUrls");
 var tray = require("./modules/tray");
-var prefab = require("./modules/classes/prefab");
-var vector2_1 = require("./modules/classes/vector2");
-var rect_1 = require("./modules/classes/rect");
+var prefab_1 = require("./modules/classes/prefab");
 var canvas = require("./modules/canvas");
 var editBlock = require("./modules/editBlock");
 var fGuide = require("./modules/ui/focusGuide");
 // packModel 関連
 var pack_1 = require("./modules/model/pack");
 var pack_2 = require("./modules/model/pack");
+// クラス
+var vector2_1 = require("./modules/classes/vector2");
+var rect_1 = require("./modules/classes/rect");
 /**
  * メインとなる処理を行います
  */
@@ -53,7 +54,7 @@ var main;
             ui.hideLoading();
         });
         event.addEventListener("gridCanvas", function (e) {
-            var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
+            var pre = new prefab_1.default(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
             var detail = stage.getPrefabFromGrid(new vector2_1.default(pre.gridX, pre.gridY), d.activeStageLayer);
             var rect = stage.toDrawRect(new rect_1.default(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
             fGuide.hide();
@@ -227,7 +228,8 @@ var prefab = (function () {
     }
     return prefab;
 })();
-module.exports = prefab;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = prefab;
 },{}],5:[function(require,module,exports){
 var default_1 = (function () {
     function default_1(x, y, width, height) {
@@ -806,7 +808,7 @@ var pack;
 module.exports = pack;
 },{"./../classes/list":3}],20:[function(require,module,exports){
 var stage = require("./stage");
-var prefab = require("./classes/prefab");
+var prefab_1 = require("./classes/prefab");
 var d = require("./data");
 var jsonPlanet = require("./jsonPlanet");
 var version = require("./version");
@@ -860,11 +862,11 @@ var planet;
                 var id = stage.getId();
                 if (pack_1.packModel.objs.contains(j.blockName)) {
                     var objData = pack_1.packModel.objs.get(j.blockName);
-                    stage.items.push(id, new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
+                    stage.items.push(id, new prefab_1.default(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
                 }
                 else {
                     var blockData = pack_1.packModel.blocks.get(j.blockName);
-                    stage.items.push(id, new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
+                    stage.items.push(id, new prefab_1.default(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
                 }
                 if (typeof j.attr !== "undefined") {
                     Object.keys(j.attr).forEach(function (k) {
@@ -1375,13 +1377,9 @@ module.exports = util;
 /**
  * Planetのバージョン情報
  */
-var version;
-(function (version_1) {
-    version_1.version = "v1.0";
-    version_1.author = "shundroid";
-    version_1.jsonPlanetVersion = 0.1;
-})(version || (version = {}));
-module.exports = version;
+exports.version = "v1.0";
+exports.author = "shundroid";
+exports.jsonPlanetVersion = 0.1;
 },{}],27:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
@@ -1390,7 +1388,6 @@ var initDOM_1 = require("./modules/initDOM");
 var event = require("./modules/event");
 var el = require("./modules/elem");
 var u = require("./modules/util");
-var vector2_1 = require("./modules/classes/vector2");
 var tray = require("./modules/tray");
 var packManager = require("./modules/packUtil/packManager");
 var planet = require("./modules/planet");
@@ -1401,6 +1398,7 @@ var anim = require("./modules/ui/anim");
 var editBlock = require("./modules/editBlock");
 var jsonPlanet = require("./modules/jsonPlanet");
 var pack_1 = require("./modules/model/pack");
+var vector2_1 = require("./modules/classes/vector2");
 /**
  * UIに関する処理を行います。
  */

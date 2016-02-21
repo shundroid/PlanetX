@@ -1,6 +1,5 @@
-import list = require("./classes/list");
-import packManager = require("./packUtil/packManager");
-import TrayBlockDetails = require("./classes/trayBlockDetails");
+import list from "./classes/list";
+import TrayBlockDetails from "./classes/trayBlockDetails";
 
 /**
  * Planetの情報を保存します。

@@ -1,12 +1,12 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 import d = require("./modules/data");
-import initDOM = require("./modules/initDOM");
+import initDOM from "./modules/initDOM";
 import event = require("./modules/event");
 import el = require("./modules/elem");
 import u = require("./modules/util");
-import list = require("./modules/classes/list");
-import Vector2 = require("./modules/classes/vector2");
+import list from "./modules/classes/list";
+import Vector2 from "./modules/classes/vector2";
 import tray = require("./modules/tray");
 import packManager = require("./modules/packUtil/packManager");
 import planet = require("./modules/planet");
@@ -21,7 +21,7 @@ import {packModel} from "./modules/model/pack";
 /**
  * UIに関する処理を行います。
  */
-module ui {
+namespace ui {
   export var canvas: HTMLCanvasElement; 
   function init() {
     window.addEventListener("resize", () => {

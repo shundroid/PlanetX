@@ -1,5 +1,5 @@
-import Vector2 = require("./../classes/vector2");
-import initDOM = require("./../initDOM");
+import Vector2 from "./../classes/vector2";
+import initDOM from "./../initDOM";
 module focusGuide {
   var guideElement:HTMLDivElement;
   initDOM(() => {

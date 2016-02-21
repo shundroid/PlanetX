@@ -1,11 +1,11 @@
 /// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
-import initDOM = require("./initDOM");
-import Rect = require("./classes/rect");
+import initDOM from "./initDOM";
+import Rect from "./classes/rect";
 
 /**
  * Canvasへの描画に関係する処理を行います。
  */
-module canvas {
+namespace canvas {
   var canvas:HTMLCanvasElement;
   var ctx:CanvasRenderingContext2D;
   export var canvasRect:Rect;

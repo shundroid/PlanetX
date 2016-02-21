@@ -1,5 +1,5 @@
 import attribute = require("./attribute");
-import list = require("./../list");
+import list from "./../list";
 class attrList extends list<attribute> {
   toSimple() {
     var list = this.getAll();

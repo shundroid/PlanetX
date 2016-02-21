@@ -1,9 +1,9 @@
-import Vector2 = require("./classes/vector2");
+import Vector2 from "./classes/vector2";
 
 /**
  * 画像処理系はここにまとめたい。(makePrefabDataUrls.ts)
  */
-function image(url:string, isNoJaggy?:boolean, size?:Vector2):HTMLImageElement {
+export default function image(url:string, isNoJaggy?:boolean, size?:Vector2):HTMLImageElement {
   var a = new Image();
   a.src = url;
   if (isNoJaggy) {
@@ -21,4 +21,3 @@ function image(url:string, isNoJaggy?:boolean, size?:Vector2):HTMLImageElement {
     return a;
   }
 }
-export = image;

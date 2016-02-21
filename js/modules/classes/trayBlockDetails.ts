@@ -1,4 +1,4 @@
-class TrayBlockDetails {
+export default class {
   constructor(
     public blockName:string,
     public fileName:string,
@@ -7,4 +7,3 @@ class TrayBlockDetails {
     public height:number
   ) { }
 }
-export = TrayBlockDetails;

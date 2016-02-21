@@ -1,8 +1,8 @@
 import d = require("./data");
-import list = require("./classes/list");
+import list from "./classes/list";
 import packManager = require("./packUtil/packManager");
-import Vector2 = require("./classes/vector2");
-import image = require("./image");
+import Vector2 from "./classes/vector2";
+import image from "./image";
 import {packModel} from "./model/pack";
 
 /**

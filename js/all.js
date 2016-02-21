@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var ui = require("./ui");
-var initDOM = require("./modules/initDOM");
+var initDOM_1 = require("./modules/initDOM");
 var packLoader = require("./modules/packUtil/packLoader");
 var packManager = require("./modules/packUtil/packManager");
 var event = require("./modules/event");
@@ -9,8 +9,8 @@ var d = require("./modules/data");
 var makeDataUrl = require("./modules/makePrefabDataUrls");
 var tray = require("./modules/tray");
 var prefab = require("./modules/classes/prefab");
-var Vector2 = require("./modules/classes/vector2");
-var Rect = require("./modules/classes/rect");
+var vector2_1 = require("./modules/classes/vector2");
+var rect_1 = require("./modules/classes/rect");
 var canvas = require("./modules/canvas");
 var editBlock = require("./modules/editBlock");
 var fGuide = require("./modules/ui/focusGuide");
@@ -26,7 +26,7 @@ var main;
         d.dataInit();
     }
     init();
-    initDOM(function () {
+    initDOM_1.default(function () {
         ui.setupCanvas();
         packLoader(d.defaultPackName).then(function (i) {
             pack_2.default(new packManager.packModule(i));
@@ -54,8 +54,8 @@ var main;
         });
         event.addEventListener("gridCanvas", function (e) {
             var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
-            var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY), d.activeStageLayer);
-            var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
+            var detail = stage.getPrefabFromGrid(new vector2_1.default(pre.gridX, pre.gridY), d.activeStageLayer);
+            var rect = stage.toDrawRect(new rect_1.default(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
             fGuide.hide();
             switch (d.activeToolName) {
                 case "pencil":
@@ -70,7 +70,7 @@ var main;
                         }
                     }
                     else if (e.eventName === "hovering") {
-                        fGuide.focus(new Vector2(rect.x, rect.y), new Vector2(rect.width, rect.height), detail.contains ? "rgba(240,0,0,0.6)" : "rgba(0,240,0,0.6)");
+                        fGuide.focus(new vector2_1.default(rect.x, rect.y), new vector2_1.default(rect.width, rect.height), detail.contains ? "rgba(240,0,0,0.6)" : "rgba(0,240,0,0.6)");
                     }
                     break;
                 case "choice":
@@ -102,7 +102,7 @@ var main;
                     if (e.eventName === "down" && detail.contains) {
                         ui.showInspector("edit-block");
                         d.editingBlockId = detail.id;
-                        editBlock.updateEditBlock(new editBlock.EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
+                        editBlock.updateEditBlock(new editBlock.EditBlock(detail.prefab.blockName, new vector2_1.default(detail.prefab.gridX, detail.prefab.gridY), detail.id));
                     }
                     break;
                 default:
@@ -130,7 +130,7 @@ var main;
 module.exports = main;
 },{"./modules/canvas":2,"./modules/classes/prefab":4,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/model/pack":17,"./modules/packUtil/packLoader":18,"./modules/packUtil/packManager":19,"./modules/stage":21,"./modules/tray":22,"./modules/ui/focusGuide":24,"./ui":27}],2:[function(require,module,exports){
 /// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
-var initDOM = require("./initDOM");
+var initDOM_1 = require("./initDOM");
 /**
  * Canvasへの描画に関係する処理を行います。
  */
@@ -138,7 +138,7 @@ var canvas;
 (function (canvas_1) {
     var canvas;
     var ctx;
-    initDOM(function () {
+    initDOM_1.default(function () {
         canvas = document.getElementById("pla-canvas");
         canvas_1.canvasRect = { x: 0, y: 0, width: window.innerWidth, height: window.innerHeight };
         resizeCanvas();
@@ -213,7 +213,8 @@ var List = (function () {
     };
     return List;
 })();
-module.exports = List;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = List;
 },{}],4:[function(require,module,exports){
 var prefab = (function () {
     function prefab(gridX, gridY, fileName, blockName, gridW, gridH) {
@@ -228,19 +229,20 @@ var prefab = (function () {
 })();
 module.exports = prefab;
 },{}],5:[function(require,module,exports){
-var rect = (function () {
-    function rect(x, y, width, height) {
+var default_1 = (function () {
+    function default_1(x, y, width, height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
     }
-    return rect;
+    return default_1;
 })();
-module.exports = rect;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = default_1;
 },{}],6:[function(require,module,exports){
-var TrayBlockDetails = (function () {
-    function TrayBlockDetails(blockName, fileName, label, // 表示するときのブロック名
+var default_1 = (function () {
+    function default_1(blockName, fileName, label, // 表示するときのブロック名
         width, height) {
         this.blockName = blockName;
         this.fileName = fileName;
@@ -248,9 +250,10 @@ var TrayBlockDetails = (function () {
         this.width = width;
         this.height = height;
     }
-    return TrayBlockDetails;
+    return default_1;
 })();
-module.exports = TrayBlockDetails;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = default_1;
 },{}],7:[function(require,module,exports){
 var Vector2 = (function () {
     function Vector2(x, y) {
@@ -267,9 +270,10 @@ var Vector2 = (function () {
     });
     return Vector2;
 })();
-module.exports = Vector2;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = Vector2;
 },{}],8:[function(require,module,exports){
-var list = require("./classes/list");
+var list_1 = require("./classes/list");
 /**
  * Planetの情報を保存します。
  */
@@ -280,7 +284,7 @@ var data = (function () {
      * 全ての Data メンバーを、初期化します。
      */
     data.dataInit = function () {
-        this.trayItemDataURLs = new list();
+        this.trayItemDataURLs = new list_1.default();
         this.defaultPackName = "oa";
         //this.pack = new packManager.packModule({});
         this.defaultGridSize = 25;
@@ -444,13 +448,13 @@ var evElems;
 })(evElems || (evElems = {}));
 module.exports = evElems;
 },{"./elem":10}],12:[function(require,module,exports){
-var list = require("./classes/list");
+var list_1 = require("./classes/list");
 /**
  * 廃止の方向で・・
  */
 var event;
 (function (event) {
-    var eventHandlers = new list();
+    var eventHandlers = new list_1.default();
     function addEventListener(eventName, fn) {
         if (eventName.indexOf("|") !== -1) {
             eventName.split("|").forEach(function (i) {
@@ -500,21 +504,23 @@ function image(url, isNoJaggy, size) {
         return a;
     }
 }
-module.exports = image;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = image;
 },{}],14:[function(require,module,exports){
 var handlerList = new Array();
 /**
  * DOMContentLoadedのタイミングで呼ばれます。
  */
-function add(fn) {
+function default_1(fn) {
     handlerList.push(fn);
 }
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = default_1;
 document.addEventListener('DOMContentLoaded', function () {
     handlerList.forEach(function (i) {
         i();
     });
 });
-module.exports = add;
 },{}],15:[function(require,module,exports){
 var version = require("./version");
 /**
@@ -627,24 +633,24 @@ var jsonPlanet;
 module.exports = jsonPlanet;
 },{"./version":26}],16:[function(require,module,exports){
 var d = require("./data");
-var list = require("./classes/list");
+var list_1 = require("./classes/list");
 var packManager = require("./packUtil/packManager");
-var Vector2 = require("./classes/vector2");
-var image = require("./image");
+var vector2_1 = require("./classes/vector2");
+var image_1 = require("./image");
 var pack_1 = require("./model/pack");
 /**
  * Todo: 必要性 -> image.tsとの統合
  */
 function makeDataUrl() {
-    var result = new list();
+    var result = new list_1.default();
     var blockList = pack_1.packModel.blocks.getAll();
     Object.keys(blockList).forEach(function (i) {
-        result.push(i, image(packManager.getPackPath(d.defaultPackName) + pack_1.packModel.blocks.get(i).data.filename, true, new Vector2(d.defaultGridSize, d.defaultGridSize)).src);
+        result.push(i, image_1.default(packManager.getPackPath(d.defaultPackName) + pack_1.packModel.blocks.get(i).data.filename, true, new vector2_1.default(d.defaultGridSize, d.defaultGridSize)).src);
     });
     var objList = pack_1.packModel.objs.getAll();
     Object.keys(objList).forEach(function (i) {
         var item = pack_1.packModel.objs.get(i).data;
-        result.push(i, image(packManager.getPackPath(d.defaultPackName) + item.filename, true, new Vector2(item.width, item.height)).src);
+        result.push(i, image_1.default(packManager.getPackPath(d.defaultPackName) + item.filename, true, new vector2_1.default(item.width, item.height)).src);
     });
     return result;
 }
@@ -677,7 +683,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var list = require("./../classes/list");
+var list_1 = require("./../classes/list");
 var pack;
 (function (pack) {
     function getPackPath(packName) {
@@ -688,11 +694,11 @@ var pack;
         function packModule(data) {
             var _this = this;
             this.pack = new packInfo(data["pack"]);
-            this.blocks = new list();
+            this.blocks = new list_1.default();
             Object.keys(data["blocks"]).forEach(function (i) {
                 _this.blocks.push(i, new blockInfo({ bName: data["blocks"][i]["name"], filename: data["blocks"][i]["filename"] }));
             });
-            this.objs = new list();
+            this.objs = new list_1.default();
             Object.keys(data["objs"]).forEach(function (i) {
                 var cur = data["objs"][i];
                 if (cur["hidden"]) {
@@ -702,7 +708,7 @@ var pack;
                     _this.objs.push(i, new objInfo({ oName: cur["name"], filename: cur["filename"], width: cur["width"], height: cur["height"], type: cur["type"], hidden: cur["hidden"] }));
                 }
             });
-            this.descriptions = new list();
+            this.descriptions = new list_1.default();
             Object.keys(data["descriptions"]).forEach(function (i) {
                 var cur = data["descriptions"][i];
                 _this.descriptions.push(i, new desInfo(cur));
@@ -794,7 +800,7 @@ var pack;
             return result;
         };
         return skyboxInfoList;
-    })(list);
+    })(list_1.default);
     pack.skyboxInfoList = skyboxInfoList;
 })(pack || (pack = {}));
 module.exports = pack;
@@ -877,13 +883,13 @@ var planet;
 })(planet || (planet = {}));
 module.exports = planet;
 },{"./classes/prefab":4,"./data":8,"./jsonPlanet":15,"./model/pack":17,"./stage":21,"./version":26}],21:[function(require,module,exports){
-var list = require("./classes/list");
+var list_1 = require("./classes/list");
 var canvas = require("./canvas");
-var image = require("./image");
+var image_1 = require("./image");
 var d = require("./data");
-var rect = require("./classes/rect");
+var rect_1 = require("./classes/rect");
 var event = require("./event");
-var Vector2 = require("./classes/vector2");
+var vector2_1 = require("./classes/vector2");
 /**
  * 現在のStage情報を保存します。
  */
@@ -1041,7 +1047,7 @@ var stage;
          */
         function getLayerItems(stageLayer) {
             var ids = getLayerIds(stageLayer);
-            var result = new list();
+            var result = new list_1.default();
             ids.forEach(function (i) {
                 result.push(i.toString(), get(i));
             });
@@ -1099,7 +1105,7 @@ var stage;
             // 画面内に入っているか
             if (x + width >= 0 && x <= canvas.canvasRect.width &&
                 y + height >= 0 && y <= canvas.canvasRect.height) {
-                canvas.render(image(d.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
+                canvas.render(image_1.default(d.trayItemDataURLs.get(item.blockName)), new rect_1.default(x, y, width, height));
             }
         });
     }
@@ -1140,7 +1146,7 @@ var stage;
         var eY = cY - (cY % d.defaultGridSize);
         var gridX = eX / d.defaultGridSize;
         var gridY = eY / d.defaultGridSize;
-        return new Vector2(gridX, gridY);
+        return new vector2_1.default(gridX, gridY);
     }
     stage.getGridPosFromMousePos = getGridPosFromMousePos;
     var getPrefabFromGridDetails = (function () {
@@ -1185,14 +1191,14 @@ var stage;
      * すべてgridPosで指定された4点のrectを、描画領域に変換します。
      */
     function toDrawRect(gridRect) {
-        return new rect(stage.scrollX + getMousePosFromCenterAndSize(toMousePos(gridRect.x), toMousePos(gridRect.width)), stage.scrollY + getMousePosFromCenterAndSize(toMousePos(gridRect.y), toMousePos(gridRect.height)), toMousePos(gridRect.width), toMousePos(gridRect.height));
+        return new rect_1.default(stage.scrollX + getMousePosFromCenterAndSize(toMousePos(gridRect.x), toMousePos(gridRect.width)), stage.scrollY + getMousePosFromCenterAndSize(toMousePos(gridRect.y), toMousePos(gridRect.height)), toMousePos(gridRect.width), toMousePos(gridRect.height));
     }
     stage.toDrawRect = toDrawRect;
 })(stage || (stage = {}));
 module.exports = stage;
 },{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":8,"./event":12,"./image":13}],22:[function(require,module,exports){
-var image = require("./image");
-var TrayBlockDetails = require("./classes/trayBlockDetails");
+var image_1 = require("./image");
+var trayBlockDetails_1 = require("./classes/trayBlockDetails");
 var d = require("./data");
 var event = require("./event");
 var packManager = require("./packUtil/packManager");
@@ -1205,12 +1211,12 @@ var tray;
     function updateActiveBlock(blockName, fileName, label, width, height) {
         var w = width || d.defaultBlockSize;
         var h = height || d.defaultBlockSize;
-        d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
+        d.selectBlock = new trayBlockDetails_1.default(blockName, fileName, label, w, h);
         updateSelectImage();
     }
     tray.updateActiveBlock = updateActiveBlock;
     function updateSelectImage() {
-        d.selectImage = image(d.trayItemDataURLs.get(d.selectBlock.blockName));
+        d.selectImage = image_1.default(d.trayItemDataURLs.get(d.selectBlock.blockName));
     }
     tray.updateSelectImage = updateSelectImage;
     function initTrayBlock(finishedOne) {
@@ -1315,11 +1321,11 @@ var anim;
 })(anim || (anim = {}));
 module.exports = anim;
 },{}],24:[function(require,module,exports){
-var initDOM = require("./../initDOM");
+var initDOM_1 = require("./../initDOM");
 var focusGuide;
 (function (focusGuide) {
     var guideElement;
-    initDOM(function () {
+    initDOM_1.default(function () {
         guideElement = document.createElement("div");
         guideElement.id = "guide";
         guideElement.style.position = "fixed";
@@ -1380,11 +1386,11 @@ module.exports = version;
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
-var initDOM = require("./modules/initDOM");
+var initDOM_1 = require("./modules/initDOM");
 var event = require("./modules/event");
 var el = require("./modules/elem");
 var u = require("./modules/util");
-var Vector2 = require("./modules/classes/vector2");
+var vector2_1 = require("./modules/classes/vector2");
 var tray = require("./modules/tray");
 var packManager = require("./modules/packUtil/packManager");
 var planet = require("./modules/planet");
@@ -1418,8 +1424,8 @@ var ui;
             changeActiveBlock(target.dataset["block"]);
         });
         event.addEventListener("ui_downCanvas|ui_moveCanvas|ui_upCanvas|ui_hoveringCanvas", function (e, eventName) {
-            var g = stage.getGridPosFromMousePos(new Vector2(e.clientX, e.clientY));
-            event.raiseEvent("gridCanvas", new stage.gridDetail(g, eventName.replace("ui_", "").replace("Canvas", ""), new Vector2(e.clientX, e.clientY)));
+            var g = stage.getGridPosFromMousePos(new vector2_1.default(e.clientX, e.clientY));
+            event.raiseEvent("gridCanvas", new stage.gridDetail(g, eventName.replace("ui_", "").replace("Canvas", ""), new vector2_1.default(e.clientX, e.clientY)));
         });
         event.addEventListener("initedPack", function () {
             // SkyboxMode
@@ -1448,7 +1454,7 @@ var ui;
             document.getElementById("stg-skybox").value = pack_1.packModel.editor.defaultSkybox;
         });
     }
-    initDOM(function () {
+    initDOM_1.default(function () {
         evElems.set(ui);
         document.getElementById("pla-ver").innerHTML = "Planet " + v.version + " by " + v.author;
         el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);

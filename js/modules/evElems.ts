@@ -1,4 +1,4 @@
-import el = require("./elem");
+import * as el from "./elem";
 
 /**
  * .ev-XXと定義された要素に、イベントをつけます。

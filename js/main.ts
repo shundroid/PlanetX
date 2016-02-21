@@ -1,16 +1,16 @@
 import ui = require("./ui");
-import initDOM = require("./modules/initDOM");
+import initDOM from "./modules/initDOM";
 import packLoader = require("./modules/packUtil/packLoader");
 import packManager = require("./modules/packUtil/packManager");
 import event = require("./modules/event");
-import list = require("./modules/classes/list");
+import list from "./modules/classes/list";
 import stage = require("./modules/stage");
 import d = require("./modules/data");
 import makeDataUrl = require("./modules/makePrefabDataUrls");
 import tray = require("./modules/tray");
 import prefab = require("./modules/classes/prefab");
-import Vector2 = require("./modules/classes/vector2");
-import Rect = require("./modules/classes/rect");
+import Vector2 from "./modules/classes/vector2";
+import Rect from "./modules/classes/rect";
 import canvas = require("./modules/canvas");
 import editBlock = require("./modules/editBlock");
 import fGuide = require("./modules/ui/focusGuide");
@@ -22,7 +22,7 @@ import setPack from "./modules/model/pack";
 /**
  * メインとなる処理を行います
  */
-module main {
+namespace main {
 
   function init() {
     d.dataInit();

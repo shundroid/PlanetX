@@ -1,4 +1,4 @@
-class rect {
+export default class {
   constructor(
     public x:number,
     public y:number,
@@ -6,4 +6,3 @@ class rect {
     public height:number
   ) { }
 }
-export = rect;

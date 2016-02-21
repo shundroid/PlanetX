@@ -1,6 +1,6 @@
-import Vector2 = require("./classes/vector2");
+import Vector2 from "./classes/vector2";
 import d = require("./data");
-import stage = require("./stage");
+import * as stage from "./stage";
 
 /**
  * Inspector内、EditBlockのデータ化

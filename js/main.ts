@@ -15,6 +15,10 @@ import canvas = require("./modules/canvas");
 import editBlock = require("./modules/editBlock");
 import fGuide = require("./modules/ui/focusGuide");
 
+// packModel 関連
+import {packModel} from "./modules/model/pack";
+import setPack from "./modules/model/pack";
+
 /**
  * メインとなる処理を行います
  */
@@ -28,10 +32,10 @@ module main {
   initDOM(() => {
     ui.setupCanvas();
     packLoader(d.defaultPackName).then((i:any) => {
-      d.pack = new packManager.packModule(i);
+      setPack(new packManager.packModule(i));
       event.raiseEvent("packLoaded", null);
-      stage.stageEffects.skyboxes = [d.pack.editor.defaultSkybox];
-      ui.setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(d.pack.editor.defaultSkybox).data.filename);
+      stage.stageEffects.skyboxes = [packModel.editor.defaultSkybox];
+      ui.setSkybox(packManager.getPackPath(d.defaultPackName) + packModel.skyboxes.get(packModel.editor.defaultSkybox).data.filename);
       event.raiseEvent("initedPack", null);
       event.raiseEvent("initedUI", null);
       ui.initTrayBlock().then(() => {
@@ -43,8 +47,8 @@ module main {
     event.addEventListener("initedTray", () => {
       ui.changeLoadingStatus("making DataURL");
       d.trayItemDataURLs = makeDataUrl();
-      var item = d.pack.blocks.get(d.pack.editor.defaultBlock);
-      tray.updateActiveBlock(d.pack.editor.defaultBlock, item.data.filename, item.data.bName);
+      var item = packModel.blocks.get(packModel.editor.defaultBlock);
+      tray.updateActiveBlock(packModel.editor.defaultBlock, item.data.filename, item.data.bName);
       ui.changeLoadingStatus("Are you ready?");
       event.raiseEvent("ready", null);
     });
@@ -74,11 +78,11 @@ module main {
           if (e.eventName === "down") {
             // オブジェクトに対応させる
             if (detail.prefab) {
-              if (d.pack.objs.contains(detail.prefab.blockName)) {
-                let oData = d.pack.objs.get(detail.prefab.blockName);
+              if (packModel.objs.contains(detail.prefab.blockName)) {
+                let oData = packModel.objs.get(detail.prefab.blockName);
                 tray.updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(d.defaultPackName) + oData.data.filename, oData.data.width, oData.data.height);
               } else {
-                let bData = d.pack.blocks.get(detail.prefab.blockName);
+                let bData = packModel.blocks.get(detail.prefab.blockName);
                 tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
               }
               ui.changeActiveBlock(detail.prefab.blockName);

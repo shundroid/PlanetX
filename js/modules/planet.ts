@@ -3,6 +3,7 @@ import prefab = require("./classes/prefab");
 import d = require("./data");
 import jsonPlanet = require("./jsonPlanet");
 import version = require("./version");
+import {packModel} from "./model/pack";
 
 /**
  * stageから、compilerを利用して、外部形式へ入出力する機能を提供します。
@@ -50,11 +51,11 @@ module planet {
     for (var i = 0; i < jsonPla.stage.length; i++) {
       jsonPla.stage[i].forEach(j => {
         var id = stage.getId();
-        if (d.pack.objs.contains(j.blockName)) {
-          let objData = d.pack.objs.get(j.blockName);
+        if (packModel.objs.contains(j.blockName)) {
+          let objData = packModel.objs.get(j.blockName);
           stage.items.push(id, new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
         } else {
-          let blockData = d.pack.blocks.get(j.blockName);
+          let blockData = packModel.blocks.get(j.blockName);
           stage.items.push(id, new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
         }
         if (typeof j.attr !== "undefined") {

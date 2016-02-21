@@ -16,6 +16,7 @@ import evElems = require("./modules/evElems");
 import anim = require("./modules/ui/anim");
 import editBlock = require("./modules/editBlock");
 import jsonPlanet = require("./modules/jsonPlanet");
+import {packModel} from "./modules/model/pack";
 
 /**
  * UIに関する処理を行います。
@@ -30,10 +31,10 @@ module ui {
       var target = <HTMLImageElement>e.target;
       d.isObjMode = target.parentElement.classList.contains("tray-list-obj");
       if (!d.isObjMode) {
-        let item = d.pack.blocks.get(target.dataset["block"]).data;
+        let item = packModel.blocks.get(target.dataset["block"]).data;
         tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName);
       } else {
-        let item = d.pack.objs.get(target.dataset["block"]).data;
+        let item = packModel.objs.get(target.dataset["block"]).data;
         tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
       }
       changeActiveBlock(target.dataset["block"]);
@@ -44,11 +45,11 @@ module ui {
     });
     event.addEventListener("initedPack", () => {
       // SkyboxMode
-      if (typeof d.pack.editor.skyboxMode !== "undefined") {
-        if (d.pack.editor.skyboxMode === "repeat") {
+      if (typeof packModel.editor.skyboxMode !== "undefined") {
+        if (packModel.editor.skyboxMode === "repeat") {
           document.body.style.backgroundRepeat = "repeat";
-          if (typeof d.pack.editor.skyboxSize !== "undefined") {
-            document.body.style.backgroundSize = d.pack.editor.skyboxSize; 
+          if (typeof packModel.editor.skyboxSize !== "undefined") {
+            document.body.style.backgroundSize = packModel.editor.skyboxSize; 
           } else {
             document.body.style.backgroundSize = "auto";
           }
@@ -56,7 +57,7 @@ module ui {
       }
       el.forEachforQuery(".pack-select", (i) => {
         var elem = <HTMLSelectElement>i;
-        elem.innerHTML = u.obj2SelectElem((<list<any>>(<any>d.pack)[elem.dataset["items"]]).toSimple());
+        elem.innerHTML = u.obj2SelectElem((<list<any>>(<any>packModel)[elem.dataset["items"]]).toSimple());
         // ev-inputで実装
 //        if (elem.dataset["change"]) {
 //          elem.addEventListener("change", (<any>ui)[elem.dataset["change"]]);
@@ -65,7 +66,7 @@ module ui {
 //          elem.value = elem.dataset["default"];
 //        }
       });
-      (<HTMLSelectElement>document.getElementById("stg-skybox")).value = d.pack.editor.defaultSkybox;
+      (<HTMLSelectElement>document.getElementById("stg-skybox")).value = packModel.editor.defaultSkybox;
     });
   }
   initDOM(() => {
@@ -132,7 +133,7 @@ module ui {
     // fromJSONPlanet内で、d.activeStageLayerは0になる。
     var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
     stage.stageEffects = effects;
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
+    setSkybox(packManager.getPackPath(d.defaultPackName) + packModel.skyboxes.get(effects.skyboxes[0]).data.filename);
     stage.renderStage(0);
   }
   
@@ -211,7 +212,7 @@ module ui {
   
   export function changeSkybox(e:Event) {
     stage.stageEffects.skyboxes[d.activeStageLayer] = (<HTMLSelectElement>e.target).value;
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
+    setSkybox(packManager.getPackPath(d.defaultPackName) + packModel.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
   }
   
   export function clickAddAttr() {
@@ -225,9 +226,9 @@ module ui {
   export function changeActiveStageLayer(e:Event) {
     stage.changeActiveStageLayer(parseInt((<HTMLInputElement>e.target).value));
     if (typeof stage.stageEffects.skyboxes[d.activeStageLayer] === "undefined") {
-      stage.stageEffects.skyboxes[d.activeStageLayer] = d.pack.editor.defaultSkybox;
+      stage.stageEffects.skyboxes[d.activeStageLayer] = packModel.editor.defaultSkybox;
     }
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename); 
+    setSkybox(packManager.getPackPath(d.defaultPackName) + packModel.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename); 
     (<HTMLSelectElement>document.getElementById("stg-skybox")).value = stage.stageEffects.skyboxes[d.activeStageLayer];
   }
   init();

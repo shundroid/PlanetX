@@ -3,6 +3,7 @@ import TrayBlockDetails = require("./classes/trayBlockDetails");
 import d = require("./data");
 import event = require("./event");
 import packManager = require("./packUtil/packManager");
+import {packModel} from "./model/pack";
 
 /**
  * Tray（UI下部分）のUI、Controllerを構成します。
@@ -19,7 +20,7 @@ module tray {
   }
   export function initTrayBlock(finishedOne:(numerator: number, denominator: number)=>void) {
     return new Promise(resolve => {
-      var list = Object.keys(d.pack.blocks.getAll());
+      var list = Object.keys(packModel.blocks.getAll());
       var result:Array<HTMLDivElement> = [];
       var async = (i: number) => {
         var item = list[i];
@@ -27,9 +28,9 @@ module tray {
         li.classList.add("tray-list", "tray-list-block");
         li.addEventListener("mousedown", (e) => { event.raiseEvent("ui_clickTray", e); });
         var img = document.createElement("img");
-        img.src = packManager.getPackPath(d.defaultPackName) + d.pack.blocks.get(item).data.filename;
+        img.src = packManager.getPackPath(d.defaultPackName) + packModel.blocks.get(item).data.filename;
         img.onload = () => {
-          img.alt = d.pack.blocks.get(item).data.bName;
+          img.alt = packModel.blocks.get(item).data.bName;
           img.dataset["block"] = item;
           li.appendChild(img);
           result.push(li);
@@ -46,7 +47,7 @@ module tray {
   }
   export function initTrayObj(finishedOne:(numerator: number, denominator: number)=>void) {
     return new Promise((resolve) => {
-      var list = Object.keys(d.pack.objs.getAll());
+      var list = Object.keys(packModel.objs.getAll());
       var result:Array<HTMLDivElement> = [];
       var async = (i: number) => {
         var item = list[i];
@@ -54,12 +55,12 @@ module tray {
         li.classList.add("tray-list", "tray-list-obj");
         li.addEventListener("click", (e) => { event.raiseEvent("ui_clickTray", e); });
         var img = document.createElement("img");
-        img.src = packManager.getPackPath(d.defaultPackName) + d.pack.objs.get(item).data.filename;
+        img.src = packManager.getPackPath(d.defaultPackName) + packModel.objs.get(item).data.filename;
         img.onload = () => {
-          img.alt = d.pack.objs.get(item).data.oName;
+          img.alt = packModel.objs.get(item).data.oName;
           img.dataset["block"] = item;
           li.style.width = img.style.width =
-            d.pack.objs.get(item).data.width / (d.pack.objs.get(item).data.height / 50) + "px";
+            packModel.objs.get(item).data.width / (packModel.objs.get(item).data.height / 50) + "px";
           li.style.height = img.style.height = "50px";
           li.appendChild(img);
           result.push(li);

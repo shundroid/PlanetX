@@ -1,5 +1,5 @@
 import list from "./classes/list";
-import version = require("./version");
+import * as version from "./version";
 
 /**
  * 構造化した、jsonPlanet関連を提供します。

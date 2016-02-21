@@ -12,9 +12,9 @@ import canvas = require("./modules/canvas");
 import editBlock = require("./modules/editBlock");
 import fGuide = require("./modules/ui/focusGuide");
 
-// packModel 関連
-import {packModel} from "./modules/model/pack";
-import setPack from "./modules/model/pack";
+// Model 関連
+import {packModel, default as setPack} from "./modules/model/pack";
+import {activeBlock, activeImage} from "./modules/model/tray";
 
 // クラス
 import Vector2 from "./modules/classes/vector2";
@@ -58,7 +58,7 @@ namespace main {
       ui.hideLoading();
     });
     event.addEventListener("gridCanvas", (e:stage.gridDetail) => {
-      var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
+      var pre = new prefab(e.gridPos.x, e.gridPos.y, activeBlock.fileName, activeBlock.blockName, stage.toGridPos(activeBlock.width), stage.toGridPos(activeBlock.height));
       var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY), d.activeStageLayer);
       var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
       fGuide.hide();
@@ -66,7 +66,7 @@ namespace main {
         case "pencil":
           if (e.eventName === "down") {
             if (!detail.contains) {
-              canvas.render(d.selectImage, rect);
+              canvas.render(activeImage, rect);
               stage.items.push(stage.getId(), pre, d.activeStageLayer);
             } else {
               stage.items.remove(detail.id, d.activeStageLayer);
@@ -110,12 +110,12 @@ namespace main {
         default:
           if (e.eventName === "move" || e.eventName === "down") {
             if (d.activeToolName === "brush") {
-              if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
+              if (detail.contains && detail.prefab.blockName !== activeBlock.blockName) {
                 stage.items.remove(detail.id, d.activeStageLayer);
                 stage.renderStage(d.activeStageLayer);
               }
               if (!detail.contains) {
-                canvas.render(d.selectImage, rect);
+                canvas.render(activeImage, rect);
                 stage.items.push(stage.getId(), pre, d.activeStageLayer);
               }
             } else if (d.activeToolName === "erase" && detail.contains) {

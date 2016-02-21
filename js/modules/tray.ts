@@ -4,6 +4,7 @@ import d = require("./data");
 import event = require("./event");
 import packManager = require("./packUtil/packManager");
 import {packModel} from "./model/pack";
+import {setActiveBlock} from "./model/tray";
 
 /**
  * Tray（UI下部分）のUI、Controllerを構成します。
@@ -12,11 +13,7 @@ namespace tray {
   export function updateActiveBlock(blockName:string, fileName:string, label:string, width?:number, height?:number) {
     var w = width || d.defaultBlockSize;
     var h = height || d.defaultBlockSize;
-    d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
-    updateSelectImage();
-  }
-  export function updateSelectImage() {
-    d.selectImage = image(d.trayItemDataURLs.get(d.selectBlock.blockName));
+    setActiveBlock(new TrayBlockDetails(blockName, fileName, label, w, h));
   }
   export function initTrayBlock(finishedOne:(numerator: number, denominator: number)=>void) {
     return new Promise(resolve => {

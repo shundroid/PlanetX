@@ -12,9 +12,9 @@ var prefab_1 = require("./modules/classes/prefab");
 var canvas = require("./modules/canvas");
 var editBlock = require("./modules/editBlock");
 var fGuide = require("./modules/ui/focusGuide");
-// packModel 関連
+// Model 関連
 var pack_1 = require("./modules/model/pack");
-var pack_2 = require("./modules/model/pack");
+var tray_1 = require("./modules/model/tray");
 // クラス
 var vector2_1 = require("./modules/classes/vector2");
 var rect_1 = require("./modules/classes/rect");
@@ -30,7 +30,7 @@ var main;
     initDOM_1.default(function () {
         ui.setupCanvas();
         packLoader(d.defaultPackName).then(function (i) {
-            pack_2.default(new packManager.packModule(i));
+            pack_1.default(new packManager.packModule(i));
             event.raiseEvent("packLoaded", null);
             stage.stageEffects.skyboxes = [pack_1.packModel.editor.defaultSkybox];
             ui.setSkybox(packManager.getPackPath(d.defaultPackName) + pack_1.packModel.skyboxes.get(pack_1.packModel.editor.defaultSkybox).data.filename);
@@ -54,7 +54,7 @@ var main;
             ui.hideLoading();
         });
         event.addEventListener("gridCanvas", function (e) {
-            var pre = new prefab_1.default(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
+            var pre = new prefab_1.default(e.gridPos.x, e.gridPos.y, tray_1.activeBlock.fileName, tray_1.activeBlock.blockName, stage.toGridPos(tray_1.activeBlock.width), stage.toGridPos(tray_1.activeBlock.height));
             var detail = stage.getPrefabFromGrid(new vector2_1.default(pre.gridX, pre.gridY), d.activeStageLayer);
             var rect = stage.toDrawRect(new rect_1.default(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
             fGuide.hide();
@@ -62,7 +62,7 @@ var main;
                 case "pencil":
                     if (e.eventName === "down") {
                         if (!detail.contains) {
-                            canvas.render(d.selectImage, rect);
+                            canvas.render(tray_1.activeImage, rect);
                             stage.items.push(stage.getId(), pre, d.activeStageLayer);
                         }
                         else {
@@ -109,12 +109,12 @@ var main;
                 default:
                     if (e.eventName === "move" || e.eventName === "down") {
                         if (d.activeToolName === "brush") {
-                            if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
+                            if (detail.contains && detail.prefab.blockName !== tray_1.activeBlock.blockName) {
                                 stage.items.remove(detail.id, d.activeStageLayer);
                                 stage.renderStage(d.activeStageLayer);
                             }
                             if (!detail.contains) {
-                                canvas.render(d.selectImage, rect);
+                                canvas.render(tray_1.activeImage, rect);
                                 stage.items.push(stage.getId(), pre, d.activeStageLayer);
                             }
                         }
@@ -129,7 +129,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/prefab":4,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/model/pack":17,"./modules/packUtil/packLoader":18,"./modules/packUtil/packManager":19,"./modules/stage":21,"./modules/tray":22,"./modules/ui/focusGuide":24,"./ui":27}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/prefab":4,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/model/pack":17,"./modules/model/tray":18,"./modules/packUtil/packLoader":19,"./modules/packUtil/packManager":20,"./modules/stage":22,"./modules/tray":23,"./modules/ui/focusGuide":25,"./ui":28}],2:[function(require,module,exports){
 /// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
 var initDOM_1 = require("./initDOM");
 /**
@@ -407,7 +407,7 @@ var editBlock;
     editBlock_1.clickRemoveAttr = clickRemoveAttr;
 })(editBlock || (editBlock = {}));
 module.exports = editBlock;
-},{"./data":8,"./stage":21}],10:[function(require,module,exports){
+},{"./data":8,"./stage":22}],10:[function(require,module,exports){
 /**
  * #41 lodashとかでかぶるかな・・
  */
@@ -633,7 +633,7 @@ var jsonPlanet;
     jsonPlanet_1.jsonPlanet = jsonPlanet;
 })(jsonPlanet || (jsonPlanet = {}));
 module.exports = jsonPlanet;
-},{"./version":26}],16:[function(require,module,exports){
+},{"./version":27}],16:[function(require,module,exports){
 var d = require("./data");
 var list_1 = require("./classes/list");
 var packManager = require("./packUtil/packManager");
@@ -657,13 +657,25 @@ function makeDataUrl() {
     return result;
 }
 module.exports = makeDataUrl;
-},{"./classes/list":3,"./classes/vector2":7,"./data":8,"./image":13,"./model/pack":17,"./packUtil/packManager":19}],17:[function(require,module,exports){
+},{"./classes/list":3,"./classes/vector2":7,"./data":8,"./image":13,"./model/pack":17,"./packUtil/packManager":20}],17:[function(require,module,exports){
 function default_1(pack) {
     exports.packModel = pack;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = default_1;
 },{}],18:[function(require,module,exports){
+var image_1 = require("./../image");
+var d = require("./../data");
+function setActiveBlock(trayBlockDetails) {
+    exports.activeBlock = trayBlockDetails;
+    exports.activeImage = image_1.default(d.trayItemDataURLs.get(exports.activeBlock.blockName));
+}
+exports.setActiveBlock = setActiveBlock;
+function setActiveImage(imageElem) {
+    exports.activeImage = imageElem;
+}
+exports.setActiveImage = setActiveImage;
+},{"./../data":8,"./../image":13}],19:[function(require,module,exports){
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
 var packManager = require("./packManager");
 function load(packName) {
@@ -679,7 +691,7 @@ function load(packName) {
     });
 }
 module.exports = load;
-},{"./packManager":19}],19:[function(require,module,exports){
+},{"./packManager":20}],20:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -806,7 +818,7 @@ var pack;
     pack.skyboxInfoList = skyboxInfoList;
 })(pack || (pack = {}));
 module.exports = pack;
-},{"./../classes/list":3}],20:[function(require,module,exports){
+},{"./../classes/list":3}],21:[function(require,module,exports){
 var stage = require("./stage");
 var prefab_1 = require("./classes/prefab");
 var d = require("./data");
@@ -884,7 +896,7 @@ var planet;
     planet.fromJsonPlanet = fromJsonPlanet;
 })(planet || (planet = {}));
 module.exports = planet;
-},{"./classes/prefab":4,"./data":8,"./jsonPlanet":15,"./model/pack":17,"./stage":21,"./version":26}],21:[function(require,module,exports){
+},{"./classes/prefab":4,"./data":8,"./jsonPlanet":15,"./model/pack":17,"./stage":22,"./version":27}],22:[function(require,module,exports){
 var list_1 = require("./classes/list");
 var canvas = require("./canvas");
 var image_1 = require("./image");
@@ -1198,13 +1210,13 @@ var stage;
     stage.toDrawRect = toDrawRect;
 })(stage || (stage = {}));
 module.exports = stage;
-},{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":8,"./event":12,"./image":13}],22:[function(require,module,exports){
-var image_1 = require("./image");
+},{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":8,"./event":12,"./image":13}],23:[function(require,module,exports){
 var trayBlockDetails_1 = require("./classes/trayBlockDetails");
 var d = require("./data");
 var event = require("./event");
 var packManager = require("./packUtil/packManager");
 var pack_1 = require("./model/pack");
+var tray_1 = require("./model/tray");
 /**
  * Tray（UI下部分）のUI、Controllerを構成します。
  */
@@ -1213,14 +1225,9 @@ var tray;
     function updateActiveBlock(blockName, fileName, label, width, height) {
         var w = width || d.defaultBlockSize;
         var h = height || d.defaultBlockSize;
-        d.selectBlock = new trayBlockDetails_1.default(blockName, fileName, label, w, h);
-        updateSelectImage();
+        tray_1.setActiveBlock(new trayBlockDetails_1.default(blockName, fileName, label, w, h));
     }
     tray.updateActiveBlock = updateActiveBlock;
-    function updateSelectImage() {
-        d.selectImage = image_1.default(d.trayItemDataURLs.get(d.selectBlock.blockName));
-    }
-    tray.updateSelectImage = updateSelectImage;
     function initTrayBlock(finishedOne) {
         return new Promise(function (resolve) {
             var list = Object.keys(pack_1.packModel.blocks.getAll());
@@ -1284,7 +1291,7 @@ var tray;
     tray.initTrayObj = initTrayObj;
 })(tray || (tray = {}));
 module.exports = tray;
-},{"./classes/trayBlockDetails":6,"./data":8,"./event":12,"./image":13,"./model/pack":17,"./packUtil/packManager":19}],23:[function(require,module,exports){
+},{"./classes/trayBlockDetails":6,"./data":8,"./event":12,"./model/pack":17,"./model/tray":18,"./packUtil/packManager":20}],24:[function(require,module,exports){
 /// <reference path="../../definitely/move.d.ts" />
 var anim;
 (function (anim) {
@@ -1322,7 +1329,7 @@ var anim;
     anim.hideLoading = hideLoading;
 })(anim || (anim = {}));
 module.exports = anim;
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var initDOM_1 = require("./../initDOM");
 var focusGuide;
 (function (focusGuide) {
@@ -1350,7 +1357,7 @@ var focusGuide;
     focusGuide.hide = hide;
 })(focusGuide || (focusGuide = {}));
 module.exports = focusGuide;
-},{"./../initDOM":14}],25:[function(require,module,exports){
+},{"./../initDOM":14}],26:[function(require,module,exports){
 /**
  * Todo: 必要性
  */
@@ -1373,14 +1380,14 @@ var util;
     util.obj2SelectElem = obj2SelectElem;
 })(util || (util = {}));
 module.exports = util;
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /**
  * Planetのバージョン情報
  */
 exports.version = "v1.0";
 exports.author = "shundroid";
 exports.jsonPlanetVersion = 0.1;
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var d = require("./modules/data");
@@ -1624,4 +1631,4 @@ var ui;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/model/pack":17,"./modules/packUtil/packManager":19,"./modules/planet":20,"./modules/stage":21,"./modules/tray":22,"./modules/ui/anim":23,"./modules/util":25,"./modules/version":26}]},{},[1]);
+},{"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/model/pack":17,"./modules/packUtil/packManager":20,"./modules/planet":21,"./modules/stage":22,"./modules/tray":23,"./modules/ui/anim":24,"./modules/util":26,"./modules/version":27}]},{},[1]);

@@ -1,5 +1,5 @@
 import {data as d} from "./data";
-import list = require("./classes/list");
+import list from "./classes/list";
 import packManager = require("./packUtil/packManager");
 import Vector2 = require("./classes/vector2");
 import image = require("./image");

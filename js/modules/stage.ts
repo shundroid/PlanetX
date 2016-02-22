@@ -1,4 +1,4 @@
-import list = require("./classes/list");
+import list from "./classes/list";
 import prefab = require("./classes/prefab");
 import canvas = require("./canvas");
 import image = require("./image");

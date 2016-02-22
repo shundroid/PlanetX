@@ -1,4 +1,4 @@
-import list = require("./classes/list");
+import list from "./classes/list";
 import packManager = require("./packUtil/packManager");
 import TrayBlockDetails = require("./classes/trayBlockDetails");
 

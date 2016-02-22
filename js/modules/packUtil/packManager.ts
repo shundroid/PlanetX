@@ -1,4 +1,4 @@
-import list = require("./../classes/list");
+import list from "./../classes/list";
 import attribute from "./../classes/blockAttr/attribute";
 namespace pack {
   export function getPackPath(packName:string) {

@@ -1,4 +1,4 @@
-import list = require("./classes/list");
+import list from "./classes/list";
 
 /**
  * 廃止の方向で・・

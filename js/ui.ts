@@ -5,7 +5,7 @@ import initDOM = require("./modules/initDOM");
 import event = require("./modules/event");
 import el = require("./modules/elem");
 import u = require("./modules/util");
-import list = require("./modules/classes/list");
+import list from "./modules/classes/list";
 import Vector2 = require("./modules/classes/vector2");
 import tray = require("./modules/tray");
 import packManager = require("./modules/packUtil/packManager");

@@ -36,4 +36,4 @@ class data {
     this.activeStageLayer = 0;
   }
 }
-export = data;
+export { data };

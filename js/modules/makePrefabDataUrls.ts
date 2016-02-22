@@ -1,4 +1,4 @@
-import d = require("./data");
+import {data as d} from "./data";
 import list = require("./classes/list");
 import packManager = require("./packUtil/packManager");
 import Vector2 = require("./classes/vector2");

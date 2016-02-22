@@ -5,7 +5,7 @@ import packManager = require("./modules/packUtil/packManager");
 import event = require("./modules/event");
 import list = require("./modules/classes/list");
 import stage = require("./modules/stage");
-import d = require("./modules/data");
+import {data as d} from "./modules/data";
 import makeDataUrl = require("./modules/makePrefabDataUrls");
 import tray = require("./modules/tray");
 import prefab = require("./modules/classes/prefab");

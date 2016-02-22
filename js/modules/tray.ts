@@ -1,6 +1,6 @@
 import image = require("./image");
 import TrayBlockDetails = require("./classes/trayBlockDetails");
-import d = require("./data");
+import {data as d} from "./data";
 import event = require("./event");
 import packManager = require("./packUtil/packManager");
 

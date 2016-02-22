@@ -1,6 +1,6 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
-import d = require("./modules/data");
+import {data as d} from "./modules/data";
 import initDOM = require("./modules/initDOM");
 import event = require("./modules/event");
 import el = require("./modules/elem");

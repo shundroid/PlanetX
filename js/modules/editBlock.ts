@@ -5,7 +5,7 @@ import stage = require("./stage");
 /**
  * Inspector内、EditBlockのデータ化
  */
-module editBlock {
+namespace editBlock {
   export class EditBlock {
     constructor(
       public blockName:string,

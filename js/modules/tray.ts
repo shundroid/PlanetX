@@ -7,7 +7,7 @@ import packManager = require("./packUtil/packManager");
 /**
  * Tray（UI下部分）のUI、Controllerを構成します。
  */
-module tray {
+namespace tray {
   export function updateActiveBlock(blockName:string, fileName:string, label:string, width?:number, height?:number) {
     var w = width || d.defaultBlockSize;
     var h = height || d.defaultBlockSize;

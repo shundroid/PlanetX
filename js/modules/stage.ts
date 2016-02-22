@@ -10,7 +10,7 @@ import Vector2 = require("./classes/vector2");
 /**
  * 現在のStage情報を保存します。
  */
-module stage {
+namespace stage {
   
   // StageEffect
   export class StageEffects {
@@ -31,7 +31,7 @@ module stage {
   
   // Attrをブロックごとに管理
   var blockAttrsList:{[key: number]: {[key: number]: Attr}};
-  export module blockAttrs {
+  export namespace blockAttrs {
     export function setAll(lst:{[key: string]: {[key: number]: Attr}}) {
       blockAttrsList = lst;
     }
@@ -121,7 +121,7 @@ module stage {
     renderStage(stageLayer);
   }
   
-  export module items {
+  export namespace items {
     
     /**
      * 内部でpushStageLayerを呼び出します

@@ -1,7 +1,7 @@
 import list = require("./../classes/list");
 import attribute = require("./../classes/blockAttr/attribute");
 import attrList = require("./../classes/blockAttr/attrList");
-module pack {
+namespace pack {
   export function getPackPath(packName:string) {
     return "pack/" + packName + "/";
   }

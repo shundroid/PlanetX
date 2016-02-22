@@ -4,7 +4,7 @@ import version = require("./version");
 /**
  * 構造化した、jsonPlanet関連を提供します。
  */
-module jsonPlanet {
+namespace jsonPlanet {
   export class jsonBlockItem {
     constructor(
       public blockName:string,

@@ -18,7 +18,7 @@ import fGuide = require("./modules/ui/focusGuide");
 /**
  * メインとなる処理を行います
  */
-module main {
+namespace main {
 
   function init() {
     d.dataInit();

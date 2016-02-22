@@ -1,7 +1,7 @@
 /**
  * Todo: 必要性
  */
-module util {
+namespace util {
   interface oI {
     [index: string]:any;
   }

@@ -3,7 +3,7 @@ import el = require("./elem");
 /**
  * .ev-XXと定義された要素に、イベントをつけます。
  */
-module evElems { 
+namespace evElems { 
   export function set(listenerNamespace:any) {
     el.forEachforQuery(".ev-btn", (i) => {
       i.addEventListener("click", listenerNamespace[(<HTMLElement>i).dataset["listener"]]);

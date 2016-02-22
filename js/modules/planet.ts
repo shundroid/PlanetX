@@ -7,7 +7,7 @@ import version = require("./version");
 /**
  * stageから、compilerを利用して、外部形式へ入出力する機能を提供します。
  */
-module planet {
+namespace planet {
   
   /**
    * stageを、jsonPlanetへ変換します。

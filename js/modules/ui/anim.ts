@@ -1,5 +1,5 @@
 /// <reference path="../../definitely/move.d.ts" />
-module anim {
+namespace anim {
   export function showTrayFull() {
     move(".pla-footer").set("height", "100%").duration("0.5s").end();
   }

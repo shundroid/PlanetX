@@ -1,7 +1,7 @@
 /**
  * #41 lodashとかでかぶるかな・・
  */
-module elem {
+namespace elem {
   export function addEventListenerforQuery(query:string, eventName:string, listener:(...param:any[])=>void) {
     forEachforQuery(query, (i) => {
       i.addEventListener(eventName, listener);

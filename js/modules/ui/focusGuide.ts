@@ -1,6 +1,6 @@
 import Vector2 = require("./../classes/vector2");
 import initDOM = require("./../initDOM");
-module focusGuide {
+namespace focusGuide {
   var guideElement:HTMLDivElement;
   initDOM(() => {
     guideElement = document.createElement("div");

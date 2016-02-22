@@ -5,7 +5,7 @@ import Rect = require("./classes/rect");
 /**
  * Canvasへの描画に関係する処理を行います。
  */
-module canvas {
+namespace canvas {
   var canvas:HTMLCanvasElement;
   var ctx:CanvasRenderingContext2D;
   export var canvasRect:Rect;

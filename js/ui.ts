@@ -20,7 +20,7 @@ import jsonPlanet = require("./modules/jsonPlanet");
 /**
  * UIに関する処理を行います。
  */
-module ui {
+namespace ui {
   export var canvas: HTMLCanvasElement; 
   function init() {
     window.addEventListener("resize", () => {

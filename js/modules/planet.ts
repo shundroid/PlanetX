@@ -1,4 +1,4 @@
-import * as stage from "./stage";
+import {stage} from "./stage";
 import prefab from "./classes/prefab";
 import d = require("./data");
 import jsonPlanet = require("./jsonPlanet");

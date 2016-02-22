@@ -8,7 +8,7 @@ import u = require("./modules/util");
 import tray = require("./modules/tray");
 import packManager = require("./modules/packUtil/packManager");
 import planet = require("./modules/planet");
-import stage = require("./modules/stage");
+import {stage} from "./modules/stage";
 import * as v from "./modules/version";
 import evElems = require("./modules/evElems");
 import anim = require("./modules/ui/anim");

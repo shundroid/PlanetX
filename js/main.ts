@@ -3,7 +3,7 @@ import initDOM from "./modules/initDOM";
 import packLoader = require("./modules/packUtil/packLoader");
 import packManager = require("./modules/packUtil/packManager");
 import event = require("./modules/event");
-import stage = require("./modules/stage");
+import {stage} from "./modules/stage";
 import d = require("./modules/data");
 import makeDataUrl = require("./modules/makePrefabDataUrls");
 import tray = require("./modules/tray");

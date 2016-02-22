@@ -7,10 +7,12 @@ import rect from "./classes/rect";
 import event = require("./event");
 import Vector2 from "./classes/vector2";
 
+import * as tray from "./model/tray";
+
 /**
  * 現在のStage情報を保存します。
  */
-namespace stage {
+export namespace stage {
   
   // StageEffect
   export class StageEffects {
@@ -194,14 +196,14 @@ namespace stage {
     var l = items.getLayerItems(renderStageLayer).getAll();
     Object.keys(l).forEach(i => {
       var item = items.get(parseInt(i));
-      var x = stage.scrollX + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridX), stage.toMousePos(item.gridW));
-      var y = stage.scrollY + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridY), stage.toMousePos(item.gridH));
-      var width = stage.toMousePos(item.gridW);
-      var height = stage.toMousePos(item.gridH);
+      var x = scrollX + getMousePosFromCenterAndSize(toMousePos(item.gridX), toMousePos(item.gridW));
+      var y = scrollY + getMousePosFromCenterAndSize(toMousePos(item.gridY), toMousePos(item.gridH));
+      var width = toMousePos(item.gridW);
+      var height = toMousePos(item.gridH);
       // 画面内に入っているか
       if (x + width >= 0 && x <= canvas.canvasRect.width &&
       y + height >= 0 && y <= canvas.canvasRect.height) {
-        canvas.render(image(d.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
+        canvas.render(image(tray.trayItemDataURLs[item.blockName]), new rect(x, y, width, height));
       }
     });
   }
@@ -279,4 +281,3 @@ namespace stage {
     );
   }
 }
-export = stage;

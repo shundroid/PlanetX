@@ -4,7 +4,7 @@ var initDOM_1 = require("./modules/initDOM");
 var packLoader = require("./modules/packUtil/packLoader");
 var packManager = require("./modules/packUtil/packManager");
 var event = require("./modules/event");
-var stage = require("./modules/stage");
+var stage_1 = require("./modules/stage");
 var d = require("./modules/data");
 var makeDataUrl = require("./modules/makePrefabDataUrls");
 var tray = require("./modules/tray");
@@ -32,7 +32,7 @@ var main;
         packLoader(d.defaultPackName).then(function (i) {
             pack_1.default(new packManager.packModule(i));
             event.raiseEvent("packLoaded", null);
-            stage.stageEffects.skyboxes = [pack_1.packModel.editor.defaultSkybox];
+            stage_1.stage.stageEffects.skyboxes = [pack_1.packModel.editor.defaultSkybox];
             ui.setSkybox(packManager.getPackPath(d.defaultPackName) + pack_1.packModel.skyboxes.get(pack_1.packModel.editor.defaultSkybox).data.filename);
             event.raiseEvent("initedPack", null);
             event.raiseEvent("initedUI", null);
@@ -54,20 +54,20 @@ var main;
             ui.hideLoading();
         });
         event.addEventListener("gridCanvas", function (e) {
-            var pre = new prefab_1.default(e.gridPos.x, e.gridPos.y, tray_1.activeBlock.fileName, tray_1.activeBlock.blockName, stage.toGridPos(tray_1.activeBlock.width), stage.toGridPos(tray_1.activeBlock.height));
-            var detail = stage.getPrefabFromGrid(new vector2_1.default(pre.gridX, pre.gridY), d.activeStageLayer);
-            var rect = stage.toDrawRect(new rect_1.default(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
+            var pre = new prefab_1.default(e.gridPos.x, e.gridPos.y, tray_1.activeBlock.fileName, tray_1.activeBlock.blockName, stage_1.stage.toGridPos(tray_1.activeBlock.width), stage_1.stage.toGridPos(tray_1.activeBlock.height));
+            var detail = stage_1.stage.getPrefabFromGrid(new vector2_1.default(pre.gridX, pre.gridY), d.activeStageLayer);
+            var rect = stage_1.stage.toDrawRect(new rect_1.default(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
             fGuide.hide();
             switch (d.activeToolName) {
                 case "pencil":
                     if (e.eventName === "down") {
                         if (!detail.contains) {
                             canvas.render(tray_1.activeImage, rect);
-                            stage.items.push(stage.getId(), pre, d.activeStageLayer);
+                            stage_1.stage.items.push(stage_1.stage.getId(), pre, d.activeStageLayer);
                         }
                         else {
-                            stage.items.remove(detail.id, d.activeStageLayer);
-                            stage.renderStage(d.activeStageLayer);
+                            stage_1.stage.items.remove(detail.id, d.activeStageLayer);
+                            stage_1.stage.renderStage(d.activeStageLayer);
                         }
                     }
                     else if (e.eventName === "hovering") {
@@ -92,12 +92,12 @@ var main;
                     break;
                 case "hand":
                     if (e.eventName === "move") {
-                        stage.scrollX += e.mousePos.x - stage.scrollBeforeX;
-                        stage.scrollY += e.mousePos.y - stage.scrollBeforeY;
-                        stage.renderStage(d.activeStageLayer);
+                        stage_1.stage.scrollX += e.mousePos.x - stage_1.stage.scrollBeforeX;
+                        stage_1.stage.scrollY += e.mousePos.y - stage_1.stage.scrollBeforeY;
+                        stage_1.stage.renderStage(d.activeStageLayer);
                     }
-                    stage.scrollBeforeX = e.mousePos.x;
-                    stage.scrollBeforeY = e.mousePos.y;
+                    stage_1.stage.scrollBeforeX = e.mousePos.x;
+                    stage_1.stage.scrollBeforeY = e.mousePos.y;
                     break;
                 case "edit":
                     if (e.eventName === "down" && detail.contains) {
@@ -110,17 +110,17 @@ var main;
                     if (e.eventName === "move" || e.eventName === "down") {
                         if (d.activeToolName === "brush") {
                             if (detail.contains && detail.prefab.blockName !== tray_1.activeBlock.blockName) {
-                                stage.items.remove(detail.id, d.activeStageLayer);
-                                stage.renderStage(d.activeStageLayer);
+                                stage_1.stage.items.remove(detail.id, d.activeStageLayer);
+                                stage_1.stage.renderStage(d.activeStageLayer);
                             }
                             if (!detail.contains) {
                                 canvas.render(tray_1.activeImage, rect);
-                                stage.items.push(stage.getId(), pre, d.activeStageLayer);
+                                stage_1.stage.items.push(stage_1.stage.getId(), pre, d.activeStageLayer);
                             }
                         }
                         else if (d.activeToolName === "erase" && detail.contains) {
-                            stage.items.remove(detail.id, d.activeStageLayer);
-                            stage.renderStage(d.activeStageLayer);
+                            stage_1.stage.items.remove(detail.id, d.activeStageLayer);
+                            stage_1.stage.renderStage(d.activeStageLayer);
                         }
                     }
                     break;
@@ -302,7 +302,7 @@ var data = (function () {
 module.exports = data;
 },{"./classes/list":3}],9:[function(require,module,exports){
 var d = require("./data");
-var stage = require("./stage");
+var stage_1 = require("./stage");
 /**
  * Inspector内、EditBlockのデータ化
  */
@@ -339,10 +339,10 @@ var editBlock;
         document.getElementById("ed-pos").textContent = "Pos: " + currentEditBlock.blockPos.x + ", " + currentEditBlock.blockPos.y;
         document.getElementById("ed-id").textContent = "ID: " + currentEditBlock.blockId;
         document.getElementsByClassName("ed-attr-view")[0].innerHTML = "";
-        if (stage.blockAttrs.containsBlock(d.editingBlockId)) {
-            var l = stage.blockAttrs.getBlock(d.editingBlockId);
+        if (stage_1.stage.blockAttrs.containsBlock(d.editingBlockId)) {
+            var l = stage_1.stage.blockAttrs.getBlock(d.editingBlockId);
             Object.keys(l).forEach(function (i) {
-                var attr = stage.blockAttrs.getAttr(d.editingBlockId, parseInt(i));
+                var attr = stage_1.stage.blockAttrs.getAttr(d.editingBlockId, parseInt(i));
                 renderAttributeUI(parseInt(i), attr.attrName, attr.attrVal);
             });
         }
@@ -392,16 +392,16 @@ var editBlock;
     function changeAttrVal(e) {
         console.log("hg!!");
         // Todo: [x] blockAttrsで、inputNameかinputValかどちらかを変えられるように、オーバーロードを作る
-        stage.blockAttrs.update(d.editingBlockId, parseInt(e.target.id.replace("ed-attr-", "")), { attrVal: e.target.value });
+        stage_1.stage.blockAttrs.update(d.editingBlockId, parseInt(e.target.id.replace("ed-attr-", "")), { attrVal: e.target.value });
     }
     editBlock_1.changeAttrVal = changeAttrVal;
     function changeAttrName(e) {
-        stage.blockAttrs.update(d.editingBlockId, parseInt(e.target.id.replace("ed-attr-name-", "")), { attrName: e.target.value });
+        stage_1.stage.blockAttrs.update(d.editingBlockId, parseInt(e.target.id.replace("ed-attr-name-", "")), { attrName: e.target.value });
     }
     editBlock_1.changeAttrName = changeAttrName;
     function clickRemoveAttr(e) {
         var attrId = parseInt(e.target.id.replace("ed-attr-remove-", ""));
-        stage.blockAttrs.removeAttr(d.editingBlockId, attrId);
+        stage_1.stage.blockAttrs.removeAttr(d.editingBlockId, attrId);
         document.getElementsByClassName("ed-attr-view")[0].removeChild(document.getElementById("ed-attr-field-" + attrId));
     }
     editBlock_1.clickRemoveAttr = clickRemoveAttr;
@@ -819,7 +819,7 @@ var pack;
 })(pack || (pack = {}));
 module.exports = pack;
 },{"./../classes/list":3}],21:[function(require,module,exports){
-var stage = require("./stage");
+var stage_1 = require("./stage");
 var prefab_1 = require("./classes/prefab");
 var d = require("./data");
 var jsonPlanet = require("./jsonPlanet");
@@ -836,18 +836,18 @@ var planet;
      */
     function toJsonPlanet() {
         var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
-        Object.keys(stage.stageEffects.skyboxes).forEach(function (i) {
-            result.skyboxes.push(stage.stageEffects.skyboxes[parseInt(i)]);
+        Object.keys(stage_1.stage.stageEffects.skyboxes).forEach(function (i) {
+            result.skyboxes.push(stage_1.stage.stageEffects.skyboxes[parseInt(i)]);
         });
-        var items = stage.items.getAllLayer();
+        var items = stage_1.stage.items.getAllLayer();
         for (var i = 0; i < items.length; i++) {
             result.stage[i] = [];
             items[i].forEach(function (j) {
-                var item = stage.items.get(j);
-                if (stage.blockAttrs.containsBlock(j)) {
+                var item = stage_1.stage.items.get(j);
+                if (stage_1.stage.blockAttrs.containsBlock(j)) {
                     // attrがあるとき
                     var attr = {};
-                    var attrs = stage.blockAttrs.getBlock(j);
+                    var attrs = stage_1.stage.blockAttrs.getBlock(j);
                     Object.keys(attrs).forEach(function (k) {
                         attr[attrs[parseInt(k)].attrName] = attrs[parseInt(k)].attrVal;
                     });
@@ -866,29 +866,29 @@ var planet;
      * 内部で、stage.itemsをクリアし、新しくpushします。
      */
     function fromJsonPlanet(jsonPla) {
-        stage.items.clear();
-        stage.blockAttrs.clear();
-        stage.resetId();
+        stage_1.stage.items.clear();
+        stage_1.stage.blockAttrs.clear();
+        stage_1.stage.resetId();
         for (var i = 0; i < jsonPla.stage.length; i++) {
             jsonPla.stage[i].forEach(function (j) {
-                var id = stage.getId();
+                var id = stage_1.stage.getId();
                 if (pack_1.packModel.objs.contains(j.blockName)) {
                     var objData = pack_1.packModel.objs.get(j.blockName);
-                    stage.items.push(id, new prefab_1.default(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
+                    stage_1.stage.items.push(id, new prefab_1.default(j.posX, j.posY, objData.data.filename, j.blockName, stage_1.stage.toGridPos(objData.data.width), stage_1.stage.toGridPos(objData.data.height)), i);
                 }
                 else {
                     var blockData = pack_1.packModel.blocks.get(j.blockName);
-                    stage.items.push(id, new prefab_1.default(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
+                    stage_1.stage.items.push(id, new prefab_1.default(j.posX, j.posY, blockData.data.filename, j.blockName, stage_1.stage.toGridPos(d.defaultBlockSize), stage_1.stage.toGridPos(d.defaultBlockSize)), i);
                 }
                 if (typeof j.attr !== "undefined") {
                     Object.keys(j.attr).forEach(function (k) {
-                        stage.blockAttrs.push(id, stage.blockAttrs.getMaxAttrId(id), new stage.Attr(k, j.attr[k]));
+                        stage_1.stage.blockAttrs.push(id, stage_1.stage.blockAttrs.getMaxAttrId(id), new stage_1.stage.Attr(k, j.attr[k]));
                     });
                 }
             });
         }
         d.activeStageLayer = 0;
-        var result = new stage.StageEffects();
+        var result = new stage_1.stage.StageEffects();
         // skyboxes
         result.skyboxes = jsonPla.skyboxes;
         return result;
@@ -904,6 +904,7 @@ var d = require("./data");
 var rect_1 = require("./classes/rect");
 var event = require("./event");
 var vector2_1 = require("./classes/vector2");
+var tray = require("./model/tray");
 /**
  * 現在のStage情報を保存します。
  */
@@ -1112,14 +1113,14 @@ var stage;
         var l = items.getLayerItems(renderStageLayer).getAll();
         Object.keys(l).forEach(function (i) {
             var item = items.get(parseInt(i));
-            var x = stage.scrollX + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridX), stage.toMousePos(item.gridW));
-            var y = stage.scrollY + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridY), stage.toMousePos(item.gridH));
-            var width = stage.toMousePos(item.gridW);
-            var height = stage.toMousePos(item.gridH);
+            var x = stage.scrollX + getMousePosFromCenterAndSize(toMousePos(item.gridX), toMousePos(item.gridW));
+            var y = stage.scrollY + getMousePosFromCenterAndSize(toMousePos(item.gridY), toMousePos(item.gridH));
+            var width = toMousePos(item.gridW);
+            var height = toMousePos(item.gridH);
             // 画面内に入っているか
             if (x + width >= 0 && x <= canvas.canvasRect.width &&
                 y + height >= 0 && y <= canvas.canvasRect.height) {
-                canvas.render(image_1.default(d.trayItemDataURLs.get(item.blockName)), new rect_1.default(x, y, width, height));
+                canvas.render(image_1.default(tray.trayItemDataURLs[item.blockName]), new rect_1.default(x, y, width, height));
             }
         });
     }
@@ -1208,9 +1209,8 @@ var stage;
         return new rect_1.default(stage.scrollX + getMousePosFromCenterAndSize(toMousePos(gridRect.x), toMousePos(gridRect.width)), stage.scrollY + getMousePosFromCenterAndSize(toMousePos(gridRect.y), toMousePos(gridRect.height)), toMousePos(gridRect.width), toMousePos(gridRect.height));
     }
     stage.toDrawRect = toDrawRect;
-})(stage || (stage = {}));
-module.exports = stage;
-},{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":8,"./event":12,"./image":13}],23:[function(require,module,exports){
+})(stage = exports.stage || (exports.stage = {}));
+},{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":8,"./event":12,"./image":13,"./model/tray":18}],23:[function(require,module,exports){
 var trayBlockDetails_1 = require("./classes/trayBlockDetails");
 var d = require("./data");
 var event = require("./event");
@@ -1398,7 +1398,7 @@ var u = require("./modules/util");
 var tray = require("./modules/tray");
 var packManager = require("./modules/packUtil/packManager");
 var planet = require("./modules/planet");
-var stage = require("./modules/stage");
+var stage_1 = require("./modules/stage");
 var v = require("./modules/version");
 var evElems = require("./modules/evElems");
 var anim = require("./modules/ui/anim");
@@ -1429,8 +1429,8 @@ var ui;
             changeActiveBlock(target.dataset["block"]);
         });
         event.addEventListener("ui_downCanvas|ui_moveCanvas|ui_upCanvas|ui_hoveringCanvas", function (e, eventName) {
-            var g = stage.getGridPosFromMousePos(new vector2_1.default(e.clientX, e.clientY));
-            event.raiseEvent("gridCanvas", new stage.gridDetail(g, eventName.replace("ui_", "").replace("Canvas", ""), new vector2_1.default(e.clientX, e.clientY)));
+            var g = stage_1.stage.getGridPosFromMousePos(new vector2_1.default(e.clientX, e.clientY));
+            event.raiseEvent("gridCanvas", new stage_1.stage.gridDetail(g, eventName.replace("ui_", "").replace("Canvas", ""), new vector2_1.default(e.clientX, e.clientY)));
         });
         event.addEventListener("initedPack", function () {
             // SkyboxMode
@@ -1527,9 +1527,9 @@ var ui;
     function clickImport() {
         // fromJSONPlanet内で、d.activeStageLayerは0になる。
         var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse(document.getElementById("pla-io").value)));
-        stage.stageEffects = effects;
+        stage_1.stage.stageEffects = effects;
         setSkybox(packManager.getPackPath(d.defaultPackName) + pack_1.packModel.skyboxes.get(effects.skyboxes[0]).data.filename);
-        stage.renderStage(0);
+        stage_1.stage.renderStage(0);
     }
     ui.clickImport = clickImport;
     function clickInsShowBtn(e) {
@@ -1606,13 +1606,13 @@ var ui;
     }
     ui.clickConvertOldFile = clickConvertOldFile;
     function changeSkybox(e) {
-        stage.stageEffects.skyboxes[d.activeStageLayer] = e.target.value;
-        setSkybox(packManager.getPackPath(d.defaultPackName) + pack_1.packModel.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
+        stage_1.stage.stageEffects.skyboxes[d.activeStageLayer] = e.target.value;
+        setSkybox(packManager.getPackPath(d.defaultPackName) + pack_1.packModel.skyboxes.get(stage_1.stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
     }
     ui.changeSkybox = changeSkybox;
     function clickAddAttr() {
-        var attrId = stage.blockAttrs.getMaxAttrId(d.editingBlockId);
-        stage.blockAttrs.push(d.editingBlockId, attrId, new stage.Attr());
+        var attrId = stage_1.stage.blockAttrs.getMaxAttrId(d.editingBlockId);
+        stage_1.stage.blockAttrs.push(d.editingBlockId, attrId, new stage_1.stage.Attr());
         editBlock.renderAttributeUI(attrId);
     }
     ui.clickAddAttr = clickAddAttr;
@@ -1620,12 +1620,12 @@ var ui;
     //    stage.blockAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")), (<HTMLInputElement>e.target).value);
     //  }
     function changeActiveStageLayer(e) {
-        stage.changeActiveStageLayer(parseInt(e.target.value));
-        if (typeof stage.stageEffects.skyboxes[d.activeStageLayer] === "undefined") {
-            stage.stageEffects.skyboxes[d.activeStageLayer] = pack_1.packModel.editor.defaultSkybox;
+        stage_1.stage.changeActiveStageLayer(parseInt(e.target.value));
+        if (typeof stage_1.stage.stageEffects.skyboxes[d.activeStageLayer] === "undefined") {
+            stage_1.stage.stageEffects.skyboxes[d.activeStageLayer] = pack_1.packModel.editor.defaultSkybox;
         }
-        setSkybox(packManager.getPackPath(d.defaultPackName) + pack_1.packModel.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
-        document.getElementById("stg-skybox").value = stage.stageEffects.skyboxes[d.activeStageLayer];
+        setSkybox(packManager.getPackPath(d.defaultPackName) + pack_1.packModel.skyboxes.get(stage_1.stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
+        document.getElementById("stg-skybox").value = stage_1.stage.stageEffects.skyboxes[d.activeStageLayer];
     }
     ui.changeActiveStageLayer = changeActiveStageLayer;
     init();

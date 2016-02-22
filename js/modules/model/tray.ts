@@ -18,3 +18,5 @@ export var activeImage:HTMLImageElement;
 export function setActiveImage(imageElem:HTMLImageElement) {
   activeImage = imageElem;
 }
+
+export var trayItemDataURLs:{[key: string]: string};

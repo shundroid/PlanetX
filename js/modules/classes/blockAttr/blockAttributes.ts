@@ -1,4 +1,4 @@
-import attribute = require("./attribute");
+import attribute from "./attribute";
 class blockAttributes {
   constructor(
     public blockId:number,

@@ -1,6 +1,5 @@
 import list = require("./../classes/list");
-import attribute = require("./../classes/blockAttr/attribute");
-import attrList = require("./../classes/blockAttr/attrList");
+import attribute from "./../classes/blockAttr/attribute";
 namespace pack {
   export function getPackPath(packName:string) {
     return "pack/" + packName + "/";
@@ -11,7 +10,6 @@ namespace pack {
     blocks: list<blockInfo>;
     objs: list<objInfo>;
     descriptions: list<desInfo>;
-    // attributes:attrList;
     skyboxes:skyboxInfoList;
     editor:packEditorInfo;
     constructor(data:Object) {
@@ -34,11 +32,6 @@ namespace pack {
         var cur = (<any>data)["descriptions"][i];
         this.descriptions.push(i, new desInfo(cur));
       });
-      // this.attributes = new attrList();
-      // Object.keys((<any>data)["attributes"]).forEach(i => {
-      //   var cur = <attribute>(<any>data)["attributes"][i];
-      //   this.attributes.push(i, cur);
-      // });
       this.skyboxes = new skyboxInfoList();
       Object.keys((<any>data)["skyboxes"]).forEach(i => {
         this.skyboxes.push(i, new skyboxInfo((<any>data)["skyboxes"][i]));

@@ -5,7 +5,7 @@ var packLoader = require("./modules/packUtil/packLoader");
 var packManager = require("./modules/packUtil/packManager");
 var event = require("./modules/event");
 var stage = require("./modules/stage");
-var d = require("./modules/data");
+var data_1 = require("./modules/data");
 var makeDataUrl = require("./modules/makePrefabDataUrls");
 var tray = require("./modules/tray");
 var prefab = require("./modules/classes/prefab");
@@ -20,16 +20,16 @@ var fGuide = require("./modules/ui/focusGuide");
 var main;
 (function (main) {
     function init() {
-        d.dataInit();
+        data_1.data.dataInit();
     }
     init();
     initDOM(function () {
         ui.setupCanvas();
-        packLoader(d.defaultPackName).then(function (i) {
-            d.pack = new packManager.packModule(i);
+        packLoader(data_1.data.defaultPackName).then(function (i) {
+            data_1.data.pack = new packManager.packModule(i);
             event.raiseEvent("packLoaded", null);
-            stage.stageEffects.skyboxes = [d.pack.editor.defaultSkybox];
-            ui.setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(d.pack.editor.defaultSkybox).data.filename);
+            stage.stageEffects.skyboxes = [data_1.data.pack.editor.defaultSkybox];
+            ui.setSkybox(packManager.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(data_1.data.pack.editor.defaultSkybox).data.filename);
             event.raiseEvent("initedPack", null);
             event.raiseEvent("initedUI", null);
             ui.initTrayBlock().then(function () {
@@ -40,9 +40,9 @@ var main;
         });
         event.addEventListener("initedTray", function () {
             ui.changeLoadingStatus("making DataURL");
-            d.trayItemDataURLs = makeDataUrl();
-            var item = d.pack.blocks.get(d.pack.editor.defaultBlock);
-            tray.updateActiveBlock(d.pack.editor.defaultBlock, item.data.filename, item.data.bName);
+            data_1.data.trayItemDataURLs = makeDataUrl();
+            var item = data_1.data.pack.blocks.get(data_1.data.pack.editor.defaultBlock);
+            tray.updateActiveBlock(data_1.data.pack.editor.defaultBlock, item.data.filename, item.data.bName);
             ui.changeLoadingStatus("Are you ready?");
             event.raiseEvent("ready", null);
         });
@@ -50,20 +50,20 @@ var main;
             ui.hideLoading();
         });
         event.addEventListener("gridCanvas", function (e) {
-            var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
-            var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY), d.activeStageLayer);
+            var pre = new prefab(e.gridPos.x, e.gridPos.y, data_1.data.selectBlock.fileName, data_1.data.selectBlock.blockName, stage.toGridPos(data_1.data.selectBlock.width), stage.toGridPos(data_1.data.selectBlock.height));
+            var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY), data_1.data.activeStageLayer);
             var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
             fGuide.hide();
-            switch (d.activeToolName) {
+            switch (data_1.data.activeToolName) {
                 case "pencil":
                     if (e.eventName === "down") {
                         if (!detail.contains) {
-                            canvas.render(d.selectImage, rect);
-                            stage.items.push(stage.getId(), pre, d.activeStageLayer);
+                            canvas.render(data_1.data.selectImage, rect);
+                            stage.items.push(stage.getId(), pre, data_1.data.activeStageLayer);
                         }
                         else {
-                            stage.items.remove(detail.id, d.activeStageLayer);
-                            stage.renderStage(d.activeStageLayer);
+                            stage.items.remove(detail.id, data_1.data.activeStageLayer);
+                            stage.renderStage(data_1.data.activeStageLayer);
                         }
                     }
                     else if (e.eventName === "hovering") {
@@ -74,13 +74,13 @@ var main;
                     if (e.eventName === "down") {
                         // オブジェクトに対応させる
                         if (detail.prefab) {
-                            if (d.pack.objs.contains(detail.prefab.blockName)) {
-                                var oData = d.pack.objs.get(detail.prefab.blockName);
-                                tray.updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(d.defaultPackName) + oData.data.filename, oData.data.width, oData.data.height);
+                            if (data_1.data.pack.objs.contains(detail.prefab.blockName)) {
+                                var oData = data_1.data.pack.objs.get(detail.prefab.blockName);
+                                tray.updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(data_1.data.defaultPackName) + oData.data.filename, oData.data.width, oData.data.height);
                             }
                             else {
-                                var bData = d.pack.blocks.get(detail.prefab.blockName);
-                                tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
+                                var bData = data_1.data.pack.blocks.get(detail.prefab.blockName);
+                                tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(data_1.data.defaultPackName) + bData.data.filename);
                             }
                             ui.changeActiveBlock(detail.prefab.blockName);
                         }
@@ -90,7 +90,7 @@ var main;
                     if (e.eventName === "move") {
                         stage.scrollX += e.mousePos.x - stage.scrollBeforeX;
                         stage.scrollY += e.mousePos.y - stage.scrollBeforeY;
-                        stage.renderStage(d.activeStageLayer);
+                        stage.renderStage(data_1.data.activeStageLayer);
                     }
                     stage.scrollBeforeX = e.mousePos.x;
                     stage.scrollBeforeY = e.mousePos.y;
@@ -98,25 +98,25 @@ var main;
                 case "edit":
                     if (e.eventName === "down" && detail.contains) {
                         ui.showInspector("edit-block");
-                        d.editingBlockId = detail.id;
+                        data_1.data.editingBlockId = detail.id;
                         editBlock.updateEditBlock(new editBlock.EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
                     }
                     break;
                 default:
                     if (e.eventName === "move" || e.eventName === "down") {
-                        if (d.activeToolName === "brush") {
-                            if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
-                                stage.items.remove(detail.id, d.activeStageLayer);
-                                stage.renderStage(d.activeStageLayer);
+                        if (data_1.data.activeToolName === "brush") {
+                            if (detail.contains && detail.prefab.blockName !== data_1.data.selectBlock.blockName) {
+                                stage.items.remove(detail.id, data_1.data.activeStageLayer);
+                                stage.renderStage(data_1.data.activeStageLayer);
                             }
                             if (!detail.contains) {
-                                canvas.render(d.selectImage, rect);
-                                stage.items.push(stage.getId(), pre, d.activeStageLayer);
+                                canvas.render(data_1.data.selectImage, rect);
+                                stage.items.push(stage.getId(), pre, data_1.data.activeStageLayer);
                             }
                         }
-                        else if (d.activeToolName === "erase" && detail.contains) {
-                            stage.items.remove(detail.id, d.activeStageLayer);
-                            stage.renderStage(d.activeStageLayer);
+                        else if (data_1.data.activeToolName === "erase" && detail.contains) {
+                            stage.items.remove(detail.id, data_1.data.activeStageLayer);
+                            stage.renderStage(data_1.data.activeStageLayer);
                         }
                     }
                     break;
@@ -290,9 +290,9 @@ var data = (function () {
     };
     return data;
 })();
-module.exports = data;
+exports.data = data;
 },{"./classes/list":3}],9:[function(require,module,exports){
-var d = require("./data");
+var data_1 = require("./data");
 var stage = require("./stage");
 /**
  * Inspector内、EditBlockのデータ化
@@ -330,10 +330,10 @@ var editBlock;
         document.getElementById("ed-pos").textContent = "Pos: " + currentEditBlock.blockPos.x + ", " + currentEditBlock.blockPos.y;
         document.getElementById("ed-id").textContent = "ID: " + currentEditBlock.blockId;
         document.getElementsByClassName("ed-attr-view")[0].innerHTML = "";
-        if (stage.blockAttrs.containsBlock(d.editingBlockId)) {
-            var l = stage.blockAttrs.getBlock(d.editingBlockId);
+        if (stage.blockAttrs.containsBlock(data_1.data.editingBlockId)) {
+            var l = stage.blockAttrs.getBlock(data_1.data.editingBlockId);
             Object.keys(l).forEach(function (i) {
-                var attr = stage.blockAttrs.getAttr(d.editingBlockId, parseInt(i));
+                var attr = stage.blockAttrs.getAttr(data_1.data.editingBlockId, parseInt(i));
                 renderAttributeUI(parseInt(i), attr.attrName, attr.attrVal);
             });
         }
@@ -383,16 +383,16 @@ var editBlock;
     function changeAttrVal(e) {
         console.log("hg!!");
         // Todo: [x] blockAttrsで、inputNameかinputValかどちらかを変えられるように、オーバーロードを作る
-        stage.blockAttrs.update(d.editingBlockId, parseInt(e.target.id.replace("ed-attr-", "")), { attrVal: e.target.value });
+        stage.blockAttrs.update(data_1.data.editingBlockId, parseInt(e.target.id.replace("ed-attr-", "")), { attrVal: e.target.value });
     }
     editBlock_1.changeAttrVal = changeAttrVal;
     function changeAttrName(e) {
-        stage.blockAttrs.update(d.editingBlockId, parseInt(e.target.id.replace("ed-attr-name-", "")), { attrName: e.target.value });
+        stage.blockAttrs.update(data_1.data.editingBlockId, parseInt(e.target.id.replace("ed-attr-name-", "")), { attrName: e.target.value });
     }
     editBlock_1.changeAttrName = changeAttrName;
     function clickRemoveAttr(e) {
         var attrId = parseInt(e.target.id.replace("ed-attr-remove-", ""));
-        stage.blockAttrs.removeAttr(d.editingBlockId, attrId);
+        stage.blockAttrs.removeAttr(data_1.data.editingBlockId, attrId);
         document.getElementsByClassName("ed-attr-view")[0].removeChild(document.getElementById("ed-attr-field-" + attrId));
     }
     editBlock_1.clickRemoveAttr = clickRemoveAttr;
@@ -623,7 +623,7 @@ var jsonPlanet;
 })(jsonPlanet || (jsonPlanet = {}));
 module.exports = jsonPlanet;
 },{"./version":25}],16:[function(require,module,exports){
-var d = require("./data");
+var data_1 = require("./data");
 var list = require("./classes/list");
 var packManager = require("./packUtil/packManager");
 var Vector2 = require("./classes/vector2");
@@ -633,14 +633,14 @@ var image = require("./image");
  */
 function makeDataUrl() {
     var result = new list();
-    var blockList = d.pack.blocks.getAll();
+    var blockList = data_1.data.pack.blocks.getAll();
     Object.keys(blockList).forEach(function (i) {
-        result.push(i, image(packManager.getPackPath(d.defaultPackName) + d.pack.blocks.get(i).data.filename, true, new Vector2(d.defaultGridSize, d.defaultGridSize)).src);
+        result.push(i, image(packManager.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.blocks.get(i).data.filename, true, new Vector2(data_1.data.defaultGridSize, data_1.data.defaultGridSize)).src);
     });
-    var objList = d.pack.objs.getAll();
+    var objList = data_1.data.pack.objs.getAll();
     Object.keys(objList).forEach(function (i) {
-        var item = d.pack.objs.get(i).data;
-        result.push(i, image(packManager.getPackPath(d.defaultPackName) + item.filename, true, new Vector2(item.width, item.height)).src);
+        var item = data_1.data.pack.objs.get(i).data;
+        result.push(i, image(packManager.getPackPath(data_1.data.defaultPackName) + item.filename, true, new Vector2(item.width, item.height)).src);
     });
     return result;
 }
@@ -791,7 +791,7 @@ module.exports = pack;
 },{"./../classes/list":3}],19:[function(require,module,exports){
 var stage = require("./stage");
 var prefab = require("./classes/prefab");
-var d = require("./data");
+var data_1 = require("./data");
 var jsonPlanet = require("./jsonPlanet");
 var version = require("./version");
 /**
@@ -841,13 +841,13 @@ var planet;
         for (var i = 0; i < jsonPla.stage.length; i++) {
             jsonPla.stage[i].forEach(function (j) {
                 var id = stage.getId();
-                if (d.pack.objs.contains(j.blockName)) {
-                    var objData = d.pack.objs.get(j.blockName);
+                if (data_1.data.pack.objs.contains(j.blockName)) {
+                    var objData = data_1.data.pack.objs.get(j.blockName);
                     stage.items.push(id, new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
                 }
                 else {
-                    var blockData = d.pack.blocks.get(j.blockName);
-                    stage.items.push(id, new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
+                    var blockData = data_1.data.pack.blocks.get(j.blockName);
+                    stage.items.push(id, new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(data_1.data.defaultBlockSize), stage.toGridPos(data_1.data.defaultBlockSize)), i);
                 }
                 if (typeof j.attr !== "undefined") {
                     Object.keys(j.attr).forEach(function (k) {
@@ -856,7 +856,7 @@ var planet;
                 }
             });
         }
-        d.activeStageLayer = 0;
+        data_1.data.activeStageLayer = 0;
         var result = new stage.StageEffects();
         // skyboxes
         result.skyboxes = jsonPla.skyboxes;
@@ -869,7 +869,7 @@ module.exports = planet;
 var list = require("./classes/list");
 var canvas = require("./canvas");
 var image = require("./image");
-var d = require("./data");
+var data_1 = require("./data");
 var rect = require("./classes/rect");
 var event = require("./event");
 var Vector2 = require("./classes/vector2");
@@ -992,7 +992,7 @@ var stage;
      * アクティブなstageLayerを変えるほか、画面の切り替えも行います。
      */
     function changeActiveStageLayer(stageLayer) {
-        d.activeStageLayer = stageLayer;
+        data_1.data.activeStageLayer = stageLayer;
         // 描画
         renderStage(stageLayer);
     }
@@ -1088,7 +1088,7 @@ var stage;
             // 画面内に入っているか
             if (x + width >= 0 && x <= canvas.canvasRect.width &&
                 y + height >= 0 && y <= canvas.canvasRect.height) {
-                canvas.render(image(d.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
+                canvas.render(image(data_1.data.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
             }
         });
     }
@@ -1102,7 +1102,7 @@ var stage;
         isResizeRequest = true;
         resizeTimerId = setTimeout(function () {
             isResizeRequest = false;
-            renderStage(d.activeStageLayer);
+            renderStage(data_1.data.activeStageLayer);
         }, 100);
     });
     var gridDetail = (function () {
@@ -1115,7 +1115,7 @@ var stage;
     })();
     stage.gridDetail = gridDetail;
     function getMousePosFromCenterAndSize(center, size) {
-        return center - ((size - d.defaultGridSize) / 2);
+        return center - ((size - data_1.data.defaultGridSize) / 2);
     }
     stage.getMousePosFromCenterAndSize = getMousePosFromCenterAndSize;
     stage.scrollX = 0;
@@ -1125,10 +1125,10 @@ var stage;
     function getGridPosFromMousePos(mousePos) {
         var cX = mousePos.x - stage.scrollX;
         var cY = mousePos.y - stage.scrollY;
-        var eX = cX - (cX % d.defaultGridSize);
-        var eY = cY - (cY % d.defaultGridSize);
-        var gridX = eX / d.defaultGridSize;
-        var gridY = eY / d.defaultGridSize;
+        var eX = cX - (cX % data_1.data.defaultGridSize);
+        var eY = cY - (cY % data_1.data.defaultGridSize);
+        var gridX = eX / data_1.data.defaultGridSize;
+        var gridY = eY / data_1.data.defaultGridSize;
         return new Vector2(gridX, gridY);
     }
     stage.getGridPosFromMousePos = getGridPosFromMousePos;
@@ -1163,11 +1163,11 @@ var stage;
     }
     stage.getPrefabFromGrid = getPrefabFromGrid;
     function toMousePos(gridPos) {
-        return gridPos * d.defaultGridSize;
+        return gridPos * data_1.data.defaultGridSize;
     }
     stage.toMousePos = toMousePos;
     function toGridPos(mousePos) {
-        return (mousePos - (mousePos % d.defaultGridSize)) / d.defaultGridSize;
+        return (mousePos - (mousePos % data_1.data.defaultGridSize)) / data_1.data.defaultGridSize;
     }
     stage.toGridPos = toGridPos;
     /**
@@ -1182,7 +1182,7 @@ module.exports = stage;
 },{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":8,"./event":12,"./image":13}],21:[function(require,module,exports){
 var image = require("./image");
 var TrayBlockDetails = require("./classes/trayBlockDetails");
-var d = require("./data");
+var data_1 = require("./data");
 var event = require("./event");
 var packManager = require("./packUtil/packManager");
 /**
@@ -1191,19 +1191,19 @@ var packManager = require("./packUtil/packManager");
 var tray;
 (function (tray) {
     function updateActiveBlock(blockName, fileName, label, width, height) {
-        var w = width || d.defaultBlockSize;
-        var h = height || d.defaultBlockSize;
-        d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
+        var w = width || data_1.data.defaultBlockSize;
+        var h = height || data_1.data.defaultBlockSize;
+        data_1.data.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
         updateSelectImage();
     }
     tray.updateActiveBlock = updateActiveBlock;
     function updateSelectImage() {
-        d.selectImage = image(d.trayItemDataURLs.get(d.selectBlock.blockName));
+        data_1.data.selectImage = image(data_1.data.trayItemDataURLs.get(data_1.data.selectBlock.blockName));
     }
     tray.updateSelectImage = updateSelectImage;
     function initTrayBlock(finishedOne) {
         return new Promise(function (resolve) {
-            var list = Object.keys(d.pack.blocks.getAll());
+            var list = Object.keys(data_1.data.pack.blocks.getAll());
             var result = [];
             var async = function (i) {
                 var item = list[i];
@@ -1211,9 +1211,9 @@ var tray;
                 li.classList.add("tray-list", "tray-list-block");
                 li.addEventListener("mousedown", function (e) { event.raiseEvent("ui_clickTray", e); });
                 var img = document.createElement("img");
-                img.src = packManager.getPackPath(d.defaultPackName) + d.pack.blocks.get(item).data.filename;
+                img.src = packManager.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.blocks.get(item).data.filename;
                 img.onload = function () {
-                    img.alt = d.pack.blocks.get(item).data.bName;
+                    img.alt = data_1.data.pack.blocks.get(item).data.bName;
                     img.dataset["block"] = item;
                     li.appendChild(img);
                     result.push(li);
@@ -1232,7 +1232,7 @@ var tray;
     tray.initTrayBlock = initTrayBlock;
     function initTrayObj(finishedOne) {
         return new Promise(function (resolve) {
-            var list = Object.keys(d.pack.objs.getAll());
+            var list = Object.keys(data_1.data.pack.objs.getAll());
             var result = [];
             var async = function (i) {
                 var item = list[i];
@@ -1240,12 +1240,12 @@ var tray;
                 li.classList.add("tray-list", "tray-list-obj");
                 li.addEventListener("click", function (e) { event.raiseEvent("ui_clickTray", e); });
                 var img = document.createElement("img");
-                img.src = packManager.getPackPath(d.defaultPackName) + d.pack.objs.get(item).data.filename;
+                img.src = packManager.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.objs.get(item).data.filename;
                 img.onload = function () {
-                    img.alt = d.pack.objs.get(item).data.oName;
+                    img.alt = data_1.data.pack.objs.get(item).data.oName;
                     img.dataset["block"] = item;
                     li.style.width = img.style.width =
-                        d.pack.objs.get(item).data.width / (d.pack.objs.get(item).data.height / 50) + "px";
+                        data_1.data.pack.objs.get(item).data.width / (data_1.data.pack.objs.get(item).data.height / 50) + "px";
                     li.style.height = img.style.height = "50px";
                     li.appendChild(img);
                     result.push(li);
@@ -1367,7 +1367,7 @@ module.exports = version;
 },{}],26:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
-var d = require("./modules/data");
+var data_1 = require("./modules/data");
 var initDOM = require("./modules/initDOM");
 var event = require("./modules/event");
 var el = require("./modules/elem");
@@ -1393,13 +1393,13 @@ var ui;
         });
         event.addEventListener("ui_clickTray", function (e) {
             var target = e.target;
-            d.isObjMode = target.parentElement.classList.contains("tray-list-obj");
-            if (!d.isObjMode) {
-                var item = d.pack.blocks.get(target.dataset["block"]).data;
+            data_1.data.isObjMode = target.parentElement.classList.contains("tray-list-obj");
+            if (!data_1.data.isObjMode) {
+                var item = data_1.data.pack.blocks.get(target.dataset["block"]).data;
                 tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName);
             }
             else {
-                var item = d.pack.objs.get(target.dataset["block"]).data;
+                var item = data_1.data.pack.objs.get(target.dataset["block"]).data;
                 tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
             }
             changeActiveBlock(target.dataset["block"]);
@@ -1410,11 +1410,11 @@ var ui;
         });
         event.addEventListener("initedPack", function () {
             // SkyboxMode
-            if (typeof d.pack.editor.skyboxMode !== "undefined") {
-                if (d.pack.editor.skyboxMode === "repeat") {
+            if (typeof data_1.data.pack.editor.skyboxMode !== "undefined") {
+                if (data_1.data.pack.editor.skyboxMode === "repeat") {
                     document.body.style.backgroundRepeat = "repeat";
-                    if (typeof d.pack.editor.skyboxSize !== "undefined") {
-                        document.body.style.backgroundSize = d.pack.editor.skyboxSize;
+                    if (typeof data_1.data.pack.editor.skyboxSize !== "undefined") {
+                        document.body.style.backgroundSize = data_1.data.pack.editor.skyboxSize;
                     }
                     else {
                         document.body.style.backgroundSize = "auto";
@@ -1423,7 +1423,7 @@ var ui;
             }
             el.forEachforQuery(".pack-select", function (i) {
                 var elem = i;
-                elem.innerHTML = u.obj2SelectElem(d.pack[elem.dataset["items"]].toSimple());
+                elem.innerHTML = u.obj2SelectElem(data_1.data.pack[elem.dataset["items"]].toSimple());
                 // ev-inputで実装
                 //        if (elem.dataset["change"]) {
                 //          elem.addEventListener("change", (<any>ui)[elem.dataset["change"]]);
@@ -1432,7 +1432,7 @@ var ui;
                 //          elem.value = elem.dataset["default"];
                 //        }
             });
-            document.getElementById("stg-skybox").value = d.pack.editor.defaultSkybox;
+            document.getElementById("stg-skybox").value = data_1.data.pack.editor.defaultSkybox;
         });
     }
     initDOM(function () {
@@ -1468,7 +1468,7 @@ var ui;
     }
     ui.setupCanvas = setupCanvas;
     function togglefullScreen(e) {
-        if (!d.isFullscreenTray) {
+        if (!data_1.data.isFullscreenTray) {
             closeInspector();
             anim.showTrayFull();
             e.target.textContent = "↓";
@@ -1477,22 +1477,22 @@ var ui;
             anim.hideTrayFull();
             e.target.textContent = "↑";
         }
-        d.isFullscreenTray = !d.isFullscreenTray;
+        data_1.data.isFullscreenTray = !data_1.data.isFullscreenTray;
     }
     ui.togglefullScreen = togglefullScreen;
     function closeInspector() {
-        if (!d.isShowInspector)
+        if (!data_1.data.isShowInspector)
             return;
-        d.isShowInspector = false;
+        data_1.data.isShowInspector = false;
         anim.hideInspector();
     }
     ui.closeInspector = closeInspector;
     function showInspector(inspectorName) {
         document.querySelector(".ins-article-active") && document.querySelector(".ins-article-active").classList.remove("ins-article-active");
         document.getElementById("ins-" + inspectorName).classList.add("ins-article-active");
-        if (d.isShowInspector)
+        if (data_1.data.isShowInspector)
             return;
-        d.isShowInspector = true;
+        data_1.data.isShowInspector = true;
         anim.showInspector();
     }
     ui.showInspector = showInspector;
@@ -1504,7 +1504,7 @@ var ui;
         // fromJSONPlanet内で、d.activeStageLayerは0になる。
         var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse(document.getElementById("pla-io").value)));
         stage.stageEffects = effects;
-        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
+        setSkybox(packManager.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
         stage.renderStage(0);
     }
     ui.clickImport = clickImport;
@@ -1523,7 +1523,7 @@ var ui;
         }
         document.getElementsByClassName("tool-active")[0].classList.remove("tool-active");
         elem.classList.add("tool-active");
-        d.activeToolName = elem.dataset["toolname"];
+        data_1.data.activeToolName = elem.dataset["toolname"];
     }
     ui.clickTrayTool = clickTrayTool;
     function setSkybox(fileName) {
@@ -1582,13 +1582,13 @@ var ui;
     }
     ui.clickConvertOldFile = clickConvertOldFile;
     function changeSkybox(e) {
-        stage.stageEffects.skyboxes[d.activeStageLayer] = e.target.value;
-        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
+        stage.stageEffects.skyboxes[data_1.data.activeStageLayer] = e.target.value;
+        setSkybox(packManager.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(stage.stageEffects.skyboxes[data_1.data.activeStageLayer]).data.filename);
     }
     ui.changeSkybox = changeSkybox;
     function clickAddAttr() {
-        var attrId = stage.blockAttrs.getMaxAttrId(d.editingBlockId);
-        stage.blockAttrs.push(d.editingBlockId, attrId, new stage.Attr());
+        var attrId = stage.blockAttrs.getMaxAttrId(data_1.data.editingBlockId);
+        stage.blockAttrs.push(data_1.data.editingBlockId, attrId, new stage.Attr());
         editBlock.renderAttributeUI(attrId);
     }
     ui.clickAddAttr = clickAddAttr;
@@ -1597,11 +1597,11 @@ var ui;
     //  }
     function changeActiveStageLayer(e) {
         stage.changeActiveStageLayer(parseInt(e.target.value));
-        if (typeof stage.stageEffects.skyboxes[d.activeStageLayer] === "undefined") {
-            stage.stageEffects.skyboxes[d.activeStageLayer] = d.pack.editor.defaultSkybox;
+        if (typeof stage.stageEffects.skyboxes[data_1.data.activeStageLayer] === "undefined") {
+            stage.stageEffects.skyboxes[data_1.data.activeStageLayer] = data_1.data.pack.editor.defaultSkybox;
         }
-        setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
-        document.getElementById("stg-skybox").value = stage.stageEffects.skyboxes[d.activeStageLayer];
+        setSkybox(packManager.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(stage.stageEffects.skyboxes[data_1.data.activeStageLayer]).data.filename);
+        document.getElementById("stg-skybox").value = stage.stageEffects.skyboxes[data_1.data.activeStageLayer];
     }
     ui.changeActiveStageLayer = changeActiveStageLayer;
     init();

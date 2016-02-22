@@ -697,11 +697,6 @@ var pack;
                 var cur = data["descriptions"][i];
                 _this.descriptions.push(i, new desInfo(cur));
             });
-            // this.attributes = new attrList();
-            // Object.keys((<any>data)["attributes"]).forEach(i => {
-            //   var cur = <attribute>(<any>data)["attributes"][i];
-            //   this.attributes.push(i, cur);
-            // });
             this.skyboxes = new skyboxInfoList();
             Object.keys(data["skyboxes"]).forEach(function (i) {
                 _this.skyboxes.push(i, new skyboxInfo(data["skyboxes"][i]));

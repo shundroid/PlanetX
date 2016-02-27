@@ -1,4 +1,4 @@
-class prefab {
+export default class prefab {
   constructor(
     public gridX: number,
     public gridY: number,
@@ -8,4 +8,3 @@ class prefab {
     public gridH: number
   ) { }
 }
-export = prefab;

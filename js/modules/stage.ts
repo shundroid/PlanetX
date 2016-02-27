@@ -1,5 +1,5 @@
 import list from "./classes/list";
-import prefab = require("./classes/prefab");
+import prefab from "./classes/prefab";
 import canvas = require("./canvas");
 import image = require("./image");
 import {data as d} from "./data";

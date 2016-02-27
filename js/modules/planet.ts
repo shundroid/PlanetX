@@ -1,5 +1,5 @@
 import stage = require("./stage");
-import prefab = require("./classes/prefab");
+import prefab from "./classes/prefab";
 import {data as d} from "./data";
 import jsonPlanet = require("./jsonPlanet");
 import version = require("./version");

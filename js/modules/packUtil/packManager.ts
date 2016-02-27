@@ -1,6 +1,6 @@
 import list from "./../classes/list";
 import attribute from "./../classes/blockAttr/attribute";
-namespace pack {
+export namespace packManager {
   export function getPackPath(packName:string) {
     return "pack/" + packName + "/";
   }
@@ -97,4 +97,3 @@ namespace pack {
     }
   }
 }
-export = pack;

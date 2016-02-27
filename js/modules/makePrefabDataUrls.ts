@@ -1,6 +1,6 @@
 import {data as d} from "./data";
 import list from "./classes/list";
-import packManager = require("./packUtil/packManager");
+import {packManager} from "./packUtil/packManager";
 import Vector2 from "./classes/vector2";
 import image = require("./image");
 

@@ -1,5 +1,5 @@
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
-import packManager = require("./packManager");
+import {packManager} from "./packManager";
 export default function load(packName:string) {
   return new Promise(resolve => {
     var xhr = new XMLHttpRequest();

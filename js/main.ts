@@ -1,6 +1,6 @@
 import ui = require("./ui");
 import initDOM = require("./modules/initDOM");
-import packLoader = require("./modules/packUtil/packLoader");
+import packLoader from "./modules/packUtil/packLoader";
 import packManager = require("./modules/packUtil/packManager");
 import event = require("./modules/event");
 import list from "./modules/classes/list";

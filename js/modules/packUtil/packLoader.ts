@@ -1,6 +1,6 @@
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
 import packManager = require("./packManager");
-function load(packName:string) {
+export default function load(packName:string) {
   return new Promise(resolve => {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", packManager.getPackPath(packName) + "packinfo.json");
@@ -12,4 +12,3 @@ function load(packName:string) {
     xhr.send(null);
   });
 }
-export = load;

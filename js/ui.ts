@@ -6,7 +6,7 @@ import event = require("./modules/event");
 import el = require("./modules/elem");
 import u = require("./modules/util");
 import list from "./modules/classes/list";
-import Vector2 = require("./modules/classes/vector2");
+import Vector2 from "./modules/classes/vector2";
 import tray = require("./modules/tray");
 import packManager = require("./modules/packUtil/packManager");
 import planet = require("./modules/planet");

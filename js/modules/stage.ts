@@ -5,7 +5,7 @@ import image = require("./image");
 import {data as d} from "./data";
 import rect from "./classes/rect";
 import event = require("./event");
-import Vector2 = require("./classes/vector2");
+import Vector2 from "./classes/vector2";
 
 /**
  * 現在のStage情報を保存します。

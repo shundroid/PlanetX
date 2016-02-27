@@ -1,4 +1,4 @@
-import Vector2 = require("./classes/vector2");
+import Vector2 from "./classes/vector2";
 import {data as d} from "./data";
 import stage = require("./stage");
 

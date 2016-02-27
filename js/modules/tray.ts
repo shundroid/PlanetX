@@ -2,7 +2,7 @@ import image = require("./image");
 import TrayBlockDetails from "./classes/trayBlockDetails";
 import {data as d} from "./data";
 import event = require("./event");
-import {packManager} from "./packUtil/packManager";
+import * as packManager from "./packUtil/packManager";
 
 /**
  * Tray（UI下部分）のUI、Controllerを構成します。

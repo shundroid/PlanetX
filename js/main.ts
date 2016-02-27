@@ -1,7 +1,7 @@
 import ui = require("./ui");
 import initDOM = require("./modules/initDOM");
 import packLoader from "./modules/packUtil/packLoader";
-import {packManager} from "./modules/packUtil/packManager";
+import * as packManager from "./modules/packUtil/packManager";
 import event = require("./modules/event");
 import list from "./modules/classes/list";
 import stage = require("./modules/stage");

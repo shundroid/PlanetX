@@ -8,7 +8,7 @@ import u = require("./modules/util");
 import list from "./modules/classes/list";
 import Vector2 from "./modules/classes/vector2";
 import tray = require("./modules/tray");
-import {packManager} from "./modules/packUtil/packManager";
+import * as packManager from "./modules/packUtil/packManager";
 import planet = require("./modules/planet");
 import stage = require("./modules/stage");
 import v = require("./modules/version");

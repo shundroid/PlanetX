@@ -1,5 +1,5 @@
 import list from "./classes/list";
-import {packManager} from "./packUtil/packManager";
+import * as packManager from "./packUtil/packManager";
 import TrayBlockDetails from "./classes/trayBlockDetails";
 
 /**

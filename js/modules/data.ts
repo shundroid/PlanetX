@@ -1,5 +1,5 @@
 import list from "./classes/list";
-import * as packManager from "./packUtil/packManager";
+import {packModule} from "./packUtil/packManager";
 import TrayBlockDetails from "./classes/trayBlockDetails";
 
 /**
@@ -8,7 +8,7 @@ import TrayBlockDetails from "./classes/trayBlockDetails";
 class data {
   static trayItemDataURLs:list<string>;
   static defaultPackName:string;
-  static pack:packManager.packModule;
+  static pack:packModule;
   static defaultGridSize:number;
   static defaultBlockSize:number;
   static selectBlock:TrayBlockDetails;

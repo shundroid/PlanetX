@@ -8,7 +8,7 @@ import u = require("./modules/util");
 import list from "./modules/classes/list";
 import Vector2 from "./modules/classes/vector2";
 import tray = require("./modules/tray");
-import * as packManager from "./modules/packUtil/packManager";
+import {getPackPath} from "./modules/packUtil/packManager";
 import planet = require("./modules/planet");
 import stage = require("./modules/stage");
 import v = require("./modules/version");
@@ -132,7 +132,7 @@ namespace ui {
     // fromJSONPlanet内で、d.activeStageLayerは0になる。
     var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
     stage.stageEffects = effects;
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
+    setSkybox(getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
     stage.renderStage(0);
   }
   
@@ -211,7 +211,7 @@ namespace ui {
   
   export function changeSkybox(e:Event) {
     stage.stageEffects.skyboxes[d.activeStageLayer] = (<HTMLSelectElement>e.target).value;
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
+    setSkybox(getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
   }
   
   export function clickAddAttr() {
@@ -227,7 +227,7 @@ namespace ui {
     if (typeof stage.stageEffects.skyboxes[d.activeStageLayer] === "undefined") {
       stage.stageEffects.skyboxes[d.activeStageLayer] = d.pack.editor.defaultSkybox;
     }
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename); 
+    setSkybox(getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename); 
     (<HTMLSelectElement>document.getElementById("stg-skybox")).value = stage.stageEffects.skyboxes[d.activeStageLayer];
   }
   init();

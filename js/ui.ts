@@ -13,7 +13,7 @@ import planet = require("./modules/planet");
 import stage = require("./modules/stage");
 import v = require("./modules/version");
 import evElems = require("./modules/evElems");
-import anim = require("./modules/ui/anim");
+import * as anim from "./modules/ui/anim";
 import editBlock = require("./modules/editBlock");
 import jsonPlanet = require("./modules/jsonPlanet");
 

@@ -10,7 +10,7 @@ import makeDataUrl = require("./modules/makePrefabDataUrls");
 import tray = require("./modules/tray");
 import prefab from "./modules/classes/prefab";
 import Vector2 = require("./modules/classes/vector2");
-import Rect = require("./modules/classes/rect");
+import Rect from "./modules/classes/rect";
 import canvas = require("./modules/canvas");
 import editBlock = require("./modules/editBlock");
 import fGuide = require("./modules/ui/focusGuide");

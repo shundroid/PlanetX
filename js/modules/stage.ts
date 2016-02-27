@@ -3,7 +3,7 @@ import prefab from "./classes/prefab";
 import canvas = require("./canvas");
 import image = require("./image");
 import {data as d} from "./data";
-import rect = require("./classes/rect");
+import rect from "./classes/rect";
 import event = require("./event");
 import Vector2 = require("./classes/vector2");
 

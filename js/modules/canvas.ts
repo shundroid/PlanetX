@@ -1,6 +1,6 @@
 /// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
 import initDOM = require("./initDOM");
-import Rect = require("./classes/rect");
+import Rect from "./classes/rect";
 
 /**
  * Canvasへの描画に関係する処理を行います。

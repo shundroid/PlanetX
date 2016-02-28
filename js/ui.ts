@@ -7,7 +7,7 @@ import {addEventListenerforQuery, forEachforQuery} from "./modules/elem";
 import u = require("./modules/util");
 import list from "./modules/classes/list";
 import Vector2 from "./modules/classes/vector2";
-import tray = require("./modules/tray");
+import * as tray from "./modules/tray";
 import {getPackPath} from "./modules/packUtil/packManager";
 import {toJsonPlanet, fromJsonPlanet} from "./modules/planet";
 import stage = require("./modules/stage");

@@ -7,7 +7,7 @@ import list from "./modules/classes/list";
 import stage = require("./modules/stage");
 import {data as d} from "./modules/data";
 import makeDataUrl from "./modules/makePrefabDataUrls";
-import tray = require("./modules/tray");
+import {updateActiveBlock} from "./modules/tray";
 import prefab from "./modules/classes/prefab";
 import Vector2 from "./modules/classes/vector2";
 import Rect from "./modules/classes/rect";
@@ -44,7 +44,7 @@ namespace main {
       ui.changeLoadingStatus("making DataURL");
       d.trayItemDataURLs = makeDataUrl();
       var item = d.pack.blocks.get(d.pack.editor.defaultBlock);
-      tray.updateActiveBlock(d.pack.editor.defaultBlock, item.data.filename, item.data.bName);
+      updateActiveBlock(d.pack.editor.defaultBlock, item.data.filename, item.data.bName);
       ui.changeLoadingStatus("Are you ready?");
       event.raiseEvent("ready", null);
     });
@@ -76,10 +76,10 @@ namespace main {
             if (detail.prefab) {
               if (d.pack.objs.contains(detail.prefab.blockName)) {
                 let oData = d.pack.objs.get(detail.prefab.blockName);
-                tray.updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(d.defaultPackName) + oData.data.filename, oData.data.width, oData.data.height);
+                updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(d.defaultPackName) + oData.data.filename, oData.data.width, oData.data.height);
               } else {
                 let bData = d.pack.blocks.get(detail.prefab.blockName);
-                tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
+                updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
               }
               ui.changeActiveBlock(detail.prefab.blockName);
             }

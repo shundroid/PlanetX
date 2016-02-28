@@ -35,3 +35,22 @@ export var editingBlockIdByInspector: number;
 export function setEditingBlockId(blockId: number) {
   editingBlockIdByInspector = blockId;
 }
+
+/**
+ * Trayで1x1でないブロックが選択されている時で、  
+ * 配置に関する処理を行う必要があるかを取得します。
+ */
+export var isObjModeInEditor: boolean;
+export function setIsObjMode(isObjMode: boolean) {
+  isObjModeInEditor = isObjMode;
+}
+
+/**
+ * EditorModelのフィールドに、デフォルトの値を設定します。
+ */
+export function setDefaultValues() {
+  activeStageLayerInEditor = 0;
+  isTrayFullscreen = false;
+  isObjModeInEditor = false;
+  isVisibleInspector = false;
+}

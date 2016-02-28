@@ -20,8 +20,8 @@ class data {
     this.defaultBlockSize = 50;
   }
   
-  static activeToolName: string; // [ ] trayModel
-  static isObjMode: boolean; // [ ] trayModel
+  static activeToolName: string; // [x] trayModel
+  static isObjMode: boolean; // [x] editorModel
   static isFullscreenTray: boolean; // [x] editorModel
   static isShowInspector: boolean; // [x] editorModel
   static editingBlockId: number; // [x] editorModel

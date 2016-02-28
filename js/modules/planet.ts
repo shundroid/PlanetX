@@ -6,9 +6,10 @@ import prefab from "./classes/prefab";
 import {data as d} from "./data";
 import {jsonPlanet, jsonBlockItem} from "./jsonPlanet";
 import {jsonPlanetVersion} from "./version";
+import {setActiveStageLayer} from "./model/editorModel";
 
 // stageから、compilerを利用して、外部形式へ入出力する機能を提供します。
-  
+
 /**
  * stageを、jsonPlanetへ変換します。
  * jsonPlanetから、jsonに変換するのには、jsonPlanet.exportJson()を利用してください。
@@ -19,18 +20,18 @@ export function toJsonPlanet() {
     result.skyboxes.push(stageEffects.skyboxes[parseInt(i)]);
   });
   var items = stageItems.getAllLayer();
-  for (var i = 0; i < items.length; i++)  {
+  for (var i = 0; i < items.length; i++) {
     result.stage[i] = [];
     items[i].forEach(j => {
       var item = stageItems.get(j);
       if (stageAttrs.containsBlock(j)) {
         // attrがあるとき
-        var attr:{ [key: string]: string } = {};
+        var attr: { [key: string]: string } = {};
         var attrs = stageAttrs.getBlock(j);
         Object.keys(attrs).forEach(k => {
           attr[attrs[parseInt(k)].attrName] = attrs[parseInt(k)].attrVal;
         });
-        result.stage[i].push(new jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString(), attr));          
+        result.stage[i].push(new jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString(), attr));
       } else {
         result.stage[i].push(new jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
       }
@@ -64,10 +65,10 @@ export function fromJsonPlanet(jsonPla: jsonPlanet) {
       }
     });
   }
-  d.activeStageLayer = 0;
+  setActiveStageLayer(0);
   var result = new StageEffects();
   // skyboxes
   result.skyboxes = jsonPla.skyboxes;
-  
+
   return result;
 }

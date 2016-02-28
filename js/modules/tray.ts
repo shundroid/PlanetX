@@ -8,7 +8,7 @@ import {getPackPath} from "./packUtil/packManager";
  * Tray（UI下部分）のUI、Controllerを構成します。
  */
 
-export function updateActiveBlock(blockName:string, fileName:string, label:string, width?:number, height?:number) {
+export function updateActiveBlock(blockName: string, fileName: string, label: string, width?: number, height?: number) {
   var w = width || d.defaultBlockSize;
   var h = height || d.defaultBlockSize;
   d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
@@ -17,10 +17,10 @@ export function updateActiveBlock(blockName:string, fileName:string, label:strin
 export function updateSelectImage() {
   d.selectImage = image(d.trayItemDataURLs.get(d.selectBlock.blockName));
 }
-export function initTrayBlock(finishedOne:(numerator: number, denominator: number)=>void) {
+export function initTrayBlock(finishedOne: (numerator: number, denominator: number) => void) {
   return new Promise(resolve => {
     var list = Object.keys(d.pack.blocks.getAll());
-    var result:Array<HTMLDivElement> = [];
+    var result: Array<HTMLDivElement> = [];
     var async = (i: number) => {
       var item = list[i];
       var li = document.createElement("div");
@@ -44,10 +44,10 @@ export function initTrayBlock(finishedOne:(numerator: number, denominator: numbe
     async(0);
   });
 }
-export function initTrayObj(finishedOne:(numerator: number, denominator: number)=>void) {
+export function initTrayObj(finishedOne: (numerator: number, denominator: number) => void) {
   return new Promise((resolve) => {
     var list = Object.keys(d.pack.objs.getAll());
-    var result:Array<HTMLDivElement> = [];
+    var result: Array<HTMLDivElement> = [];
     var async = (i: number) => {
       var item = list[i];
       var li = document.createElement("div");

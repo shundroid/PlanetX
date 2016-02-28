@@ -12,7 +12,7 @@ import prefab from "./modules/classes/prefab";
 import Vector2 from "./modules/classes/vector2";
 import Rect from "./modules/classes/rect";
 import * as canvas from "./modules/canvas";
-import editBlock = require("./modules/editBlock");
+import {EditBlock, updateEditBlock} from "./modules/editBlock";
 import * as fGuide from "./modules/ui/focusGuide";
 
 /**
@@ -98,7 +98,7 @@ namespace main {
           if (e.eventName === "down" && detail.contains) {
             ui.showInspector("edit-block");
             d.editingBlockId = detail.id;
-            editBlock.updateEditBlock(new editBlock.EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
+            updateEditBlock(new EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
           }
           break;
         default:

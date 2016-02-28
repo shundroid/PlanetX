@@ -14,7 +14,7 @@ import stage = require("./modules/stage");
 import v = require("./modules/version");
 import evElems = require("./modules/evElems");
 import * as anim from "./modules/ui/anim";
-import editBlock = require("./modules/editBlock");
+import {renderAttributeUI} from "./modules/editBlock";
 import jsonPlanet = require("./modules/jsonPlanet");
 
 /**
@@ -217,7 +217,7 @@ namespace ui {
   export function clickAddAttr() {
     var attrId = stage.blockAttrs.getMaxAttrId(d.editingBlockId);
     stage.blockAttrs.push(d.editingBlockId, attrId, new stage.Attr());
-    editBlock.renderAttributeUI(attrId);    
+    renderAttributeUI(attrId);    
   }
 //  export function changeAttrInput(e:Event) {
 //    stage.blockAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")), (<HTMLInputElement>e.target).value);

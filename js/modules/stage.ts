@@ -8,7 +8,7 @@ import {addEventListener} from "./event";
 import Vector2 from "./classes/vector2";
 import {init as stageAttrsInit} from "./model/stageAttrsModel";
 import * as stageItems from "./model/stageItemsModel";
-import {setActiveStageLayer, activeStageLayer} from "./model/editorModel";
+import {setActiveStageLayer, activeStageLayerInEditor} from "./model/editorModel";
 import renderStage from "./view/stageRenderView";
 
 /**
@@ -40,7 +40,7 @@ namespace stage {
     isResizeRequest = true;
     resizeTimerId = setTimeout(() => {
       isResizeRequest = false;
-      renderStage(activeStageLayer);
+      renderStage(activeStageLayerInEditor);
     }, 100);
   });
   export class gridDetail {

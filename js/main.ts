@@ -59,7 +59,7 @@ namespace main {
     });
     event.addEventListener("gridCanvas", (e: stage.gridDetail) => {
       var pre = new prefab(e.gridPos.x, e.gridPos.y, activeBlock.fileName, activeBlock.blockName, stage.toGridPos(activeBlock.width), stage.toGridPos(activeBlock.height));
-      var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY), editorModel.activeStageLayer);
+      var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY), editorModel.activeStageLayerInEditor);
       var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
       fGuide.hide();
       switch (d.activeToolName) {
@@ -67,10 +67,10 @@ namespace main {
           if (e.eventName === "down") {
             if (!detail.contains) {
               canvas.render(activeBlockImage, rect);
-              stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayer);
+              stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayerInEditor);
             } else {
-              stageItems.remove(detail.id, editorModel.activeStageLayer);
-              renderStage(editorModel.activeStageLayer);
+              stageItems.remove(detail.id, editorModel.activeStageLayerInEditor);
+              renderStage(editorModel.activeStageLayerInEditor);
             }
           } else if (e.eventName === "hovering") {
             fGuide.focus(new Vector2(rect.x, rect.y), new Vector2(rect.width, rect.height), detail.contains ? "rgba(240,0,0,0.6)" : "rgba(0,240,0,0.6)");
@@ -95,7 +95,7 @@ namespace main {
           if (e.eventName === "move") {
             stage.scrollX += e.mousePos.x - stage.scrollBeforeX;
             stage.scrollY += e.mousePos.y - stage.scrollBeforeY;
-            renderStage(editorModel.activeStageLayer);
+            renderStage(editorModel.activeStageLayerInEditor);
           }
           stage.scrollBeforeX = e.mousePos.x;
           stage.scrollBeforeY = e.mousePos.y;
@@ -111,16 +111,16 @@ namespace main {
           if (e.eventName === "move" || e.eventName === "down") {
             if (d.activeToolName === "brush") {
               if (detail.contains && detail.prefab.blockName !== activeBlock.blockName) {
-                stageItems.remove(detail.id, editorModel.activeStageLayer);
-                renderStage(editorModel.activeStageLayer);
+                stageItems.remove(detail.id, editorModel.activeStageLayerInEditor);
+                renderStage(editorModel.activeStageLayerInEditor);
               }
               if (!detail.contains) {
                 canvas.render(activeBlockImage, rect);
-                stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayer);
+                stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayerInEditor);
               }
             } else if (d.activeToolName === "erase" && detail.contains) {
-              stageItems.remove(detail.id, editorModel.activeStageLayer);
-              renderStage(editorModel.activeStageLayer);
+              stageItems.remove(detail.id, editorModel.activeStageLayerInEditor);
+              renderStage(editorModel.activeStageLayerInEditor);
             }
           }
           break;

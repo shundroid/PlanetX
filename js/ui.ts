@@ -208,8 +208,8 @@ namespace ui {
   }
 
   export function changeSkybox(e: Event) {
-    stageEffects.skyboxes[editorModel.activeStageLayer] = (<HTMLSelectElement>e.target).value;
-    setSkybox(getPackPath(d.defaultPackName) + pack.skyboxes.get(stageEffects.skyboxes[editorModel.activeStageLayer]).data.filename);
+    stageEffects.skyboxes[editorModel.activeStageLayerInEditor] = (<HTMLSelectElement>e.target).value;
+    setSkybox(getPackPath(d.defaultPackName) + pack.skyboxes.get(stageEffects.skyboxes[editorModel.activeStageLayerInEditor]).data.filename);
   }
 
   export function clickAddAttr() {
@@ -222,11 +222,11 @@ namespace ui {
   //  }
   export function changeActiveStageLayer(e: Event) {
     stage.changeActiveStageLayer(parseInt((<HTMLInputElement>e.target).value));
-    if (typeof stageEffects.skyboxes[editorModel.activeStageLayer] === "undefined") {
-      stageEffects.skyboxes[editorModel.activeStageLayer] = pack.editor.defaultSkybox;
+    if (typeof stageEffects.skyboxes[editorModel.activeStageLayerInEditor] === "undefined") {
+      stageEffects.skyboxes[editorModel.activeStageLayerInEditor] = pack.editor.defaultSkybox;
     }
-    setSkybox(getPackPath(d.defaultPackName) + pack.skyboxes.get(stageEffects.skyboxes[editorModel.activeStageLayer]).data.filename);
-    (<HTMLSelectElement>document.getElementById("stg-skybox")).value = stageEffects.skyboxes[editorModel.activeStageLayer];
+    setSkybox(getPackPath(d.defaultPackName) + pack.skyboxes.get(stageEffects.skyboxes[editorModel.activeStageLayerInEditor]).data.filename);
+    (<HTMLSelectElement>document.getElementById("stg-skybox")).value = stageEffects.skyboxes[editorModel.activeStageLayerInEditor];
   }
   init();
 }

@@ -9,6 +9,7 @@ import Vector2 from "./classes/vector2";
 import {init as stageAttrsInit} from "./model/stageAttrsModel";
 import * as stageItems from "./model/stageItemsModel";
 import {setActiveStageLayer, activeStageLayer} from "./model/editorModel";
+import renderStage from "./view/stageRenderView";
 
 /**
  * 現在のStage情報を保存します。
@@ -29,26 +30,6 @@ namespace stage {
     stageAttrsInit();
   }
   init();
-
-  /**
-   * ステージをstageLayerに基づき描画します。
-   */
-  export function renderStage(renderStageLayer: number = 0) {
-    canvas.clear();
-    var l = stageItems.getLayerItems(renderStageLayer).getAll();
-    Object.keys(l).forEach(i => {
-      var item = stageItems.get(parseInt(i));
-      var x = stage.scrollX + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridX), stage.toMousePos(item.gridW));
-      var y = stage.scrollY + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridY), stage.toMousePos(item.gridH));
-      var width = stage.toMousePos(item.gridW);
-      var height = stage.toMousePos(item.gridH);
-      // 画面内に入っているか
-      if (x + width >= 0 && x <= canvas.canvasRect.width &&
-        y + height >= 0 && y <= canvas.canvasRect.height) {
-        canvas.render(image(d.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
-      }
-    });
-  }
 
   var isResizeRequest = false;
   var resizeTimerId: number;

@@ -19,6 +19,7 @@ import * as anim from "./modules/ui/anim";
 import {renderAttributeUI} from "./modules/editBlock";
 import {jsonPlanet} from "./modules/jsonPlanet";
 import * as editorModel from "./modules/model/editorModel";
+import renderStage from "./modules/view/stageRenderView";
 
 /**
  * UIに関する処理を行います。
@@ -129,7 +130,7 @@ namespace ui {
     var effects = fromJsonPlanet(jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
     setStageEffects(effects);
     setSkybox(getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
-    stage.renderStage(0);
+    renderStage(0);
   }
   
   export function clickInsShowBtn(e:MouseEvent) {

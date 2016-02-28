@@ -19,7 +19,7 @@ export default function renderStage(renderStageLayer: number = 0) {
     var height = stage.toMousePos(item.gridH);
     // 画面内に入っているか
     if (x + width >= 0 && x <= canvas.canvasRect.width &&
-    y + height >= 0 && y <= canvas.canvasRect.height) {
+      y + height >= 0 && y <= canvas.canvasRect.height) {
       canvas.render(image(d.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
     }
   });

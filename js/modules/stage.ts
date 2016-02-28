@@ -18,18 +18,18 @@ namespace stage {
   /**
    * アクティブなstageLayerを変えるほか、画面の切り替えも行います。
    */
-  export function changeActiveStageLayer(stageLayer:number) {
+  export function changeActiveStageLayer(stageLayer: number) {
     setActiveStageLayer(stageLayer);
     // 描画
     renderStage(stageLayer);
   }
-  
+
   function init() {
     stageItems.init();
     stageAttrsInit();
   }
   init();
-  
+
   /**
    * ステージをstageLayerに基づき描画します。
    */
@@ -44,14 +44,14 @@ namespace stage {
       var height = stage.toMousePos(item.gridH);
       // 画面内に入っているか
       if (x + width >= 0 && x <= canvas.canvasRect.width &&
-      y + height >= 0 && y <= canvas.canvasRect.height) {
+        y + height >= 0 && y <= canvas.canvasRect.height) {
         canvas.render(image(d.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
       }
     });
   }
-  
+
   var isResizeRequest = false;
-  var resizeTimerId:number;
+  var resizeTimerId: number;
   addEventListener("resize", () => {
     if (isResizeRequest) {
       clearTimeout(resizeTimerId);
@@ -63,16 +63,16 @@ namespace stage {
     }, 100);
   });
   export class gridDetail {
-    constructor(public gridPos:Vector2, public eventName:string, public mousePos:Vector2) { }
+    constructor(public gridPos: Vector2, public eventName: string, public mousePos: Vector2) { }
   }
-  export function getMousePosFromCenterAndSize(center:number, size:number) {
+  export function getMousePosFromCenterAndSize(center: number, size: number) {
     return center - ((size - d.defaultGridSize) / 2);
   }
   export var scrollX = 0;
   export var scrollY = 0;
   export var scrollBeforeX = 0;
   export var scrollBeforeY = 0;
-  export function getGridPosFromMousePos(mousePos:Vector2) {
+  export function getGridPosFromMousePos(mousePos: Vector2) {
     var cX = mousePos.x - scrollX; var cY = mousePos.y - scrollY;
     var eX = cX - (cX % d.defaultGridSize);
     var eY = cY - (cY % d.defaultGridSize);
@@ -87,7 +87,7 @@ namespace stage {
       public prefab: prefab
     ) { }
   }
-  export function getPrefabFromGrid(grid:Vector2, stageLayer: number) {
+  export function getPrefabFromGrid(grid: Vector2, stageLayer: number) {
     var result = new getPrefabFromGridDetails(false, -1, null);
     var breakException = {};
     // breakするため
@@ -105,16 +105,16 @@ namespace stage {
     }
     return result;
   }
-  export function toMousePos(gridPos:number) {
+  export function toMousePos(gridPos: number) {
     return gridPos * d.defaultGridSize;
   }
-  export function toGridPos(mousePos:number) {
+  export function toGridPos(mousePos: number) {
     return (mousePos - (mousePos % d.defaultGridSize)) / d.defaultGridSize;
   }
   /**
    * すべてgridPosで指定された4点のrectを、描画領域に変換します。
    */
-  export function toDrawRect(gridRect:rect) {
+  export function toDrawRect(gridRect: rect) {
     return new rect(
       scrollX + getMousePosFromCenterAndSize(toMousePos(gridRect.x), toMousePos(gridRect.width)),
       scrollY + getMousePosFromCenterAndSize(toMousePos(gridRect.y), toMousePos(gridRect.height)),

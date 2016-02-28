@@ -12,15 +12,6 @@ import Vector2 from "./classes/vector2";
  */
 namespace stage {
   
-  // StageEffect
-  export class StageEffects {
-    public skyboxes:string[];
-    constructor() {
-      this.skyboxes = [ "" ];
-    }
-  }
-  export var stageEffects:StageEffects = new StageEffects();
-  
   // Todo: このクラスを分離
   export class Attr {
     constructor(

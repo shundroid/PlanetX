@@ -5,6 +5,7 @@ import * as packManager from "./modules/packUtil/packManager";
 import * as event from "./modules/event";
 import list from "./modules/classes/list";
 import stage = require("./modules/stage");
+import {stageEffects} from "./modules/model/stageEffectsModel";
 import {data as d} from "./modules/data";
 import makeDataUrl from "./modules/makePrefabDataUrls";
 import {updateActiveBlock} from "./modules/tray";
@@ -30,7 +31,7 @@ namespace main {
     packLoader(d.defaultPackName).then((i:any) => {
       d.pack = new packManager.packModule(i);
       event.raiseEvent("packLoaded", null);
-      stage.stageEffects.skyboxes = [d.pack.editor.defaultSkybox];
+      stageEffects.skyboxes = [d.pack.editor.defaultSkybox];
       ui.setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(d.pack.editor.defaultSkybox).data.filename);
       event.raiseEvent("initedPack", null);
       event.raiseEvent("initedUI", null);

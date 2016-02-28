@@ -1,4 +1,5 @@
 import stage = require("./stage");
+import {stageEffects, StageEffects} from "./model/stageEffectsModel";
 import prefab from "./classes/prefab";
 import {data as d} from "./data";
 import {jsonPlanet, jsonBlockItem} from "./jsonPlanet";
@@ -12,8 +13,8 @@ import {jsonPlanetVersion} from "./version";
  */
 export function toJsonPlanet() {
   var result = new jsonPlanet(jsonPlanetVersion);
-  Object.keys(stage.stageEffects.skyboxes).forEach(i => {
-    result.skyboxes.push(stage.stageEffects.skyboxes[parseInt(i)]);
+  Object.keys(stageEffects.skyboxes).forEach(i => {
+    result.skyboxes.push(stageEffects.skyboxes[parseInt(i)]);
   });
   var items = stage.items.getAllLayer();
   for (var i = 0; i < items.length; i++)  {
@@ -62,7 +63,7 @@ export function fromJsonPlanet(jsonPla: jsonPlanet) {
     });
   }
   d.activeStageLayer = 0;
-  var result = new stage.StageEffects();
+  var result = new StageEffects();
   // skyboxes
   result.skyboxes = jsonPla.skyboxes;
   

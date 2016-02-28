@@ -1,5 +1,6 @@
 import stage = require("./stage");
 import {stageEffects, StageEffects} from "./model/stageEffectsModel";
+import * as stageAttrs from "./model/stageAttrsModel";
 import prefab from "./classes/prefab";
 import {data as d} from "./data";
 import {jsonPlanet, jsonBlockItem} from "./jsonPlanet";
@@ -21,10 +22,10 @@ export function toJsonPlanet() {
     result.stage[i] = [];
     items[i].forEach(j => {
       var item = stage.items.get(j);
-      if (stage.blockAttrs.containsBlock(j)) {
+      if (stageAttrs.containsBlock(j)) {
         // attrがあるとき
         var attr:{ [key: string]: string } = {};
-        var attrs = stage.blockAttrs.getBlock(j);
+        var attrs = stageAttrs.getBlock(j);
         Object.keys(attrs).forEach(k => {
           attr[attrs[parseInt(k)].attrName] = attrs[parseInt(k)].attrVal;
         });
@@ -43,7 +44,7 @@ export function toJsonPlanet() {
  */
 export function fromJsonPlanet(jsonPla: jsonPlanet) {
   stage.items.clear();
-  stage.blockAttrs.clear();
+  stageAttrs.clear();
   stage.resetId();
   for (var i = 0; i < jsonPla.stage.length; i++) {
     jsonPla.stage[i].forEach(j => {
@@ -57,7 +58,7 @@ export function fromJsonPlanet(jsonPla: jsonPlanet) {
       }
       if (typeof j.attr !== "undefined") {
         Object.keys(j.attr).forEach(k => {
-          stage.blockAttrs.push(id, stage.blockAttrs.getMaxAttrId(id), new stage.Attr(k, j.attr[k]));
+          stageAttrs.push(id, stageAttrs.getMaxAttrId(id), new stageAttrs.Attr(k, j.attr[k]));
         });
       }
     });

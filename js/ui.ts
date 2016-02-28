@@ -12,6 +12,7 @@ import {getPackPath} from "./modules/packUtil/packManager";
 import {toJsonPlanet, fromJsonPlanet} from "./modules/planet";
 import stage = require("./modules/stage");
 import {stageEffects, setStageEffects} from "./modules/model/stageEffectsModel";
+import * as stageAttrs from "./modules/model/stageAttrsModel"; 
 import * as v from "./modules/version";
 import evElems from "./modules/evElems";
 import * as anim from "./modules/ui/anim";
@@ -209,8 +210,8 @@ namespace ui {
   }
   
   export function clickAddAttr() {
-    var attrId = stage.blockAttrs.getMaxAttrId(d.editingBlockId);
-    stage.blockAttrs.push(d.editingBlockId, attrId, new stage.Attr());
+    var attrId = stageAttrs.getMaxAttrId(d.editingBlockId);
+    stageAttrs.push(d.editingBlockId, attrId, new stageAttrs.Attr());
     renderAttributeUI(attrId);    
   }
 //  export function changeAttrInput(e:Event) {

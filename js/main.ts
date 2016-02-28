@@ -11,7 +11,7 @@ import tray = require("./modules/tray");
 import prefab from "./modules/classes/prefab";
 import Vector2 from "./modules/classes/vector2";
 import Rect from "./modules/classes/rect";
-import canvas = require("./modules/canvas");
+import * as canvas from "./modules/canvas";
 import editBlock = require("./modules/editBlock");
 import * as fGuide from "./modules/ui/focusGuide";
 

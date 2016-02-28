@@ -1,6 +1,6 @@
 import list from "./classes/list";
 import prefab from "./classes/prefab";
-import canvas = require("./canvas");
+import * as canvas from "./canvas";
 import image = require("./image");
 import {data as d} from "./data";
 import rect from "./classes/rect";

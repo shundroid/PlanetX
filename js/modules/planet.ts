@@ -7,6 +7,7 @@ import {data as d} from "./data";
 import {jsonPlanet, jsonBlockItem} from "./jsonPlanet";
 import {jsonPlanetVersion} from "./version";
 import {setActiveStageLayer} from "./model/editorModel";
+import {pack} from "./model/packModel";
 
 // stageから、compilerを利用して、外部形式へ入出力する機能を提供します。
 
@@ -51,11 +52,11 @@ export function fromJsonPlanet(jsonPla: jsonPlanet) {
   for (var i = 0; i < jsonPla.stage.length; i++) {
     jsonPla.stage[i].forEach(j => {
       var id = stageItems.getId();
-      if (d.pack.objs.contains(j.blockName)) {
-        let objData = d.pack.objs.get(j.blockName);
+      if (pack.objs.contains(j.blockName)) {
+        let objData = pack.objs.get(j.blockName);
         stageItems.push(id, new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
       } else {
-        let blockData = d.pack.blocks.get(j.blockName);
+        let blockData = pack.blocks.get(j.blockName);
         stageItems.push(id, new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
       }
       if (typeof j.attr !== "undefined") {

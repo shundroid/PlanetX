@@ -3,6 +3,7 @@ import TrayBlockDetails from "./classes/trayBlockDetails";
 import {data as d} from "./data";
 import {raiseEvent} from "./event";
 import {getPackPath} from "./packUtil/packManager";
+import {pack} from "./model/packModel";
 
 /**
  * Tray（UI下部分）のUI、Controllerを構成します。
@@ -19,7 +20,7 @@ export function updateSelectImage() {
 }
 export function initTrayBlock(finishedOne: (numerator: number, denominator: number) => void) {
   return new Promise(resolve => {
-    var list = Object.keys(d.pack.blocks.getAll());
+    var list = Object.keys(pack.blocks.getAll());
     var result: Array<HTMLDivElement> = [];
     var async = (i: number) => {
       var item = list[i];
@@ -27,9 +28,9 @@ export function initTrayBlock(finishedOne: (numerator: number, denominator: numb
       li.classList.add("tray-list", "tray-list-block");
       li.addEventListener("mousedown", (e) => { raiseEvent("ui_clickTray", e); });
       var img = document.createElement("img");
-      img.src = getPackPath(d.defaultPackName) + d.pack.blocks.get(item).data.filename;
+      img.src = getPackPath(d.defaultPackName) + pack.blocks.get(item).data.filename;
       img.onload = () => {
-        img.alt = d.pack.blocks.get(item).data.bName;
+        img.alt = pack.blocks.get(item).data.bName;
         img.dataset["block"] = item;
         li.appendChild(img);
         result.push(li);
@@ -46,7 +47,7 @@ export function initTrayBlock(finishedOne: (numerator: number, denominator: numb
 }
 export function initTrayObj(finishedOne: (numerator: number, denominator: number) => void) {
   return new Promise((resolve) => {
-    var list = Object.keys(d.pack.objs.getAll());
+    var list = Object.keys(pack.objs.getAll());
     var result: Array<HTMLDivElement> = [];
     var async = (i: number) => {
       var item = list[i];
@@ -54,12 +55,12 @@ export function initTrayObj(finishedOne: (numerator: number, denominator: number
       li.classList.add("tray-list", "tray-list-obj");
       li.addEventListener("click", (e) => { raiseEvent("ui_clickTray", e); });
       var img = document.createElement("img");
-      img.src = getPackPath(d.defaultPackName) + d.pack.objs.get(item).data.filename;
+      img.src = getPackPath(d.defaultPackName) + pack.objs.get(item).data.filename;
       img.onload = () => {
-        img.alt = d.pack.objs.get(item).data.oName;
+        img.alt = pack.objs.get(item).data.oName;
         img.dataset["block"] = item;
         li.style.width = img.style.width =
-          d.pack.objs.get(item).data.width / (d.pack.objs.get(item).data.height / 50) + "px";
+          pack.objs.get(item).data.width / (pack.objs.get(item).data.height / 50) + "px";
         li.style.height = img.style.height = "50px";
         li.appendChild(img);
         result.push(li);

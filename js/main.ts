@@ -6,7 +6,7 @@ import * as event from "./modules/event";
 import list from "./modules/classes/list";
 import stage = require("./modules/stage");
 import {data as d} from "./modules/data";
-import makeDataUrl = require("./modules/makePrefabDataUrls");
+import makeDataUrl from "./modules/makePrefabDataUrls";
 import tray = require("./modules/tray");
 import prefab from "./modules/classes/prefab";
 import Vector2 from "./modules/classes/vector2";

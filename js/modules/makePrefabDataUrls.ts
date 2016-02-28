@@ -7,7 +7,7 @@ import image from "./image";
 /**
  * Todo: 必要性 -> image.tsとの統合
  */
-function makeDataUrl() {
+export default function makeDataUrl() {
   var result = new list<string>();
   var blockList = d.pack.blocks.getAll();
   Object.keys(blockList).forEach(i => {
@@ -20,4 +20,3 @@ function makeDataUrl() {
   });
   return result;
 }
-export = makeDataUrl;

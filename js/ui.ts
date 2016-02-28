@@ -9,7 +9,7 @@ import list from "./modules/classes/list";
 import Vector2 from "./modules/classes/vector2";
 import tray = require("./modules/tray");
 import {getPackPath} from "./modules/packUtil/packManager";
-import planet = require("./modules/planet");
+import {toJsonPlanet, fromJsonPlanet} from "./modules/planet";
 import stage = require("./modules/stage");
 import v = require("./modules/version");
 import evElems from "./modules/evElems";
@@ -119,11 +119,11 @@ namespace ui {
   }
   
   export function clickExport() {
-    (<HTMLTextAreaElement>document.getElementById("pla-io")).value = JSON.stringify(planet.toJsonPlanet().exportJson());
+    (<HTMLTextAreaElement>document.getElementById("pla-io")).value = JSON.stringify(toJsonPlanet().exportJson());
   }
   export function clickImport() {
     // fromJSONPlanet内で、d.activeStageLayerは0になる。
-    var effects = planet.fromJsonPlanet(jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
+    var effects = fromJsonPlanet(jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
     stage.stageEffects = effects;
     setSkybox(getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
     stage.renderStage(0);

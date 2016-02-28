@@ -1,26 +1,26 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
-import d = require("./modules/data");
-import initDOM = require("./modules/initDOM");
-import event = require("./modules/event");
-import el = require("./modules/elem");
-import u = require("./modules/util");
-import list = require("./modules/classes/list");
-import Vector2 = require("./modules/classes/vector2");
-import tray = require("./modules/tray");
-import packManager = require("./modules/packUtil/packManager");
-import planet = require("./modules/planet");
+import {data as d} from "./modules/data";
+import initDOM from "./modules/initDOM";
+import * as event from "./modules/event";
+import {addEventListenerforQuery, forEachforQuery} from "./modules/elem";
+import obj2SelectElem from "./modules/util";
+import list from "./modules/classes/list";
+import Vector2 from "./modules/classes/vector2";
+import * as tray from "./modules/tray";
+import {getPackPath} from "./modules/packUtil/packManager";
+import {toJsonPlanet, fromJsonPlanet} from "./modules/planet";
 import stage = require("./modules/stage");
-import v = require("./modules/version");
-import evElems = require("./modules/evElems");
-import anim = require("./modules/ui/anim");
-import editBlock = require("./modules/editBlock");
-import jsonPlanet = require("./modules/jsonPlanet");
+import * as v from "./modules/version";
+import evElems from "./modules/evElems";
+import * as anim from "./modules/ui/anim";
+import {renderAttributeUI} from "./modules/editBlock";
+import {jsonPlanet} from "./modules/jsonPlanet";
 
 /**
  * UIに関する処理を行います。
  */
-module ui {
+namespace ui {
   export var canvas: HTMLCanvasElement; 
   function init() {
     window.addEventListener("resize", () => {
@@ -54,25 +54,18 @@ module ui {
           }
         }
       }
-      el.forEachforQuery(".pack-select", (i) => {
+      forEachforQuery(".pack-select", (i) => {
         var elem = <HTMLSelectElement>i;
-        elem.innerHTML = u.obj2SelectElem((<list<any>>(<any>d.pack)[elem.dataset["items"]]).toSimple());
-        // ev-inputで実装
-//        if (elem.dataset["change"]) {
-//          elem.addEventListener("change", (<any>ui)[elem.dataset["change"]]);
-//        }
-//        if (elem.dataset["default"]) {
-//          elem.value = elem.dataset["default"];
-//        }
+        elem.innerHTML = obj2SelectElem((<list<any>>(<any>d.pack)[elem.dataset["items"]]).toSimple());
       });
       (<HTMLSelectElement>document.getElementById("stg-skybox")).value = d.pack.editor.defaultSkybox;
     });
   }
   initDOM(() => {
-    evElems.set(ui);
+    evElems(ui);
     document.getElementById("pla-ver").innerHTML = `Planet ${v.version} by ${v.author}`;
-    el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
-    el.addEventListenerforQuery(".tray-list-tool", "mousedown", clickTrayTool);
+    addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
+    addEventListenerforQuery(".tray-list-tool", "mousedown", clickTrayTool);
     
     // movejsを読む
     var movejs = document.createElement("script");
@@ -126,13 +119,13 @@ module ui {
   }
   
   export function clickExport() {
-    (<HTMLTextAreaElement>document.getElementById("pla-io")).value = JSON.stringify(planet.toJsonPlanet().exportJson());
+    (<HTMLTextAreaElement>document.getElementById("pla-io")).value = JSON.stringify(toJsonPlanet().exportJson());
   }
   export function clickImport() {
     // fromJSONPlanet内で、d.activeStageLayerは0になる。
-    var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
+    var effects = fromJsonPlanet(jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
     stage.stageEffects = effects;
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
+    setSkybox(getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
     stage.renderStage(0);
   }
   
@@ -206,18 +199,18 @@ module ui {
   
   export function clickConvertOldFile() {
     (<HTMLTextAreaElement>document.getElementById("conv-new")).value = 
-      JSON.stringify(jsonPlanet.jsonPlanet.fromCSV((<HTMLTextAreaElement>document.getElementById("conv-old")).value).exportJson());
+      JSON.stringify(jsonPlanet.fromCSV((<HTMLTextAreaElement>document.getElementById("conv-old")).value).exportJson());
   }
   
   export function changeSkybox(e:Event) {
     stage.stageEffects.skyboxes[d.activeStageLayer] = (<HTMLSelectElement>e.target).value;
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
+    setSkybox(getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename);
   }
   
   export function clickAddAttr() {
     var attrId = stage.blockAttrs.getMaxAttrId(d.editingBlockId);
     stage.blockAttrs.push(d.editingBlockId, attrId, new stage.Attr());
-    editBlock.renderAttributeUI(attrId);    
+    renderAttributeUI(attrId);    
   }
 //  export function changeAttrInput(e:Event) {
 //    stage.blockAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")), (<HTMLInputElement>e.target).value);
@@ -227,7 +220,7 @@ module ui {
     if (typeof stage.stageEffects.skyboxes[d.activeStageLayer] === "undefined") {
       stage.stageEffects.skyboxes[d.activeStageLayer] = d.pack.editor.defaultSkybox;
     }
-    setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename); 
+    setSkybox(getPackPath(d.defaultPackName) + d.pack.skyboxes.get(stage.stageEffects.skyboxes[d.activeStageLayer]).data.filename); 
     (<HTMLSelectElement>document.getElementById("stg-skybox")).value = stage.stageEffects.skyboxes[d.activeStageLayer];
   }
   init();

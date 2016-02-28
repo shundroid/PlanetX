@@ -1,4 +1,4 @@
-class attribute {
+export default class attribute {
   constructor(
     public label: string,
     public type: string,
@@ -6,4 +6,3 @@ class attribute {
     public defaultValue?:string
   ) {}
 }
-export = attribute;

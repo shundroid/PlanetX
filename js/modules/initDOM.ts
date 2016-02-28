@@ -2,7 +2,7 @@ var handlerList = new Array<()=>void>();
 /**
  * DOMContentLoadedのタイミングで呼ばれます。
  */
-function add(fn:()=>void) {
+export default function add(fn:()=>void) {
   handlerList.push(fn);
 }
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,4 +10,3 @@ document.addEventListener('DOMContentLoaded', () => {
     i();
   });
 });
-export = add;

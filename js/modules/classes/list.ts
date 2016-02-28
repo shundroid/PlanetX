@@ -1,4 +1,4 @@
-class List<list> {
+export default class List<list> {
     private data:Object;
     constructor() {
       this.data = {};
@@ -28,4 +28,3 @@ class List<list> {
       return this.data;
     }
 }
-export = List;

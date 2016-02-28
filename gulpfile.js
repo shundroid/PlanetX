@@ -31,7 +31,7 @@ gulp.task("build", function() {
 
 // Browserify 関係
 gulp.task("brify", function(callBack) {
-  runBrowserify(minimist(process.argv.slice(2)).watch, minimist(process.argv.slice(2)).dev);
+  runBrowserify(minimist(process.argv.slice(2)).watch, minimist(process.argv.slice(2)).min);
 });
 function runBrowserify(watch, min) {
   var isWatch = typeof watch !== "undefined";

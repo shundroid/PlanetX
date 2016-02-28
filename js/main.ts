@@ -1,24 +1,24 @@
-import ui = require("./ui");
-import initDOM = require("./modules/initDOM");
-import packLoader = require("./modules/packUtil/packLoader");
-import packManager = require("./modules/packUtil/packManager");
-import event = require("./modules/event");
-import list = require("./modules/classes/list");
+import * as ui from "./ui";
+import initDOM from "./modules/initDOM";
+import packLoader from "./modules/packUtil/packLoader";
+import * as packManager from "./modules/packUtil/packManager";
+import * as event from "./modules/event";
+import list from "./modules/classes/list";
 import stage = require("./modules/stage");
-import d = require("./modules/data");
-import makeDataUrl = require("./modules/makePrefabDataUrls");
-import tray = require("./modules/tray");
-import prefab = require("./modules/classes/prefab");
-import Vector2 = require("./modules/classes/vector2");
-import Rect = require("./modules/classes/rect");
-import canvas = require("./modules/canvas");
-import editBlock = require("./modules/editBlock");
-import fGuide = require("./modules/ui/focusGuide");
+import {data as d} from "./modules/data";
+import makeDataUrl from "./modules/makePrefabDataUrls";
+import {updateActiveBlock} from "./modules/tray";
+import prefab from "./modules/classes/prefab";
+import Vector2 from "./modules/classes/vector2";
+import Rect from "./modules/classes/rect";
+import * as canvas from "./modules/canvas";
+import {EditBlock, updateEditBlock} from "./modules/editBlock";
+import * as fGuide from "./modules/ui/focusGuide";
 
 /**
  * メインとなる処理を行います
  */
-module main {
+namespace main {
 
   function init() {
     d.dataInit();
@@ -44,7 +44,7 @@ module main {
       ui.changeLoadingStatus("making DataURL");
       d.trayItemDataURLs = makeDataUrl();
       var item = d.pack.blocks.get(d.pack.editor.defaultBlock);
-      tray.updateActiveBlock(d.pack.editor.defaultBlock, item.data.filename, item.data.bName);
+      updateActiveBlock(d.pack.editor.defaultBlock, item.data.filename, item.data.bName);
       ui.changeLoadingStatus("Are you ready?");
       event.raiseEvent("ready", null);
     });
@@ -76,10 +76,10 @@ module main {
             if (detail.prefab) {
               if (d.pack.objs.contains(detail.prefab.blockName)) {
                 let oData = d.pack.objs.get(detail.prefab.blockName);
-                tray.updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(d.defaultPackName) + oData.data.filename, oData.data.width, oData.data.height);
+                updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(d.defaultPackName) + oData.data.filename, oData.data.width, oData.data.height);
               } else {
                 let bData = d.pack.blocks.get(detail.prefab.blockName);
-                tray.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
+                updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
               }
               ui.changeActiveBlock(detail.prefab.blockName);
             }
@@ -98,7 +98,7 @@ module main {
           if (e.eventName === "down" && detail.contains) {
             ui.showInspector("edit-block");
             d.editingBlockId = detail.id;
-            editBlock.updateEditBlock(new editBlock.EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
+            updateEditBlock(new EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
           }
           break;
         default:

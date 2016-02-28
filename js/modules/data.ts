@@ -1,6 +1,6 @@
-import list = require("./classes/list");
-import packManager = require("./packUtil/packManager");
-import TrayBlockDetails = require("./classes/trayBlockDetails");
+import list from "./classes/list";
+import {packModule} from "./packUtil/packManager";
+import TrayBlockDetails from "./classes/trayBlockDetails";
 
 /**
  * Planetの情報を保存します。
@@ -8,7 +8,7 @@ import TrayBlockDetails = require("./classes/trayBlockDetails");
 class data {
   static trayItemDataURLs:list<string>;
   static defaultPackName:string;
-  static pack:packManager.packModule;
+  static pack:packModule;
   static defaultGridSize:number;
   static defaultBlockSize:number;
   static selectBlock:TrayBlockDetails;
@@ -36,4 +36,4 @@ class data {
     this.activeStageLayer = 0;
   }
 }
-export = data;
+export { data };

@@ -6,6 +6,7 @@ import * as event from "./modules/event";
 import list from "./modules/classes/list";
 import stage = require("./modules/stage");
 import {stageEffects} from "./modules/model/stageEffectsModel";
+import * as stageItems from "./modules/model/stageItemsModel";
 import {data as d} from "./modules/data";
 import makeDataUrl from "./modules/makePrefabDataUrls";
 import {updateActiveBlock} from "./modules/tray";
@@ -62,9 +63,9 @@ namespace main {
           if (e.eventName === "down") {
             if (!detail.contains) {
               canvas.render(d.selectImage, rect);
-              stage.items.push(stage.getId(), pre, d.activeStageLayer);
+              stageItems.push(stage.getId(), pre, d.activeStageLayer);
             } else {
-              stage.items.remove(detail.id, d.activeStageLayer);
+              stageItems.remove(detail.id, d.activeStageLayer);
               stage.renderStage(d.activeStageLayer);
             }
           } else if (e.eventName === "hovering") {
@@ -106,15 +107,15 @@ namespace main {
           if (e.eventName === "move" || e.eventName === "down") {
             if (d.activeToolName === "brush") {
               if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
-                stage.items.remove(detail.id, d.activeStageLayer);
+                stageItems.remove(detail.id, d.activeStageLayer);
                 stage.renderStage(d.activeStageLayer);
               }
               if (!detail.contains) {
                 canvas.render(d.selectImage, rect);
-                stage.items.push(stage.getId(), pre, d.activeStageLayer);
+                stageItems.push(stage.getId(), pre, d.activeStageLayer);
               }
             } else if (d.activeToolName === "erase" && detail.contains) {
-              stage.items.remove(detail.id, d.activeStageLayer);
+              stageItems.remove(detail.id, d.activeStageLayer);
               stage.renderStage(d.activeStageLayer);
             }
           }

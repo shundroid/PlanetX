@@ -1,5 +1,6 @@
 import stage = require("./stage");
 import {stageEffects, StageEffects} from "./model/stageEffectsModel";
+import * as stageItems from "./model/stageItemsModel";
 import * as stageAttrs from "./model/stageAttrsModel";
 import prefab from "./classes/prefab";
 import {data as d} from "./data";
@@ -17,11 +18,11 @@ export function toJsonPlanet() {
   Object.keys(stageEffects.skyboxes).forEach(i => {
     result.skyboxes.push(stageEffects.skyboxes[parseInt(i)]);
   });
-  var items = stage.items.getAllLayer();
+  var items = stageItems.getAllLayer();
   for (var i = 0; i < items.length; i++)  {
     result.stage[i] = [];
     items[i].forEach(j => {
-      var item = stage.items.get(j);
+      var item = stageItems.get(j);
       if (stageAttrs.containsBlock(j)) {
         // attrがあるとき
         var attr:{ [key: string]: string } = {};
@@ -43,7 +44,7 @@ export function toJsonPlanet() {
  * 内部で、stage.itemsをクリアし、新しくpushします。
  */
 export function fromJsonPlanet(jsonPla: jsonPlanet) {
-  stage.items.clear();
+  stageItems.clear();
   stageAttrs.clear();
   stage.resetId();
   for (var i = 0; i < jsonPla.stage.length; i++) {
@@ -51,10 +52,10 @@ export function fromJsonPlanet(jsonPla: jsonPlanet) {
       var id = stage.getId();
       if (d.pack.objs.contains(j.blockName)) {
         let objData = d.pack.objs.get(j.blockName);
-        stage.items.push(id, new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
+        stageItems.push(id, new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
       } else {
         let blockData = d.pack.blocks.get(j.blockName);
-        stage.items.push(id, new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
+        stageItems.push(id, new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
       }
       if (typeof j.attr !== "undefined") {
         Object.keys(j.attr).forEach(k => {

@@ -4,6 +4,7 @@ import {data as d} from "./data";
 import {raiseEvent} from "./event";
 import {getPackPath} from "./packUtil/packManager";
 import {pack} from "./model/packModel";
+import * as trayModel from "./model/trayModel";
 
 /**
  * Tray（UI下部分）のUI、Controllerを構成します。
@@ -12,11 +13,11 @@ import {pack} from "./model/packModel";
 export function updateActiveBlock(blockName: string, fileName: string, label: string, width?: number, height?: number) {
   var w = width || d.defaultBlockSize;
   var h = height || d.defaultBlockSize;
-  d.selectBlock = new TrayBlockDetails(blockName, fileName, label, w, h);
+  trayModel.setActiveBlock(new TrayBlockDetails(blockName, fileName, label, w, h));
   updateSelectImage();
 }
 export function updateSelectImage() {
-  d.selectImage = image(d.trayItemDataURLs.get(d.selectBlock.blockName));
+  trayModel.setActiveBlockImage(image(d.trayItemDataURLs.get(trayModel.activeBlock.blockName)));
 }
 export function initTrayBlock(finishedOne: (numerator: number, denominator: number) => void) {
   return new Promise(resolve => {

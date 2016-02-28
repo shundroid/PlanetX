@@ -19,6 +19,7 @@ import * as fGuide from "./modules/ui/focusGuide";
 import * as editorModel from "./modules/model/editorModel";
 import renderStage from "./modules/view/stageRenderView";
 import {pack, setPack} from "./modules/model/packModel";
+import {activeBlock, activeBlockImage} from "./modules/model/trayModel";
 
 /**
  * メインとなる処理を行います
@@ -57,7 +58,7 @@ namespace main {
       ui.hideLoading();
     });
     event.addEventListener("gridCanvas", (e: stage.gridDetail) => {
-      var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
+      var pre = new prefab(e.gridPos.x, e.gridPos.y, activeBlock.fileName, activeBlock.blockName, stage.toGridPos(activeBlock.width), stage.toGridPos(activeBlock.height));
       var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY), editorModel.activeStageLayer);
       var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
       fGuide.hide();
@@ -65,7 +66,7 @@ namespace main {
         case "pencil":
           if (e.eventName === "down") {
             if (!detail.contains) {
-              canvas.render(d.selectImage, rect);
+              canvas.render(activeBlockImage, rect);
               stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayer);
             } else {
               stageItems.remove(detail.id, editorModel.activeStageLayer);
@@ -109,12 +110,12 @@ namespace main {
         default:
           if (e.eventName === "move" || e.eventName === "down") {
             if (d.activeToolName === "brush") {
-              if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
+              if (detail.contains && detail.prefab.blockName !== activeBlock.blockName) {
                 stageItems.remove(detail.id, editorModel.activeStageLayer);
                 renderStage(editorModel.activeStageLayer);
               }
               if (!detail.contains) {
-                canvas.render(d.selectImage, rect);
+                canvas.render(activeBlockImage, rect);
                 stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayer);
               }
             } else if (d.activeToolName === "erase" && detail.contains) {

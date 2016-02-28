@@ -11,9 +11,7 @@ class data {
   static defaultPackName: string;
   static defaultGridSize: number;
   static defaultBlockSize: number;
-  static selectBlock: TrayBlockDetails;
   static activeToolName: string;
-  static selectImage: HTMLImageElement;
   static isObjMode: boolean;
   static isFullscreenTray: boolean;
   static isShowInspector: boolean;

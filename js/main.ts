@@ -63,7 +63,7 @@ namespace main {
           if (e.eventName === "down") {
             if (!detail.contains) {
               canvas.render(d.selectImage, rect);
-              stageItems.push(stage.getId(), pre, d.activeStageLayer);
+              stageItems.push(stageItems.getId(), pre, d.activeStageLayer);
             } else {
               stageItems.remove(detail.id, d.activeStageLayer);
               stage.renderStage(d.activeStageLayer);
@@ -112,7 +112,7 @@ namespace main {
               }
               if (!detail.contains) {
                 canvas.render(d.selectImage, rect);
-                stageItems.push(stage.getId(), pre, d.activeStageLayer);
+                stageItems.push(stageItems.getId(), pre, d.activeStageLayer);
               }
             } else if (d.activeToolName === "erase" && detail.contains) {
               stageItems.remove(detail.id, d.activeStageLayer);

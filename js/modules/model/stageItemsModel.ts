@@ -58,7 +58,16 @@ export function getAllLayer() {
   return prefabLayer;
 }
 
+var maxId:number;
+export function getId() {
+  return maxId++;
+}
+export function resetId() {
+  maxId = 0;
+}
+
 export function init() {
   prefabList = {};
   prefabLayer = new Array<Array<number>>();
+  maxId = 0;
 }

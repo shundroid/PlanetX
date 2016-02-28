@@ -46,10 +46,10 @@ export function toJsonPlanet() {
 export function fromJsonPlanet(jsonPla: jsonPlanet) {
   stageItems.clear();
   stageAttrs.clear();
-  stage.resetId();
+  stageItems.resetId();
   for (var i = 0; i < jsonPla.stage.length; i++) {
     jsonPla.stage[i].forEach(j => {
-      var id = stage.getId();
+      var id = stageItems.getId();
       if (d.pack.objs.contains(j.blockName)) {
         let objData = d.pack.objs.get(j.blockName);
         stageItems.push(id, new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);

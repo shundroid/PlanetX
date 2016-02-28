@@ -23,20 +23,11 @@ namespace stage {
     renderStage(stageLayer);
   }
   
-  var maxId:number;
   function init() {
     stageItems.init();
     stageAttrsInit();
-    maxId = 0;
   }
   init();
-  
-  export function getId() {
-    return maxId++;
-  }
-  export function resetId() {
-    maxId = 0;
-  }
   
   /**
    * ステージをstageLayerに基づき描画します。

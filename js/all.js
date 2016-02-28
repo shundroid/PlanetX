@@ -5,6 +5,8 @@ var packLoader_1 = require("./modules/packUtil/packLoader");
 var packManager = require("./modules/packUtil/packManager");
 var event = require("./modules/event");
 var stage = require("./modules/stage");
+var stageEffectsModel_1 = require("./modules/model/stageEffectsModel");
+var stageItems = require("./modules/model/stageItemsModel");
 var data_1 = require("./modules/data");
 var makePrefabDataUrls_1 = require("./modules/makePrefabDataUrls");
 var tray_1 = require("./modules/tray");
@@ -28,7 +30,7 @@ var main;
         packLoader_1.default(data_1.data.defaultPackName).then(function (i) {
             data_1.data.pack = new packManager.packModule(i);
             event.raiseEvent("packLoaded", null);
-            stage.stageEffects.skyboxes = [data_1.data.pack.editor.defaultSkybox];
+            stageEffectsModel_1.stageEffects.skyboxes = [data_1.data.pack.editor.defaultSkybox];
             ui.setSkybox(packManager.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(data_1.data.pack.editor.defaultSkybox).data.filename);
             event.raiseEvent("initedPack", null);
             event.raiseEvent("initedUI", null);
@@ -59,10 +61,10 @@ var main;
                     if (e.eventName === "down") {
                         if (!detail.contains) {
                             canvas.render(data_1.data.selectImage, rect);
-                            stage.items.push(stage.getId(), pre, data_1.data.activeStageLayer);
+                            stageItems.push(stageItems.getId(), pre, data_1.data.activeStageLayer);
                         }
                         else {
-                            stage.items.remove(detail.id, data_1.data.activeStageLayer);
+                            stageItems.remove(detail.id, data_1.data.activeStageLayer);
                             stage.renderStage(data_1.data.activeStageLayer);
                         }
                     }
@@ -106,16 +108,16 @@ var main;
                     if (e.eventName === "move" || e.eventName === "down") {
                         if (data_1.data.activeToolName === "brush") {
                             if (detail.contains && detail.prefab.blockName !== data_1.data.selectBlock.blockName) {
-                                stage.items.remove(detail.id, data_1.data.activeStageLayer);
+                                stageItems.remove(detail.id, data_1.data.activeStageLayer);
                                 stage.renderStage(data_1.data.activeStageLayer);
                             }
                             if (!detail.contains) {
                                 canvas.render(data_1.data.selectImage, rect);
-                                stage.items.push(stage.getId(), pre, data_1.data.activeStageLayer);
+                                stageItems.push(stageItems.getId(), pre, data_1.data.activeStageLayer);
                             }
                         }
                         else if (data_1.data.activeToolName === "erase" && detail.contains) {
-                            stage.items.remove(detail.id, data_1.data.activeStageLayer);
+                            stageItems.remove(detail.id, data_1.data.activeStageLayer);
                             stage.renderStage(data_1.data.activeStageLayer);
                         }
                     }
@@ -125,7 +127,7 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/prefab":4,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/packUtil/packLoader":17,"./modules/packUtil/packManager":18,"./modules/stage":20,"./modules/tray":21,"./modules/ui/focusGuide":23,"./ui":26}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/prefab":4,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/model/stageEffectsModel":18,"./modules/model/stageItemsModel":19,"./modules/packUtil/packLoader":20,"./modules/packUtil/packManager":21,"./modules/stage":23,"./modules/tray":24,"./modules/ui/focusGuide":26,"./ui":29}],2:[function(require,module,exports){
 /// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
 var initDOM_1 = require("./initDOM");
 /**
@@ -294,7 +296,7 @@ var data = (function () {
 exports.data = data;
 },{"./classes/list":3}],9:[function(require,module,exports){
 var data_1 = require("./data");
-var stage = require("./stage");
+var stageAttrs = require("./model/stageAttrsModel");
 /**
  * Inspector内、EditBlockのデータ化
  */
@@ -329,10 +331,10 @@ function updateEditBlockUI() {
     document.getElementById("ed-pos").textContent = "Pos: " + currentEditBlock.blockPos.x + ", " + currentEditBlock.blockPos.y;
     document.getElementById("ed-id").textContent = "ID: " + currentEditBlock.blockId;
     document.getElementsByClassName("ed-attr-view")[0].innerHTML = "";
-    if (stage.blockAttrs.containsBlock(data_1.data.editingBlockId)) {
-        var l = stage.blockAttrs.getBlock(data_1.data.editingBlockId);
+    if (stageAttrs.containsBlock(data_1.data.editingBlockId)) {
+        var l = stageAttrs.getBlock(data_1.data.editingBlockId);
         Object.keys(l).forEach(function (i) {
-            var attr = stage.blockAttrs.getAttr(data_1.data.editingBlockId, parseInt(i));
+            var attr = stageAttrs.getAttr(data_1.data.editingBlockId, parseInt(i));
             renderAttributeUI(parseInt(i), attr.attrName, attr.attrVal);
         });
     }
@@ -381,21 +383,21 @@ function renderAttributeUI(attrId, inputName, inputValue) {
 exports.renderAttributeUI = renderAttributeUI;
 function changeAttrVal(e) {
     console.log("hg!!");
-    // Todo: [x] blockAttrsで、inputNameかinputValかどちらかを変えられるように、オーバーロードを作る
-    stage.blockAttrs.update(data_1.data.editingBlockId, parseInt(e.target.id.replace("ed-attr-", "")), { attrVal: e.target.value });
+    // Todo: [x] stageAttrsで、inputNameかinputValかどちらかを変えられるように、オーバーロードを作る
+    stageAttrs.update(data_1.data.editingBlockId, parseInt(e.target.id.replace("ed-attr-", "")), { attrVal: e.target.value });
 }
 exports.changeAttrVal = changeAttrVal;
 function changeAttrName(e) {
-    stage.blockAttrs.update(data_1.data.editingBlockId, parseInt(e.target.id.replace("ed-attr-name-", "")), { attrName: e.target.value });
+    stageAttrs.update(data_1.data.editingBlockId, parseInt(e.target.id.replace("ed-attr-name-", "")), { attrName: e.target.value });
 }
 exports.changeAttrName = changeAttrName;
 function clickRemoveAttr(e) {
     var attrId = parseInt(e.target.id.replace("ed-attr-remove-", ""));
-    stage.blockAttrs.removeAttr(data_1.data.editingBlockId, attrId);
+    stageAttrs.removeAttr(data_1.data.editingBlockId, attrId);
     document.getElementsByClassName("ed-attr-view")[0].removeChild(document.getElementById("ed-attr-field-" + attrId));
 }
 exports.clickRemoveAttr = clickRemoveAttr;
-},{"./data":8,"./stage":20}],10:[function(require,module,exports){
+},{"./data":8,"./model/stageAttrsModel":17}],10:[function(require,module,exports){
 /**
  * (#41) lodashとかでかぶるかな・・
  */
@@ -608,7 +610,7 @@ var jsonPlanet = (function () {
     return jsonPlanet;
 })();
 exports.jsonPlanet = jsonPlanet;
-},{"./version":25}],16:[function(require,module,exports){
+},{"./version":28}],16:[function(require,module,exports){
 var data_1 = require("./data");
 var list_1 = require("./classes/list");
 var packManager_1 = require("./packUtil/packManager");
@@ -632,7 +634,196 @@ function makeDataUrl() {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = makeDataUrl;
-},{"./classes/list":3,"./classes/vector2":7,"./data":8,"./image":13,"./packUtil/packManager":18}],17:[function(require,module,exports){
+},{"./classes/list":3,"./classes/vector2":7,"./data":8,"./image":13,"./packUtil/packManager":21}],17:[function(require,module,exports){
+// Todo: このクラスを分離
+var Attr = (function () {
+    function Attr(attrName, attrVal) {
+        if (attrName === void 0) { attrName = ""; }
+        if (attrVal === void 0) { attrVal = ""; }
+        this.attrName = attrName;
+        this.attrVal = attrVal;
+    }
+    return Attr;
+})();
+exports.Attr = Attr;
+// Attrをブロックごとに管理
+var blockAttrsList;
+function setAll(lst) {
+    blockAttrsList = lst;
+}
+exports.setAll = setAll;
+function push(blockId, attrId, value) {
+    if (typeof blockAttrsList[blockId] === "undefined") {
+        blockAttrsList[blockId] = {};
+    }
+    blockAttrsList[blockId][attrId] = value;
+}
+exports.push = push;
+function update(blockId, attrId, attr) {
+    if (attr instanceof Attr) {
+        // attrNameをAttrで指定するとき
+        blockAttrsList[blockId][attrId] = attr;
+    }
+    else {
+        // attrName、attrValで指定するとき
+        var cur = blockAttrsList[blockId][attrId];
+        if (typeof attr["attrName"] !== "undefined") {
+            cur.attrName = attr["attrName"];
+        }
+        if (typeof attr["attrVal"] !== "undefined") {
+            cur.attrVal = attr["attrVal"];
+        }
+        blockAttrsList[blockId][attrId] = cur;
+    }
+}
+exports.update = update;
+function containsAttr(blockId, attrId) {
+    // blockIdがundefinedのときは、エラーが出ないよう、falseを返しておく。
+    if (typeof blockAttrsList[blockId] === "undefined") {
+        return false;
+    }
+    else {
+        return typeof blockAttrsList[blockId][attrId] !== "undefined";
+    }
+}
+exports.containsAttr = containsAttr;
+function containsBlock(blockId) {
+    return typeof blockAttrsList[blockId] !== "undefined";
+}
+exports.containsBlock = containsBlock;
+function removeAttr(blockId, attrId) {
+    delete blockAttrsList[blockId][attrId];
+}
+exports.removeAttr = removeAttr;
+function removeBlock(blockId) {
+    delete blockAttrsList[blockId];
+}
+exports.removeBlock = removeBlock;
+function getBlock(blockId) {
+    return blockAttrsList[blockId];
+}
+exports.getBlock = getBlock;
+function getAttr(blockId, attrId) {
+    return blockAttrsList[blockId][attrId];
+}
+exports.getAttr = getAttr;
+function getAll() {
+    return blockAttrsList;
+}
+exports.getAll = getAll;
+function clear() {
+    blockAttrsList = {};
+}
+exports.clear = clear;
+// attrId関係
+function getMaxAttrId(blockId) {
+    if (typeof blockAttrsList[blockId] === "undefined") {
+        return 0;
+    }
+    else {
+        return Object.keys(blockAttrsList[blockId]).length;
+    }
+}
+exports.getMaxAttrId = getMaxAttrId;
+function init() {
+    blockAttrsList = {};
+}
+exports.init = init;
+},{}],18:[function(require,module,exports){
+var StageEffects = (function () {
+    function StageEffects() {
+        this.skyboxes = [""];
+    }
+    return StageEffects;
+})();
+exports.StageEffects = StageEffects;
+exports.stageEffects = new StageEffects();
+function setStageEffects(effect) {
+    exports.stageEffects = effect;
+}
+exports.setStageEffects = setStageEffects;
+},{}],19:[function(require,module,exports){
+var list_1 = require("./../classes/list");
+/**
+ * ステージ上のすべてのPrefabのリスト
+ */
+var prefabList;
+/**
+ * stageLayer別のIdを格納
+ */
+var prefabLayer;
+/**
+ * 内部でpushStageLayerを呼び出します
+ */
+function push(id, p, stageLayer) {
+    if (stageLayer === void 0) { stageLayer = 0; }
+    prefabList[id] = p;
+    pushStageLayer(stageLayer, id);
+}
+exports.push = push;
+function all() {
+    return prefabList;
+}
+exports.all = all;
+function remove(id, stageLayer) {
+    prefabLayer[stageLayer].splice(prefabLayer[stageLayer].indexOf(id), 1);
+    delete prefabList[id];
+}
+exports.remove = remove;
+function clear() {
+    prefabList = {};
+}
+exports.clear = clear;
+function get(id) {
+    return prefabList[id];
+}
+exports.get = get;
+/**
+ * レイヤーごとにItemを取得
+ */
+function getLayerItems(stageLayer) {
+    var ids = getLayerIds(stageLayer);
+    var result = new list_1.default();
+    ids.forEach(function (i) {
+        result.push(i.toString(), get(i));
+    });
+    return result;
+}
+exports.getLayerItems = getLayerItems;
+function pushStageLayer(stageLayer, id) {
+    if (typeof prefabLayer[stageLayer] === "undefined") {
+        prefabLayer[stageLayer] = [];
+    }
+    prefabLayer[stageLayer].push(id);
+}
+exports.pushStageLayer = pushStageLayer;
+function getLayerIds(stageLayer) {
+    if (typeof prefabLayer[stageLayer] === "undefined") {
+        prefabLayer[stageLayer] = [];
+    }
+    return prefabLayer[stageLayer];
+}
+exports.getLayerIds = getLayerIds;
+function getAllLayer() {
+    return prefabLayer;
+}
+exports.getAllLayer = getAllLayer;
+var maxId;
+function getId() {
+    return maxId++;
+}
+exports.getId = getId;
+function resetId() {
+    maxId = 0;
+}
+exports.resetId = resetId;
+function init() {
+    prefabList = {};
+    prefabLayer = new Array();
+    maxId = 0;
+}
+exports.init = init;
+},{"./../classes/list":3}],20:[function(require,module,exports){
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
 var packManager_1 = require("./../packUtil/packManager");
 function load(packName) {
@@ -649,7 +840,7 @@ function load(packName) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = load;
-},{"./../packUtil/packManager":18}],18:[function(require,module,exports){
+},{"./../packUtil/packManager":21}],21:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -767,8 +958,11 @@ var skyboxInfoList = (function (_super) {
     return skyboxInfoList;
 })(list_1.default);
 exports.skyboxInfoList = skyboxInfoList;
-},{"./../classes/list":3}],19:[function(require,module,exports){
+},{"./../classes/list":3}],22:[function(require,module,exports){
 var stage = require("./stage");
+var stageEffectsModel_1 = require("./model/stageEffectsModel");
+var stageItems = require("./model/stageItemsModel");
+var stageAttrs = require("./model/stageAttrsModel");
 var prefab_1 = require("./classes/prefab");
 var data_1 = require("./data");
 var jsonPlanet_1 = require("./jsonPlanet");
@@ -780,18 +974,18 @@ var version_1 = require("./version");
  */
 function toJsonPlanet() {
     var result = new jsonPlanet_1.jsonPlanet(version_1.jsonPlanetVersion);
-    Object.keys(stage.stageEffects.skyboxes).forEach(function (i) {
-        result.skyboxes.push(stage.stageEffects.skyboxes[parseInt(i)]);
+    Object.keys(stageEffectsModel_1.stageEffects.skyboxes).forEach(function (i) {
+        result.skyboxes.push(stageEffectsModel_1.stageEffects.skyboxes[parseInt(i)]);
     });
-    var items = stage.items.getAllLayer();
+    var items = stageItems.getAllLayer();
     for (var i = 0; i < items.length; i++) {
         result.stage[i] = [];
         items[i].forEach(function (j) {
-            var item = stage.items.get(j);
-            if (stage.blockAttrs.containsBlock(j)) {
+            var item = stageItems.get(j);
+            if (stageAttrs.containsBlock(j)) {
                 // attrがあるとき
                 var attr = {};
-                var attrs = stage.blockAttrs.getBlock(j);
+                var attrs = stageAttrs.getBlock(j);
                 Object.keys(attrs).forEach(function (k) {
                     attr[attrs[parseInt(k)].attrName] = attrs[parseInt(k)].attrVal;
                 });
@@ -810,157 +1004,48 @@ exports.toJsonPlanet = toJsonPlanet;
  * 内部で、stage.itemsをクリアし、新しくpushします。
  */
 function fromJsonPlanet(jsonPla) {
-    stage.items.clear();
-    stage.blockAttrs.clear();
-    stage.resetId();
+    stageItems.clear();
+    stageAttrs.clear();
+    stageItems.resetId();
     for (var i = 0; i < jsonPla.stage.length; i++) {
         jsonPla.stage[i].forEach(function (j) {
-            var id = stage.getId();
+            var id = stageItems.getId();
             if (data_1.data.pack.objs.contains(j.blockName)) {
                 var objData = data_1.data.pack.objs.get(j.blockName);
-                stage.items.push(id, new prefab_1.default(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
+                stageItems.push(id, new prefab_1.default(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
             }
             else {
                 var blockData = data_1.data.pack.blocks.get(j.blockName);
-                stage.items.push(id, new prefab_1.default(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(data_1.data.defaultBlockSize), stage.toGridPos(data_1.data.defaultBlockSize)), i);
+                stageItems.push(id, new prefab_1.default(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(data_1.data.defaultBlockSize), stage.toGridPos(data_1.data.defaultBlockSize)), i);
             }
             if (typeof j.attr !== "undefined") {
                 Object.keys(j.attr).forEach(function (k) {
-                    stage.blockAttrs.push(id, stage.blockAttrs.getMaxAttrId(id), new stage.Attr(k, j.attr[k]));
+                    stageAttrs.push(id, stageAttrs.getMaxAttrId(id), new stageAttrs.Attr(k, j.attr[k]));
                 });
             }
         });
     }
     data_1.data.activeStageLayer = 0;
-    var result = new stage.StageEffects();
+    var result = new stageEffectsModel_1.StageEffects();
     // skyboxes
     result.skyboxes = jsonPla.skyboxes;
     return result;
 }
 exports.fromJsonPlanet = fromJsonPlanet;
-},{"./classes/prefab":4,"./data":8,"./jsonPlanet":15,"./stage":20,"./version":25}],20:[function(require,module,exports){
-var list_1 = require("./classes/list");
+},{"./classes/prefab":4,"./data":8,"./jsonPlanet":15,"./model/stageAttrsModel":17,"./model/stageEffectsModel":18,"./model/stageItemsModel":19,"./stage":23,"./version":28}],23:[function(require,module,exports){
 var canvas = require("./canvas");
 var image_1 = require("./image");
 var data_1 = require("./data");
 var rect_1 = require("./classes/rect");
 var event_1 = require("./event");
 var vector2_1 = require("./classes/vector2");
+var stageAttrsModel_1 = require("./model/stageAttrsModel");
+var stageItems = require("./model/stageItemsModel");
 /**
  * 現在のStage情報を保存します。
  */
 var stage;
 (function (stage) {
-    // StageEffect
-    var StageEffects = (function () {
-        function StageEffects() {
-            this.skyboxes = [""];
-        }
-        return StageEffects;
-    })();
-    stage.StageEffects = StageEffects;
-    stage.stageEffects = new StageEffects();
-    // Todo: このクラスを分離
-    var Attr = (function () {
-        function Attr(attrName, attrVal) {
-            if (attrName === void 0) { attrName = ""; }
-            if (attrVal === void 0) { attrVal = ""; }
-            this.attrName = attrName;
-            this.attrVal = attrVal;
-        }
-        return Attr;
-    })();
-    stage.Attr = Attr;
-    // Attrをブロックごとに管理
-    var blockAttrsList;
-    var blockAttrs;
-    (function (blockAttrs) {
-        function setAll(lst) {
-            blockAttrsList = lst;
-        }
-        blockAttrs.setAll = setAll;
-        function push(blockId, attrId, value) {
-            if (typeof blockAttrsList[blockId] === "undefined") {
-                blockAttrsList[blockId] = {};
-            }
-            blockAttrsList[blockId][attrId] = value;
-        }
-        blockAttrs.push = push;
-        function update(blockId, attrId, attr) {
-            if (attr instanceof Attr) {
-                // attrNameをAttrで指定するとき
-                blockAttrsList[blockId][attrId] = attr;
-            }
-            else {
-                // attrName、attrValで指定するとき
-                var cur = blockAttrsList[blockId][attrId];
-                if (typeof attr["attrName"] !== "undefined") {
-                    cur.attrName = attr["attrName"];
-                }
-                if (typeof attr["attrVal"] !== "undefined") {
-                    cur.attrVal = attr["attrVal"];
-                }
-                blockAttrsList[blockId][attrId] = cur;
-            }
-        }
-        blockAttrs.update = update;
-        function containsAttr(blockId, attrId) {
-            // blockIdがundefinedのときは、エラーが出ないよう、falseを返しておく。
-            if (typeof blockAttrsList[blockId] === "undefined") {
-                return false;
-            }
-            else {
-                return typeof blockAttrsList[blockId][attrId] !== "undefined";
-            }
-        }
-        blockAttrs.containsAttr = containsAttr;
-        function containsBlock(blockId) {
-            return typeof blockAttrsList[blockId] !== "undefined";
-        }
-        blockAttrs.containsBlock = containsBlock;
-        function removeAttr(blockId, attrId) {
-            delete blockAttrsList[blockId][attrId];
-        }
-        blockAttrs.removeAttr = removeAttr;
-        function removeBlock(blockId) {
-            delete blockAttrsList[blockId];
-        }
-        blockAttrs.removeBlock = removeBlock;
-        function getBlock(blockId) {
-            return blockAttrsList[blockId];
-        }
-        blockAttrs.getBlock = getBlock;
-        function getAttr(blockId, attrId) {
-            return blockAttrsList[blockId][attrId];
-        }
-        blockAttrs.getAttr = getAttr;
-        function getAll() {
-            return blockAttrsList;
-        }
-        blockAttrs.getAll = getAll;
-        function clear() {
-            blockAttrsList = {};
-        }
-        blockAttrs.clear = clear;
-        // attrId関係
-        function getMaxAttrId(blockId) {
-            if (typeof blockAttrsList[blockId] === "undefined") {
-                return 0;
-            }
-            else {
-                return Object.keys(blockAttrsList[blockId]).length;
-            }
-        }
-        blockAttrs.getMaxAttrId = getMaxAttrId;
-    })(blockAttrs = stage.blockAttrs || (stage.blockAttrs = {}));
-    /**
-     * ステージ上のすべてのPrefabのリスト
-     */
-    var prefabList;
-    /**
-     * stageLayer別のIdを格納
-     */
-    var prefabLayer;
     /**
      * アクティブなstageLayerを変えるほか、画面の切り替えも行います。
      */
@@ -970,90 +1055,20 @@ var stage;
         renderStage(stageLayer);
     }
     stage.changeActiveStageLayer = changeActiveStageLayer;
-    var items;
-    (function (items) {
-        /**
-         * 内部でpushStageLayerを呼び出します
-         */
-        function push(id, p, stageLayer) {
-            if (stageLayer === void 0) { stageLayer = 0; }
-            prefabList[id] = p;
-            pushStageLayer(stageLayer, id);
-        }
-        items.push = push;
-        function all() {
-            return prefabList;
-        }
-        items.all = all;
-        function remove(id, stageLayer) {
-            prefabLayer[stageLayer].splice(prefabLayer[stageLayer].indexOf(id), 1);
-            delete prefabList[id];
-        }
-        items.remove = remove;
-        function clear() {
-            prefabList = {};
-        }
-        items.clear = clear;
-        function get(id) {
-            return prefabList[id];
-        }
-        items.get = get;
-        /**
-         * レイヤーごとにItemを取得
-         */
-        function getLayerItems(stageLayer) {
-            var ids = getLayerIds(stageLayer);
-            var result = new list_1.default();
-            ids.forEach(function (i) {
-                result.push(i.toString(), get(i));
-            });
-            return result;
-        }
-        items.getLayerItems = getLayerItems;
-        function pushStageLayer(stageLayer, id) {
-            if (typeof prefabLayer[stageLayer] === "undefined") {
-                prefabLayer[stageLayer] = [];
-            }
-            prefabLayer[stageLayer].push(id);
-        }
-        items.pushStageLayer = pushStageLayer;
-        function getLayerIds(stageLayer) {
-            if (typeof prefabLayer[stageLayer] === "undefined") {
-                prefabLayer[stageLayer] = [];
-            }
-            return prefabLayer[stageLayer];
-        }
-        items.getLayerIds = getLayerIds;
-        function getAllLayer() {
-            return prefabLayer;
-        }
-        items.getAllLayer = getAllLayer;
-    })(items = stage.items || (stage.items = {}));
-    var maxId;
     function init() {
-        prefabList = {};
-        blockAttrsList = {};
-        prefabLayer = new Array();
-        maxId = 0;
+        stageItems.init();
+        stageAttrsModel_1.init();
     }
     init();
-    function getId() {
-        return maxId++;
-    }
-    stage.getId = getId;
-    function resetId() {
-        maxId = 0;
-    }
-    stage.resetId = resetId;
     /**
      * ステージをstageLayerに基づき描画します。
      */
     function renderStage(renderStageLayer) {
         if (renderStageLayer === void 0) { renderStageLayer = 0; }
         canvas.clear();
-        var l = items.getLayerItems(renderStageLayer).getAll();
+        var l = stageItems.getLayerItems(renderStageLayer).getAll();
         Object.keys(l).forEach(function (i) {
-            var item = items.get(parseInt(i));
+            var item = stageItems.get(parseInt(i));
             var x = stage.scrollX + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridX), stage.toMousePos(item.gridW));
             var y = stage.scrollY + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridY), stage.toMousePos(item.gridH));
             var width = stage.toMousePos(item.gridW);
@@ -1119,8 +1134,8 @@ var stage;
         var breakException = {};
         // breakするため
         try {
-            Object.keys(items.getLayerItems(stageLayer).getAll()).forEach(function (i) {
-                var item = items.get(parseInt(i));
+            Object.keys(stageItems.getLayerItems(stageLayer).getAll()).forEach(function (i) {
+                var item = stageItems.get(parseInt(i));
                 if (grid.x >= item.gridX && grid.x < item.gridX + item.gridW &&
                     grid.y >= item.gridY && grid.y < item.gridY + item.gridH) {
                     result = new getPrefabFromGridDetails(true, parseInt(i), item);
@@ -1152,7 +1167,7 @@ var stage;
     stage.toDrawRect = toDrawRect;
 })(stage || (stage = {}));
 module.exports = stage;
-},{"./canvas":2,"./classes/list":3,"./classes/rect":5,"./classes/vector2":7,"./data":8,"./event":12,"./image":13}],21:[function(require,module,exports){
+},{"./canvas":2,"./classes/rect":5,"./classes/vector2":7,"./data":8,"./event":12,"./image":13,"./model/stageAttrsModel":17,"./model/stageItemsModel":19}],24:[function(require,module,exports){
 var image_1 = require("./image");
 var trayBlockDetails_1 = require("./classes/trayBlockDetails");
 var data_1 = require("./data");
@@ -1233,7 +1248,7 @@ function initTrayObj(finishedOne) {
     });
 }
 exports.initTrayObj = initTrayObj;
-},{"./classes/trayBlockDetails":6,"./data":8,"./event":12,"./image":13,"./packUtil/packManager":18}],22:[function(require,module,exports){
+},{"./classes/trayBlockDetails":6,"./data":8,"./event":12,"./image":13,"./packUtil/packManager":21}],25:[function(require,module,exports){
 /// <reference path="../../definitely/move.d.ts" />
 function showTrayFull() {
     move(".pla-footer").set("height", "100%").duration("0.5s").end();
@@ -1267,7 +1282,7 @@ function hideLoading() {
         .end();
 }
 exports.hideLoading = hideLoading;
-},{}],23:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var initDOM_1 = require("./../initDOM");
 var guideElement;
 initDOM_1.default(function () {
@@ -1291,7 +1306,7 @@ function hide() {
     guideElement.style.visibility = "hidden";
 }
 exports.hide = hide;
-},{"./../initDOM":14}],24:[function(require,module,exports){
+},{"./../initDOM":14}],27:[function(require,module,exports){
 /**
  * Todo: 必要性
  * - react?
@@ -1313,14 +1328,14 @@ function obj2SelectElem(obj) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = obj2SelectElem;
-},{}],25:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /**
  * Planetのバージョン情報
  */
 exports.version = "v1.0";
 exports.author = "shundroid";
 exports.jsonPlanetVersion = 0.1;
-},{}],26:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var data_1 = require("./modules/data");
@@ -1333,6 +1348,8 @@ var tray = require("./modules/tray");
 var packManager_1 = require("./modules/packUtil/packManager");
 var planet_1 = require("./modules/planet");
 var stage = require("./modules/stage");
+var stageEffectsModel_1 = require("./modules/model/stageEffectsModel");
+var stageAttrs = require("./modules/model/stageAttrsModel");
 var v = require("./modules/version");
 var evElems_1 = require("./modules/evElems");
 var anim = require("./modules/ui/anim");
@@ -1452,7 +1469,7 @@ var ui;
     function clickImport() {
         // fromJSONPlanet内で、d.activeStageLayerは0になる。
         var effects = planet_1.fromJsonPlanet(jsonPlanet_1.jsonPlanet.importJson(JSON.parse(document.getElementById("pla-io").value)));
-        stage.stageEffects = effects;
+        stageEffectsModel_1.setStageEffects(effects);
         setSkybox(packManager_1.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
         stage.renderStage(0);
     }
@@ -1531,13 +1548,13 @@ var ui;
     }
     ui.clickConvertOldFile = clickConvertOldFile;
     function changeSkybox(e) {
-        stage.stageEffects.skyboxes[data_1.data.activeStageLayer] = e.target.value;
-        setSkybox(packManager_1.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(stage.stageEffects.skyboxes[data_1.data.activeStageLayer]).data.filename);
+        stageEffectsModel_1.stageEffects.skyboxes[data_1.data.activeStageLayer] = e.target.value;
+        setSkybox(packManager_1.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(stageEffectsModel_1.stageEffects.skyboxes[data_1.data.activeStageLayer]).data.filename);
     }
     ui.changeSkybox = changeSkybox;
     function clickAddAttr() {
-        var attrId = stage.blockAttrs.getMaxAttrId(data_1.data.editingBlockId);
-        stage.blockAttrs.push(data_1.data.editingBlockId, attrId, new stage.Attr());
+        var attrId = stageAttrs.getMaxAttrId(data_1.data.editingBlockId);
+        stageAttrs.push(data_1.data.editingBlockId, attrId, new stageAttrs.Attr());
         editBlock_1.renderAttributeUI(attrId);
     }
     ui.clickAddAttr = clickAddAttr;
@@ -1546,14 +1563,14 @@ var ui;
     //  }
     function changeActiveStageLayer(e) {
         stage.changeActiveStageLayer(parseInt(e.target.value));
-        if (typeof stage.stageEffects.skyboxes[data_1.data.activeStageLayer] === "undefined") {
-            stage.stageEffects.skyboxes[data_1.data.activeStageLayer] = data_1.data.pack.editor.defaultSkybox;
+        if (typeof stageEffectsModel_1.stageEffects.skyboxes[data_1.data.activeStageLayer] === "undefined") {
+            stageEffectsModel_1.stageEffects.skyboxes[data_1.data.activeStageLayer] = data_1.data.pack.editor.defaultSkybox;
         }
-        setSkybox(packManager_1.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(stage.stageEffects.skyboxes[data_1.data.activeStageLayer]).data.filename);
-        document.getElementById("stg-skybox").value = stage.stageEffects.skyboxes[data_1.data.activeStageLayer];
+        setSkybox(packManager_1.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(stageEffectsModel_1.stageEffects.skyboxes[data_1.data.activeStageLayer]).data.filename);
+        document.getElementById("stg-skybox").value = stageEffectsModel_1.stageEffects.skyboxes[data_1.data.activeStageLayer];
     }
     ui.changeActiveStageLayer = changeActiveStageLayer;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/packUtil/packManager":18,"./modules/planet":19,"./modules/stage":20,"./modules/tray":21,"./modules/ui/anim":22,"./modules/util":24,"./modules/version":25}]},{},[1]);
+},{"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/model/stageAttrsModel":17,"./modules/model/stageEffectsModel":18,"./modules/packUtil/packManager":21,"./modules/planet":22,"./modules/stage":23,"./modules/tray":24,"./modules/ui/anim":25,"./modules/util":27,"./modules/version":28}]},{},[1]);

@@ -1,6 +1,7 @@
 import list from "./classes/list";
 import {packModule} from "./packUtil/packManager";
 import TrayBlockDetails from "./classes/trayBlockDetails";
+import {setActiveStageLayer} from "./model/editorModel";
 
 /**
  * Planetの情報を保存します。
@@ -18,7 +19,6 @@ class data {
   static isFullscreenTray:boolean;
   static isShowInspector:boolean;
   static editingBlockId:number;
-  static activeStageLayer:number;
   
   /**
    * 全ての Data メンバーを、初期化します。
@@ -33,7 +33,7 @@ class data {
     this.isObjMode = false;
     this.isFullscreenTray = false;
     this.isShowInspector = false;
-    this.activeStageLayer = 0;
+    setActiveStageLayer(0);
   }
 }
 export { data };

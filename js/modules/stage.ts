@@ -8,6 +8,7 @@ import {addEventListener} from "./event";
 import Vector2 from "./classes/vector2";
 import {init as stageAttrsInit} from "./model/stageAttrsModel";
 import * as stageItems from "./model/stageItemsModel";
+import {setActiveStageLayer, activeStageLayer} from "./model/editorModel";
 
 /**
  * 現在のStage情報を保存します。
@@ -18,7 +19,7 @@ namespace stage {
    * アクティブなstageLayerを変えるほか、画面の切り替えも行います。
    */
   export function changeActiveStageLayer(stageLayer:number) {
-    d.activeStageLayer = stageLayer;
+    setActiveStageLayer(stageLayer);
     // 描画
     renderStage(stageLayer);
   }
@@ -58,7 +59,7 @@ namespace stage {
     isResizeRequest = true;
     resizeTimerId = setTimeout(() => {
       isResizeRequest = false;
-      renderStage(d.activeStageLayer);
+      renderStage(activeStageLayer);
     }, 100);
   });
   export class gridDetail {

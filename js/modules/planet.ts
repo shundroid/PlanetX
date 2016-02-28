@@ -6,6 +6,7 @@ import prefab from "./classes/prefab";
 import {data as d} from "./data";
 import {jsonPlanet, jsonBlockItem} from "./jsonPlanet";
 import {jsonPlanetVersion} from "./version";
+import {setActiveStageLayer} from "./model/editorModel";
 
 // stageから、compilerを利用して、外部形式へ入出力する機能を提供します。
   
@@ -64,7 +65,7 @@ export function fromJsonPlanet(jsonPla: jsonPlanet) {
       }
     });
   }
-  d.activeStageLayer = 0;
+  setActiveStageLayer(0);
   var result = new StageEffects();
   // skyboxes
   result.skyboxes = jsonPla.skyboxes;

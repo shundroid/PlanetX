@@ -2,7 +2,7 @@ import {data as d} from "./data";
 import list from "./classes/list";
 import {getPackPath} from "./packUtil/packManager";
 import Vector2 from "./classes/vector2";
-import image = require("./image");
+import image from "./image";
 
 /**
  * Todo: 必要性 -> image.tsとの統合

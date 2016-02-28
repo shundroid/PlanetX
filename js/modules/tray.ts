@@ -1,7 +1,7 @@
-import image = require("./image");
+import image from "./image";
 import TrayBlockDetails from "./classes/trayBlockDetails";
 import {data as d} from "./data";
-import event = require("./event");
+import {raiseEvent} from "./event";
 import {getPackPath} from "./packUtil/packManager";
 
 /**
@@ -25,7 +25,7 @@ namespace tray {
         var item = list[i];
         var li = document.createElement("div");
         li.classList.add("tray-list", "tray-list-block");
-        li.addEventListener("mousedown", (e) => { event.raiseEvent("ui_clickTray", e); });
+        li.addEventListener("mousedown", (e) => { raiseEvent("ui_clickTray", e); });
         var img = document.createElement("img");
         img.src = getPackPath(d.defaultPackName) + d.pack.blocks.get(item).data.filename;
         img.onload = () => {
@@ -52,7 +52,7 @@ namespace tray {
         var item = list[i];
         var li = document.createElement("div");
         li.classList.add("tray-list", "tray-list-obj");
-        li.addEventListener("click", (e) => { event.raiseEvent("ui_clickTray", e); });
+        li.addEventListener("click", (e) => { raiseEvent("ui_clickTray", e); });
         var img = document.createElement("img");
         img.src = getPackPath(d.defaultPackName) + d.pack.objs.get(item).data.filename;
         img.onload = () => {

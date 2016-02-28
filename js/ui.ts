@@ -2,8 +2,8 @@
 /// <reference path="definitely/move.d.ts" />
 import {data as d} from "./modules/data";
 import initDOM = require("./modules/initDOM");
-import event = require("./modules/event");
-import el = require("./modules/elem");
+import * as event from "./modules/event";
+import {addEventListenerforQuery, forEachforQuery} from "./modules/elem";
 import u = require("./modules/util");
 import list from "./modules/classes/list";
 import Vector2 from "./modules/classes/vector2";
@@ -12,7 +12,7 @@ import {getPackPath} from "./modules/packUtil/packManager";
 import planet = require("./modules/planet");
 import stage = require("./modules/stage");
 import v = require("./modules/version");
-import evElems = require("./modules/evElems");
+import evElems from "./modules/evElems";
 import * as anim from "./modules/ui/anim";
 import {renderAttributeUI} from "./modules/editBlock";
 import jsonPlanet = require("./modules/jsonPlanet");
@@ -54,25 +54,18 @@ namespace ui {
           }
         }
       }
-      el.forEachforQuery(".pack-select", (i) => {
+      forEachforQuery(".pack-select", (i) => {
         var elem = <HTMLSelectElement>i;
         elem.innerHTML = u.obj2SelectElem((<list<any>>(<any>d.pack)[elem.dataset["items"]]).toSimple());
-        // ev-inputで実装
-//        if (elem.dataset["change"]) {
-//          elem.addEventListener("change", (<any>ui)[elem.dataset["change"]]);
-//        }
-//        if (elem.dataset["default"]) {
-//          elem.value = elem.dataset["default"];
-//        }
       });
       (<HTMLSelectElement>document.getElementById("stg-skybox")).value = d.pack.editor.defaultSkybox;
     });
   }
   initDOM(() => {
-    evElems.set(ui);
+    evElems(ui);
     document.getElementById("pla-ver").innerHTML = `Planet ${v.version} by ${v.author}`;
-    el.addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
-    el.addEventListenerforQuery(".tray-list-tool", "mousedown", clickTrayTool);
+    addEventListenerforQuery(".ins-show-btn", "click", clickInsShowBtn);
+    addEventListenerforQuery(".tray-list-tool", "mousedown", clickTrayTool);
     
     // movejsを読む
     var movejs = document.createElement("script");

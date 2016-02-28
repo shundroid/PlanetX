@@ -1,14 +1,11 @@
 /**
- * #41 lodashとかでかぶるかな・・
+ * (#41) lodashとかでかぶるかな・・
  */
-namespace elem {
-  export function addEventListenerforQuery(query:string, eventName:string, listener:(...param:any[])=>void) {
-    forEachforQuery(query, (i) => {
-      i.addEventListener(eventName, listener);
-    });
-  }
-  export function forEachforQuery(query:string, listener:(i:Element)=>void) {
-    Array.prototype.forEach.call(document.querySelectorAll(query), listener);
-  }
+export function addEventListenerforQuery(query:string, eventName:string, listener:(...param:any[])=>void) {
+  forEachforQuery(query, (i) => {
+    i.addEventListener(eventName, listener);
+  });
 }
-export = elem;
+export function forEachforQuery(query:string, listener:(i:Element)=>void) {
+  Array.prototype.forEach.call(document.querySelectorAll(query), listener);
+}

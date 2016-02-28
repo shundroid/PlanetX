@@ -1,10 +1,10 @@
 import list from "./classes/list";
 import prefab from "./classes/prefab";
 import * as canvas from "./canvas";
-import image = require("./image");
+import image from "./image";
 import {data as d} from "./data";
 import rect from "./classes/rect";
-import event = require("./event");
+import {addEventListener} from "./event";
 import Vector2 from "./classes/vector2";
 
 /**
@@ -208,7 +208,7 @@ namespace stage {
   
   var isResizeRequest = false;
   var resizeTimerId:number;
-  event.addEventListener("resize", () => {
+  addEventListener("resize", () => {
     if (isResizeRequest) {
       clearTimeout(resizeTimerId);
     }

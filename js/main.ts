@@ -13,7 +13,7 @@ import Vector2 from "./modules/classes/vector2";
 import Rect from "./modules/classes/rect";
 import canvas = require("./modules/canvas");
 import editBlock = require("./modules/editBlock");
-import fGuide = require("./modules/ui/focusGuide");
+import * as fGuide from "./modules/ui/focusGuide";
 
 /**
  * メインとなる処理を行います

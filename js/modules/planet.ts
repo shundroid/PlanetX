@@ -1,4 +1,7 @@
 import stage = require("./stage");
+import {stageEffects, StageEffects} from "./model/stageEffectsModel";
+import * as stageItems from "./model/stageItemsModel";
+import * as stageAttrs from "./model/stageAttrsModel";
 import prefab from "./classes/prefab";
 import {data as d} from "./data";
 import {jsonPlanet, jsonBlockItem} from "./jsonPlanet";
@@ -12,18 +15,18 @@ import {jsonPlanetVersion} from "./version";
  */
 export function toJsonPlanet() {
   var result = new jsonPlanet(jsonPlanetVersion);
-  Object.keys(stage.stageEffects.skyboxes).forEach(i => {
-    result.skyboxes.push(stage.stageEffects.skyboxes[parseInt(i)]);
+  Object.keys(stageEffects.skyboxes).forEach(i => {
+    result.skyboxes.push(stageEffects.skyboxes[parseInt(i)]);
   });
-  var items = stage.items.getAllLayer();
+  var items = stageItems.getAllLayer();
   for (var i = 0; i < items.length; i++)  {
     result.stage[i] = [];
     items[i].forEach(j => {
-      var item = stage.items.get(j);
-      if (stage.blockAttrs.containsBlock(j)) {
+      var item = stageItems.get(j);
+      if (stageAttrs.containsBlock(j)) {
         // attrがあるとき
         var attr:{ [key: string]: string } = {};
-        var attrs = stage.blockAttrs.getBlock(j);
+        var attrs = stageAttrs.getBlock(j);
         Object.keys(attrs).forEach(k => {
           attr[attrs[parseInt(k)].attrName] = attrs[parseInt(k)].attrVal;
         });
@@ -41,28 +44,28 @@ export function toJsonPlanet() {
  * 内部で、stage.itemsをクリアし、新しくpushします。
  */
 export function fromJsonPlanet(jsonPla: jsonPlanet) {
-  stage.items.clear();
-  stage.blockAttrs.clear();
-  stage.resetId();
+  stageItems.clear();
+  stageAttrs.clear();
+  stageItems.resetId();
   for (var i = 0; i < jsonPla.stage.length; i++) {
     jsonPla.stage[i].forEach(j => {
-      var id = stage.getId();
+      var id = stageItems.getId();
       if (d.pack.objs.contains(j.blockName)) {
         let objData = d.pack.objs.get(j.blockName);
-        stage.items.push(id, new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
+        stageItems.push(id, new prefab(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
       } else {
         let blockData = d.pack.blocks.get(j.blockName);
-        stage.items.push(id, new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
+        stageItems.push(id, new prefab(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(d.defaultBlockSize), stage.toGridPos(d.defaultBlockSize)), i);
       }
       if (typeof j.attr !== "undefined") {
         Object.keys(j.attr).forEach(k => {
-          stage.blockAttrs.push(id, stage.blockAttrs.getMaxAttrId(id), new stage.Attr(k, j.attr[k]));
+          stageAttrs.push(id, stageAttrs.getMaxAttrId(id), new stageAttrs.Attr(k, j.attr[k]));
         });
       }
     });
   }
   d.activeStageLayer = 0;
-  var result = new stage.StageEffects();
+  var result = new StageEffects();
   // skyboxes
   result.skyboxes = jsonPla.skyboxes;
   

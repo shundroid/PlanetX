@@ -6,112 +6,14 @@ import {data as d} from "./data";
 import rect from "./classes/rect";
 import {addEventListener} from "./event";
 import Vector2 from "./classes/vector2";
+import {init as stageAttrsInit} from "./model/stageAttrsModel";
+import * as stageItems from "./model/stageItemsModel";
 
 /**
  * 現在のStage情報を保存します。
  */
 namespace stage {
-  
-  // StageEffect
-  export class StageEffects {
-    public skyboxes:string[];
-    constructor() {
-      this.skyboxes = [ "" ];
-    }
-  }
-  export var stageEffects:StageEffects = new StageEffects();
-  
-  // Todo: このクラスを分離
-  export class Attr {
-    constructor(
-      public attrName: string = "",
-      public attrVal: string = ""
-    ) { }
-  }
-  
-  // Attrをブロックごとに管理
-  var blockAttrsList:{[key: number]: {[key: number]: Attr}};
-  export namespace blockAttrs {
-    export function setAll(lst:{[key: string]: {[key: number]: Attr}}) {
-      blockAttrsList = lst;
-    }
-    export function push(blockId: number, attrId: number, value:Attr) {
-      if (typeof blockAttrsList[blockId] === "undefined") {
-        blockAttrsList[blockId] = {};
-      }
-      blockAttrsList[blockId][attrId] = value;
-    }
-    
-    export function update(blockId: number, attrId: number, attr:{[key: string]: string}): void;
-    export function update(blockId: number, attrId: number, attr:Attr): void;
-    
-    export function update(blockId: number, attrId: number, attr:any): void {
-      if (attr instanceof Attr) {
-        // attrNameをAttrで指定するとき
-        blockAttrsList[blockId][attrId] = <Attr>attr;
-      } else {
-        // attrName、attrValで指定するとき
-        var cur = blockAttrsList[blockId][attrId];
-        if (typeof attr["attrName"] !== "undefined") {
-          cur.attrName = attr["attrName"];
-        }
-        if (typeof attr["attrVal"] !== "undefined") {
-          cur.attrVal = attr["attrVal"];
-        }
-        blockAttrsList[blockId][attrId] = cur;
-      }
-    }
-    
-    export function containsAttr(blockId: number, attrId: number) {
-      // blockIdがundefinedのときは、エラーが出ないよう、falseを返しておく。
-      if (typeof blockAttrsList[blockId] === "undefined") {
-        return false;
-      } else {
-        return typeof blockAttrsList[blockId][attrId] !== "undefined";
-      }
-    }
-    export function containsBlock(blockId: number) {
-      return typeof blockAttrsList[blockId] !== "undefined";
-    }
-    export function removeAttr(blockId: number, attrId: number) {
-      delete blockAttrsList[blockId][attrId];
-    }
-    export function removeBlock(blockId: number) {
-      delete blockAttrsList[blockId];
-    }
-    export function getBlock(blockId: number) {
-      return blockAttrsList[blockId];
-    }
-    export function getAttr(blockId: number, attrId: number) {
-      return blockAttrsList[blockId][attrId];
-    }
-    export function getAll() {
-      return blockAttrsList;
-    }
-    export function clear() {
-      blockAttrsList = {};
-    }
-    
-    // attrId関係
-    export function getMaxAttrId(blockId: number) {
-      if (typeof blockAttrsList[blockId] === "undefined") {
-        return 0;
-      } else {
-        return Object.keys(blockAttrsList[blockId]).length;
-      }
-    }
-  }
-  
-  /**
-   * ステージ上のすべてのPrefabのリスト
-   */
-  var prefabList:{[key: number]: prefab};
-  
-  /**
-   * stageLayer別のIdを格納
-   */
-  var prefabLayer:number[][];
-  
+
   /**
    * アクティブなstageLayerを変えるほか、画面の切り替えも行います。
    */
@@ -121,79 +23,20 @@ namespace stage {
     renderStage(stageLayer);
   }
   
-  export namespace items {
-    
-    /**
-     * 内部でpushStageLayerを呼び出します
-     */
-    export function push(id:number, p:prefab, stageLayer:number=0) {
-      prefabList[id] =  p;
-      pushStageLayer(stageLayer, id);
-    }
-    export function all() {
-      return prefabList;
-    }
-    export function remove(id:number, stageLayer: number) {
-      prefabLayer[stageLayer].splice(prefabLayer[stageLayer].indexOf(id), 1);
-      delete prefabList[id];
-    }
-    export function clear() {
-      prefabList = {};
-    }
-    export function get(id:number) {
-      return prefabList[id];
-    }
-    /**
-     * レイヤーごとにItemを取得
-     */
-    export function getLayerItems(stageLayer:number) {
-      var ids = getLayerIds(stageLayer);
-      var result = new list<prefab>();
-      ids.forEach(i => {
-        result.push(i.toString(), get(i));
-      });
-      return result;
-    }
-    export function pushStageLayer(stageLayer: number, id: number) {
-      if (typeof prefabLayer[stageLayer] === "undefined") {
-        prefabLayer[stageLayer] = [];
-      }
-      prefabLayer[stageLayer].push(id);
-    }
-    export function getLayerIds(stageLayer: number) {
-      if (typeof prefabLayer[stageLayer] === "undefined") {
-        prefabLayer[stageLayer] = [];
-      }
-      return prefabLayer[stageLayer];
-    }
-    export function getAllLayer() {
-      return prefabLayer;
-    }
-  }
-  var maxId:number;
   function init() {
-    prefabList = {};
-    blockAttrsList = {};
-    prefabLayer = new Array<Array<number>>();
-    maxId = 0;
+    stageItems.init();
+    stageAttrsInit();
   }
   init();
-  
-  export function getId() {
-    return maxId++;
-  }
-  export function resetId() {
-    maxId = 0;
-  }
   
   /**
    * ステージをstageLayerに基づき描画します。
    */
   export function renderStage(renderStageLayer: number = 0) {
     canvas.clear();
-    var l = items.getLayerItems(renderStageLayer).getAll();
+    var l = stageItems.getLayerItems(renderStageLayer).getAll();
     Object.keys(l).forEach(i => {
-      var item = items.get(parseInt(i));
+      var item = stageItems.get(parseInt(i));
       var x = stage.scrollX + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridX), stage.toMousePos(item.gridW));
       var y = stage.scrollY + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridY), stage.toMousePos(item.gridH));
       var width = stage.toMousePos(item.gridW);
@@ -248,8 +91,8 @@ namespace stage {
     var breakException = {};
     // breakするため
     try {
-      Object.keys(items.getLayerItems(stageLayer).getAll()).forEach(i => {
-        var item = items.get(parseInt(i));
+      Object.keys(stageItems.getLayerItems(stageLayer).getAll()).forEach(i => {
+        var item = stageItems.get(parseInt(i));
         if (grid.x >= item.gridX && grid.x < item.gridX + item.gridW &&
           grid.y >= item.gridY && grid.y < item.gridY + item.gridH) {
           result = new getPrefabFromGridDetails(true, parseInt(i), item);

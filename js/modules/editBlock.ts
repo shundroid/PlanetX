@@ -1,6 +1,7 @@
 import Vector2 from "./classes/vector2";
 import {data as d} from "./data";
 import stage = require("./stage");
+import * as stageAttrs from "./model/stageAttrsModel";
 
 /**
  * Inspector内、EditBlockのデータ化
@@ -33,10 +34,10 @@ export function updateEditBlockUI() {
   document.getElementById("ed-pos").textContent = `Pos: ${currentEditBlock.blockPos.x}, ${currentEditBlock.blockPos.y}`;
   document.getElementById("ed-id").textContent = `ID: ${currentEditBlock.blockId}`;
   (<HTMLElement>document.getElementsByClassName("ed-attr-view")[0]).innerHTML = "";
-  if (stage.blockAttrs.containsBlock(d.editingBlockId)) {
-    var l = stage.blockAttrs.getBlock(d.editingBlockId);
+  if (stageAttrs.containsBlock(d.editingBlockId)) {
+    var l = stageAttrs.getBlock(d.editingBlockId);
     Object.keys(l).forEach(i => {
-      var attr = stage.blockAttrs.getAttr(d.editingBlockId, parseInt(i));
+      var attr = stageAttrs.getAttr(d.editingBlockId, parseInt(i));
       renderAttributeUI(parseInt(i), attr.attrName, attr.attrVal);
     });
   }
@@ -89,16 +90,16 @@ export function renderAttributeUI(attrId: number, inputName?: string, inputValue
 
 export function changeAttrVal(e:Event) {
   console.log("hg!!");
-  // Todo: [x] blockAttrsで、inputNameかinputValかどちらかを変えられるように、オーバーロードを作る
-  stage.blockAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")), { attrVal: (<HTMLInputElement>e.target).value });
+  // Todo: [x] stageAttrsで、inputNameかinputValかどちらかを変えられるように、オーバーロードを作る
+  stageAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")), { attrVal: (<HTMLInputElement>e.target).value });
 }
 
 export function changeAttrName(e:Event) {
-  stage.blockAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-name-", "")), { attrName: (<HTMLInputElement>e.target).value });
+  stageAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-name-", "")), { attrName: (<HTMLInputElement>e.target).value });
 }
 
 export function clickRemoveAttr(e:MouseEvent) {
   var attrId = parseInt((<HTMLElement>e.target).id.replace("ed-attr-remove-", ""));
-  stage.blockAttrs.removeAttr(d.editingBlockId, attrId);
+  stageAttrs.removeAttr(d.editingBlockId, attrId);
   document.getElementsByClassName("ed-attr-view")[0].removeChild(document.getElementById(`ed-attr-field-${attrId}`));
 }

@@ -1,5 +1,5 @@
 /// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
-import initDOM = require("./initDOM");
+import initDOM from "./initDOM";
 import Rect from "./classes/rect";
 
 /**

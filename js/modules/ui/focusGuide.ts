@@ -1,5 +1,5 @@
 import Vector2 from "./../classes/vector2";
-import initDOM = require("./../initDOM");
+import initDOM from "./../initDOM";
 var guideElement:HTMLDivElement;
 initDOM(() => {
   guideElement = document.createElement("div");

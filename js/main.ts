@@ -1,5 +1,5 @@
 import ui = require("./ui");
-import initDOM = require("./modules/initDOM");
+import initDOM from "./modules/initDOM";
 import packLoader from "./modules/packUtil/packLoader";
 import * as packManager from "./modules/packUtil/packManager";
 import * as event from "./modules/event";

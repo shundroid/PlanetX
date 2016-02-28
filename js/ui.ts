@@ -1,7 +1,7 @@
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 import {data as d} from "./modules/data";
-import initDOM = require("./modules/initDOM");
+import initDOM from "./modules/initDOM";
 import * as event from "./modules/event";
 import {addEventListenerforQuery, forEachforQuery} from "./modules/elem";
 import u = require("./modules/util");
@@ -15,7 +15,7 @@ import v = require("./modules/version");
 import evElems from "./modules/evElems";
 import * as anim from "./modules/ui/anim";
 import {renderAttributeUI} from "./modules/editBlock";
-import jsonPlanet = require("./modules/jsonPlanet");
+import {jsonPlanet} from "./modules/jsonPlanet";
 
 /**
  * UIに関する処理を行います。
@@ -123,7 +123,7 @@ namespace ui {
   }
   export function clickImport() {
     // fromJSONPlanet内で、d.activeStageLayerは0になる。
-    var effects = planet.fromJsonPlanet(jsonPlanet.jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
+    var effects = planet.fromJsonPlanet(jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
     stage.stageEffects = effects;
     setSkybox(getPackPath(d.defaultPackName) + d.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
     stage.renderStage(0);
@@ -199,7 +199,7 @@ namespace ui {
   
   export function clickConvertOldFile() {
     (<HTMLTextAreaElement>document.getElementById("conv-new")).value = 
-      JSON.stringify(jsonPlanet.jsonPlanet.fromCSV((<HTMLTextAreaElement>document.getElementById("conv-old")).value).exportJson());
+      JSON.stringify(jsonPlanet.fromCSV((<HTMLTextAreaElement>document.getElementById("conv-old")).value).exportJson());
   }
   
   export function changeSkybox(e:Event) {

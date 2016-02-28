@@ -1,7 +1,7 @@
 import stage = require("./stage");
 import prefab from "./classes/prefab";
 import {data as d} from "./data";
-import jsonPlanet = require("./jsonPlanet");
+import {jsonPlanet, jsonBlockItem} from "./jsonPlanet";
 import version = require("./version");
 
 /**
@@ -14,7 +14,7 @@ namespace planet {
    * jsonPlanetから、jsonに変換するのには、jsonPlanet.exportJson()を利用してください。
    */
   export function toJsonPlanet() {
-    var result = new jsonPlanet.jsonPlanet(version.jsonPlanetVersion);
+    var result = new jsonPlanet(version.jsonPlanetVersion);
     Object.keys(stage.stageEffects.skyboxes).forEach(i => {
       result.skyboxes.push(stage.stageEffects.skyboxes[parseInt(i)]);
     });
@@ -30,9 +30,9 @@ namespace planet {
           Object.keys(attrs).forEach(k => {
             attr[attrs[parseInt(k)].attrName] = attrs[parseInt(k)].attrVal;
           });
-          result.stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString(), attr));          
+          result.stage[i].push(new jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString(), attr));          
         } else {
-          result.stage[i].push(new jsonPlanet.jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
+          result.stage[i].push(new jsonBlockItem(item.blockName, item.gridX, item.gridY, j.toString()));
         }
       });
     }
@@ -43,7 +43,7 @@ namespace planet {
    * jsonPlanetを、stageへ変換します。
    * 内部で、stage.itemsをクリアし、新しくpushします。
    */
-  export function fromJsonPlanet(jsonPla: jsonPlanet.jsonPlanet) {
+  export function fromJsonPlanet(jsonPla: jsonPlanet) {
     stage.items.clear();
     stage.blockAttrs.clear();
     stage.resetId();

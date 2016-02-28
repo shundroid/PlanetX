@@ -4,14 +4,14 @@ import {data as d} from "./modules/data";
 import initDOM from "./modules/initDOM";
 import * as event from "./modules/event";
 import {addEventListenerforQuery, forEachforQuery} from "./modules/elem";
-import u = require("./modules/util");
+import obj2SelectElem from "./modules/util";
 import list from "./modules/classes/list";
 import Vector2 from "./modules/classes/vector2";
 import * as tray from "./modules/tray";
 import {getPackPath} from "./modules/packUtil/packManager";
 import {toJsonPlanet, fromJsonPlanet} from "./modules/planet";
 import stage = require("./modules/stage");
-import v = require("./modules/version");
+import * as v from "./modules/version";
 import evElems from "./modules/evElems";
 import * as anim from "./modules/ui/anim";
 import {renderAttributeUI} from "./modules/editBlock";
@@ -56,7 +56,7 @@ namespace ui {
       }
       forEachforQuery(".pack-select", (i) => {
         var elem = <HTMLSelectElement>i;
-        elem.innerHTML = u.obj2SelectElem((<list<any>>(<any>d.pack)[elem.dataset["items"]]).toSimple());
+        elem.innerHTML = obj2SelectElem((<list<any>>(<any>d.pack)[elem.dataset["items"]]).toSimple());
       });
       (<HTMLSelectElement>document.getElementById("stg-skybox")).value = d.pack.editor.defaultSkybox;
     });

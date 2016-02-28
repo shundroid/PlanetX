@@ -1,5 +1,5 @@
 import list from "./classes/list";
-import version = require("./version");
+import {jsonPlanetVersion} from "./version";
 
 /**
  * 構造化した、jsonPlanet関連を提供します。
@@ -56,7 +56,7 @@ export class jsonPlanet {
     return result;
   }
   static importJson(json:any) {
-    var result = new jsonPlanet(json["jsonPlanetVersion"] || version.jsonPlanetVersion);
+    var result = new jsonPlanet(json["jsonPlanetVersion"] || jsonPlanetVersion);
     
     // stage
     var stage = (<Array<any>>json["stage"]);
@@ -79,7 +79,7 @@ export class jsonPlanet {
    * 昔はCSVを使っていたものです・・
    */
   static fromCSV(csv:string):jsonPlanet {
-    var result = new jsonPlanet(version.jsonPlanetVersion, [[]]);
+    var result = new jsonPlanet(jsonPlanetVersion, [[]]);
     var lines = csv.split("\n");
     lines.forEach(i => {
       if (i === "") {

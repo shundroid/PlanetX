@@ -2,7 +2,7 @@ import stage = require("./stage");
 import prefab from "./classes/prefab";
 import {data as d} from "./data";
 import {jsonPlanet, jsonBlockItem} from "./jsonPlanet";
-import version = require("./version");
+import {jsonPlanetVersion} from "./version";
 
 // stageから、compilerを利用して、外部形式へ入出力する機能を提供します。
   
@@ -11,7 +11,7 @@ import version = require("./version");
  * jsonPlanetから、jsonに変換するのには、jsonPlanet.exportJson()を利用してください。
  */
 export function toJsonPlanet() {
-  var result = new jsonPlanet(version.jsonPlanetVersion);
+  var result = new jsonPlanet(jsonPlanetVersion);
   Object.keys(stage.stageEffects.skyboxes).forEach(i => {
     result.skyboxes.push(stage.stageEffects.skyboxes[parseInt(i)]);
   });

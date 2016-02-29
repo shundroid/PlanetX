@@ -18,6 +18,9 @@ import {EditBlock, updateEditBlock} from "./modules/editBlock";
 import * as fGuide from "./modules/ui/focusGuide";
 import * as editorModel from "./modules/model/editorModel";
 import renderStage from "./modules/view/stageRenderView";
+import {pack, setPack} from "./modules/model/packModel";
+import {activeBlock, activeBlockImage} from "./modules/model/trayModel";
+import {currentPackName} from "./modules/model/preferencesModel";
 
 /**
  * メインとなる処理を行います
@@ -31,11 +34,11 @@ namespace main {
 
   initDOM(() => {
     ui.setupCanvas();
-    packLoader(d.defaultPackName).then((i: any) => {
-      d.pack = new packManager.packModule(i);
+    packLoader(currentPackName).then((i: any) => {
+      setPack(new packManager.packModule(i));
       event.raiseEvent("packLoaded", null);
-      stageEffects.skyboxes = [d.pack.editor.defaultSkybox];
-      ui.setSkybox(packManager.getPackPath(d.defaultPackName) + d.pack.skyboxes.get(d.pack.editor.defaultSkybox).data.filename);
+      stageEffects.skyboxes = [pack.editor.defaultSkybox];
+      ui.setSkybox(packManager.getPackPath(currentPackName) + pack.skyboxes.get(pack.editor.defaultSkybox).data.filename);
       event.raiseEvent("initedPack", null);
       event.raiseEvent("initedUI", null);
       ui.initTrayBlock().then(() => {
@@ -47,8 +50,8 @@ namespace main {
     event.addEventListener("initedTray", () => {
       ui.changeLoadingStatus("making DataURL");
       d.trayItemDataURLs = makeDataUrl();
-      var item = d.pack.blocks.get(d.pack.editor.defaultBlock);
-      updateActiveBlock(d.pack.editor.defaultBlock, item.data.filename, item.data.bName);
+      var item = pack.blocks.get(pack.editor.defaultBlock);
+      updateActiveBlock(pack.editor.defaultBlock, item.data.filename, item.data.bName);
       ui.changeLoadingStatus("Are you ready?");
       event.raiseEvent("ready", null);
     });
@@ -56,19 +59,19 @@ namespace main {
       ui.hideLoading();
     });
     event.addEventListener("gridCanvas", (e: stage.gridDetail) => {
-      var pre = new prefab(e.gridPos.x, e.gridPos.y, d.selectBlock.fileName, d.selectBlock.blockName, stage.toGridPos(d.selectBlock.width), stage.toGridPos(d.selectBlock.height));
-      var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY), editorModel.activeStageLayer);
+      var pre = new prefab(e.gridPos.x, e.gridPos.y, activeBlock.fileName, activeBlock.blockName, stage.toGridPos(activeBlock.width), stage.toGridPos(activeBlock.height));
+      var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY), editorModel.activeStageLayerInEditor);
       var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
       fGuide.hide();
       switch (d.activeToolName) {
         case "pencil":
           if (e.eventName === "down") {
             if (!detail.contains) {
-              canvas.render(d.selectImage, rect);
-              stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayer);
+              canvas.render(activeBlockImage, rect);
+              stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayerInEditor);
             } else {
-              stageItems.remove(detail.id, editorModel.activeStageLayer);
-              renderStage(editorModel.activeStageLayer);
+              stageItems.remove(detail.id, editorModel.activeStageLayerInEditor);
+              renderStage(editorModel.activeStageLayerInEditor);
             }
           } else if (e.eventName === "hovering") {
             fGuide.focus(new Vector2(rect.x, rect.y), new Vector2(rect.width, rect.height), detail.contains ? "rgba(240,0,0,0.6)" : "rgba(0,240,0,0.6)");
@@ -78,12 +81,12 @@ namespace main {
           if (e.eventName === "down") {
             // オブジェクトに対応させる
             if (detail.prefab) {
-              if (d.pack.objs.contains(detail.prefab.blockName)) {
-                let oData = d.pack.objs.get(detail.prefab.blockName);
-                updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(d.defaultPackName) + oData.data.filename, oData.data.width, oData.data.height);
+              if (pack.objs.contains(detail.prefab.blockName)) {
+                let oData = pack.objs.get(detail.prefab.blockName);
+                updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(currentPackName) + oData.data.filename, oData.data.width, oData.data.height);
               } else {
-                let bData = d.pack.blocks.get(detail.prefab.blockName);
-                updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
+                let bData = pack.blocks.get(detail.prefab.blockName);
+                updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(currentPackName) + bData.data.filename);
               }
               ui.changeActiveBlock(detail.prefab.blockName);
             }
@@ -93,7 +96,7 @@ namespace main {
           if (e.eventName === "move") {
             stage.scrollX += e.mousePos.x - stage.scrollBeforeX;
             stage.scrollY += e.mousePos.y - stage.scrollBeforeY;
-            renderStage(editorModel.activeStageLayer);
+            renderStage(editorModel.activeStageLayerInEditor);
           }
           stage.scrollBeforeX = e.mousePos.x;
           stage.scrollBeforeY = e.mousePos.y;
@@ -108,17 +111,17 @@ namespace main {
         default:
           if (e.eventName === "move" || e.eventName === "down") {
             if (d.activeToolName === "brush") {
-              if (detail.contains && detail.prefab.blockName !== d.selectBlock.blockName) {
-                stageItems.remove(detail.id, editorModel.activeStageLayer);
-                renderStage(editorModel.activeStageLayer);
+              if (detail.contains && detail.prefab.blockName !== activeBlock.blockName) {
+                stageItems.remove(detail.id, editorModel.activeStageLayerInEditor);
+                renderStage(editorModel.activeStageLayerInEditor);
               }
               if (!detail.contains) {
-                canvas.render(d.selectImage, rect);
-                stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayer);
+                canvas.render(activeBlockImage, rect);
+                stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayerInEditor);
               }
             } else if (d.activeToolName === "erase" && detail.contains) {
-              stageItems.remove(detail.id, editorModel.activeStageLayer);
-              renderStage(editorModel.activeStageLayer);
+              stageItems.remove(detail.id, editorModel.activeStageLayerInEditor);
+              renderStage(editorModel.activeStageLayerInEditor);
             }
           }
           break;

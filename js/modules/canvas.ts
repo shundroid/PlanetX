@@ -3,7 +3,8 @@ import initDOM from "./initDOM";
 import Rect from "./classes/rect";
 
 /**
- * Canvasへの描画に関係する処理を行います。
+ * Canvasへの描画に関係する処理を行います。  
+ * (#43) Viewに入れる
  */
 
 var canvas:HTMLCanvasElement;

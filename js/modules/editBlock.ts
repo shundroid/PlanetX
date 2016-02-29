@@ -3,15 +3,20 @@ import {data as d} from "./data";
 import stage = require("./stage");
 import * as stageAttrs from "./model/stageAttrsModel";
 
-/**
- * Inspector内、EditBlockのデータ化
+/*
+ * Inspector内、EditBlockのデータ化  
+ * (#43) Viewになる。  
+ * AttributeのUIの部分は分けたい。
+ * - React への対応
  */
+
+
 export class EditBlock {
   constructor(
-    public blockName:string,
-    public blockPos:Vector2,
-    public blockId:number
-  ) {}
+    public blockName: string,
+    public blockPos: Vector2,
+    public blockId: number
+  ) { }
 }
 var currentEditBlock: EditBlock;
 /**
@@ -71,7 +76,7 @@ export function renderAttributeUI(attrId: number, inputName?: string, inputValue
     valElem.value = inputValue;
   }
   valElem.addEventListener("keydown", changeAttrVal);
-  
+
   // attrの削除
   var removeButton = document.createElement("button");
   removeButton.innerHTML = '<i class="fa fa-minus"></i>';
@@ -88,17 +93,17 @@ export function renderAttributeUI(attrId: number, inputName?: string, inputValue
   document.getElementsByClassName("ed-attr-view")[0].appendChild(elemGroup);
 }
 
-export function changeAttrVal(e:Event) {
+export function changeAttrVal(e: Event) {
   console.log("hg!!");
   // Todo: [x] stageAttrsで、inputNameかinputValかどちらかを変えられるように、オーバーロードを作る
   stageAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")), { attrVal: (<HTMLInputElement>e.target).value });
 }
 
-export function changeAttrName(e:Event) {
+export function changeAttrName(e: Event) {
   stageAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-name-", "")), { attrName: (<HTMLInputElement>e.target).value });
 }
 
-export function clickRemoveAttr(e:MouseEvent) {
+export function clickRemoveAttr(e: MouseEvent) {
   var attrId = parseInt((<HTMLElement>e.target).id.replace("ed-attr-remove-", ""));
   stageAttrs.removeAttr(d.editingBlockId, attrId);
   document.getElementsByClassName("ed-attr-view")[0].removeChild(document.getElementById(`ed-attr-field-${attrId}`));

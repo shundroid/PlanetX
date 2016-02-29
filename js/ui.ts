@@ -21,6 +21,7 @@ import {jsonPlanet} from "./modules/jsonPlanet";
 import * as editorModel from "./modules/model/editorModel";
 import renderStage from "./modules/view/stageRenderView";
 import {pack} from "./modules/model/packModel";
+import {currentPackName} from "./modules/model/preferencesModel";
 
 /**
  * UIに関する処理を行います。
@@ -130,7 +131,7 @@ namespace ui {
     // fromJSONPlanet内で、editorModel.activeStageLayerは0になる。
     var effects = fromJsonPlanet(jsonPlanet.importJson(JSON.parse((<HTMLTextAreaElement>document.getElementById("pla-io")).value)));
     setStageEffects(effects);
-    setSkybox(getPackPath(d.defaultPackName) + pack.skyboxes.get(effects.skyboxes[0]).data.filename);
+    setSkybox(getPackPath(currentPackName) + pack.skyboxes.get(effects.skyboxes[0]).data.filename);
     renderStage(0);
   }
 
@@ -209,7 +210,7 @@ namespace ui {
 
   export function changeSkybox(e: Event) {
     stageEffects.skyboxes[editorModel.activeStageLayerInEditor] = (<HTMLSelectElement>e.target).value;
-    setSkybox(getPackPath(d.defaultPackName) + pack.skyboxes.get(stageEffects.skyboxes[editorModel.activeStageLayerInEditor]).data.filename);
+    setSkybox(getPackPath(currentPackName) + pack.skyboxes.get(stageEffects.skyboxes[editorModel.activeStageLayerInEditor]).data.filename);
   }
 
   export function clickAddAttr() {
@@ -225,7 +226,7 @@ namespace ui {
     if (typeof stageEffects.skyboxes[editorModel.activeStageLayerInEditor] === "undefined") {
       stageEffects.skyboxes[editorModel.activeStageLayerInEditor] = pack.editor.defaultSkybox;
     }
-    setSkybox(getPackPath(d.defaultPackName) + pack.skyboxes.get(stageEffects.skyboxes[editorModel.activeStageLayerInEditor]).data.filename);
+    setSkybox(getPackPath(currentPackName) + pack.skyboxes.get(stageEffects.skyboxes[editorModel.activeStageLayerInEditor]).data.filename);
     (<HTMLSelectElement>document.getElementById("stg-skybox")).value = stageEffects.skyboxes[editorModel.activeStageLayerInEditor];
   }
   init();

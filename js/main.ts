@@ -20,6 +20,7 @@ import * as editorModel from "./modules/model/editorModel";
 import renderStage from "./modules/view/stageRenderView";
 import {pack, setPack} from "./modules/model/packModel";
 import {activeBlock, activeBlockImage} from "./modules/model/trayModel";
+import {currentPackName} from "./modules/model/preferencesModel";
 
 /**
  * メインとなる処理を行います
@@ -33,11 +34,11 @@ namespace main {
 
   initDOM(() => {
     ui.setupCanvas();
-    packLoader(d.defaultPackName).then((i: any) => {
+    packLoader(currentPackName).then((i: any) => {
       setPack(new packManager.packModule(i));
       event.raiseEvent("packLoaded", null);
       stageEffects.skyboxes = [pack.editor.defaultSkybox];
-      ui.setSkybox(packManager.getPackPath(d.defaultPackName) + pack.skyboxes.get(pack.editor.defaultSkybox).data.filename);
+      ui.setSkybox(packManager.getPackPath(currentPackName) + pack.skyboxes.get(pack.editor.defaultSkybox).data.filename);
       event.raiseEvent("initedPack", null);
       event.raiseEvent("initedUI", null);
       ui.initTrayBlock().then(() => {
@@ -82,10 +83,10 @@ namespace main {
             if (detail.prefab) {
               if (pack.objs.contains(detail.prefab.blockName)) {
                 let oData = pack.objs.get(detail.prefab.blockName);
-                updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(d.defaultPackName) + oData.data.filename, oData.data.width, oData.data.height);
+                updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(currentPackName) + oData.data.filename, oData.data.width, oData.data.height);
               } else {
                 let bData = pack.blocks.get(detail.prefab.blockName);
-                updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(d.defaultPackName) + bData.data.filename);
+                updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(currentPackName) + bData.data.filename);
               }
               ui.changeActiveBlock(detail.prefab.blockName);
             }

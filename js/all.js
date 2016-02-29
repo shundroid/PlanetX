@@ -16,6 +16,11 @@ var rect_1 = require("./modules/classes/rect");
 var canvas = require("./modules/canvas");
 var editBlock_1 = require("./modules/editBlock");
 var fGuide = require("./modules/ui/focusGuide");
+var editorModel = require("./modules/model/editorModel");
+var stageRenderView_1 = require("./modules/view/stageRenderView");
+var packModel_1 = require("./modules/model/packModel");
+var trayModel_1 = require("./modules/model/trayModel");
+var preferencesModel_1 = require("./modules/model/preferencesModel");
 /**
  * メインとなる処理を行います
  */
@@ -27,11 +32,11 @@ var main;
     init();
     initDOM_1.default(function () {
         ui.setupCanvas();
-        packLoader_1.default(data_1.data.defaultPackName).then(function (i) {
-            data_1.data.pack = new packManager.packModule(i);
+        packLoader_1.default(preferencesModel_1.currentPackName).then(function (i) {
+            packModel_1.setPack(new packManager.packModule(i));
             event.raiseEvent("packLoaded", null);
-            stageEffectsModel_1.stageEffects.skyboxes = [data_1.data.pack.editor.defaultSkybox];
-            ui.setSkybox(packManager.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(data_1.data.pack.editor.defaultSkybox).data.filename);
+            stageEffectsModel_1.stageEffects.skyboxes = [packModel_1.pack.editor.defaultSkybox];
+            ui.setSkybox(packManager.getPackPath(preferencesModel_1.currentPackName) + packModel_1.pack.skyboxes.get(packModel_1.pack.editor.defaultSkybox).data.filename);
             event.raiseEvent("initedPack", null);
             event.raiseEvent("initedUI", null);
             ui.initTrayBlock().then(function () {
@@ -43,8 +48,8 @@ var main;
         event.addEventListener("initedTray", function () {
             ui.changeLoadingStatus("making DataURL");
             data_1.data.trayItemDataURLs = makePrefabDataUrls_1.default();
-            var item = data_1.data.pack.blocks.get(data_1.data.pack.editor.defaultBlock);
-            tray_1.updateActiveBlock(data_1.data.pack.editor.defaultBlock, item.data.filename, item.data.bName);
+            var item = packModel_1.pack.blocks.get(packModel_1.pack.editor.defaultBlock);
+            tray_1.updateActiveBlock(packModel_1.pack.editor.defaultBlock, item.data.filename, item.data.bName);
             ui.changeLoadingStatus("Are you ready?");
             event.raiseEvent("ready", null);
         });
@@ -52,20 +57,20 @@ var main;
             ui.hideLoading();
         });
         event.addEventListener("gridCanvas", function (e) {
-            var pre = new prefab_1.default(e.gridPos.x, e.gridPos.y, data_1.data.selectBlock.fileName, data_1.data.selectBlock.blockName, stage.toGridPos(data_1.data.selectBlock.width), stage.toGridPos(data_1.data.selectBlock.height));
-            var detail = stage.getPrefabFromGrid(new vector2_1.default(pre.gridX, pre.gridY), data_1.data.activeStageLayer);
+            var pre = new prefab_1.default(e.gridPos.x, e.gridPos.y, trayModel_1.activeBlock.fileName, trayModel_1.activeBlock.blockName, stage.toGridPos(trayModel_1.activeBlock.width), stage.toGridPos(trayModel_1.activeBlock.height));
+            var detail = stage.getPrefabFromGrid(new vector2_1.default(pre.gridX, pre.gridY), editorModel.activeStageLayerInEditor);
             var rect = stage.toDrawRect(new rect_1.default(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
             fGuide.hide();
             switch (data_1.data.activeToolName) {
                 case "pencil":
                     if (e.eventName === "down") {
                         if (!detail.contains) {
-                            canvas.render(data_1.data.selectImage, rect);
-                            stageItems.push(stageItems.getId(), pre, data_1.data.activeStageLayer);
+                            canvas.render(trayModel_1.activeBlockImage, rect);
+                            stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayerInEditor);
                         }
                         else {
-                            stageItems.remove(detail.id, data_1.data.activeStageLayer);
-                            stage.renderStage(data_1.data.activeStageLayer);
+                            stageItems.remove(detail.id, editorModel.activeStageLayerInEditor);
+                            stageRenderView_1.default(editorModel.activeStageLayerInEditor);
                         }
                     }
                     else if (e.eventName === "hovering") {
@@ -76,13 +81,13 @@ var main;
                     if (e.eventName === "down") {
                         // オブジェクトに対応させる
                         if (detail.prefab) {
-                            if (data_1.data.pack.objs.contains(detail.prefab.blockName)) {
-                                var oData = data_1.data.pack.objs.get(detail.prefab.blockName);
-                                tray_1.updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(data_1.data.defaultPackName) + oData.data.filename, oData.data.width, oData.data.height);
+                            if (packModel_1.pack.objs.contains(detail.prefab.blockName)) {
+                                var oData = packModel_1.pack.objs.get(detail.prefab.blockName);
+                                tray_1.updateActiveBlock(detail.prefab.blockName, oData.data.oName, packManager.getPackPath(preferencesModel_1.currentPackName) + oData.data.filename, oData.data.width, oData.data.height);
                             }
                             else {
-                                var bData = data_1.data.pack.blocks.get(detail.prefab.blockName);
-                                tray_1.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(data_1.data.defaultPackName) + bData.data.filename);
+                                var bData = packModel_1.pack.blocks.get(detail.prefab.blockName);
+                                tray_1.updateActiveBlock(detail.prefab.blockName, bData.data.bName, packManager.getPackPath(preferencesModel_1.currentPackName) + bData.data.filename);
                             }
                             ui.changeActiveBlock(detail.prefab.blockName);
                         }
@@ -92,7 +97,7 @@ var main;
                     if (e.eventName === "move") {
                         stage.scrollX += e.mousePos.x - stage.scrollBeforeX;
                         stage.scrollY += e.mousePos.y - stage.scrollBeforeY;
-                        stage.renderStage(data_1.data.activeStageLayer);
+                        stageRenderView_1.default(editorModel.activeStageLayerInEditor);
                     }
                     stage.scrollBeforeX = e.mousePos.x;
                     stage.scrollBeforeY = e.mousePos.y;
@@ -107,18 +112,18 @@ var main;
                 default:
                     if (e.eventName === "move" || e.eventName === "down") {
                         if (data_1.data.activeToolName === "brush") {
-                            if (detail.contains && detail.prefab.blockName !== data_1.data.selectBlock.blockName) {
-                                stageItems.remove(detail.id, data_1.data.activeStageLayer);
-                                stage.renderStage(data_1.data.activeStageLayer);
+                            if (detail.contains && detail.prefab.blockName !== trayModel_1.activeBlock.blockName) {
+                                stageItems.remove(detail.id, editorModel.activeStageLayerInEditor);
+                                stageRenderView_1.default(editorModel.activeStageLayerInEditor);
                             }
                             if (!detail.contains) {
-                                canvas.render(data_1.data.selectImage, rect);
-                                stageItems.push(stageItems.getId(), pre, data_1.data.activeStageLayer);
+                                canvas.render(trayModel_1.activeBlockImage, rect);
+                                stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayerInEditor);
                             }
                         }
                         else if (data_1.data.activeToolName === "erase" && detail.contains) {
-                            stageItems.remove(detail.id, data_1.data.activeStageLayer);
-                            stage.renderStage(data_1.data.activeStageLayer);
+                            stageItems.remove(detail.id, editorModel.activeStageLayerInEditor);
+                            stageRenderView_1.default(editorModel.activeStageLayerInEditor);
                         }
                     }
                     break;
@@ -127,11 +132,12 @@ var main;
     });
 })(main || (main = {}));
 module.exports = main;
-},{"./modules/canvas":2,"./modules/classes/prefab":4,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/model/stageEffectsModel":18,"./modules/model/stageItemsModel":19,"./modules/packUtil/packLoader":20,"./modules/packUtil/packManager":21,"./modules/stage":23,"./modules/tray":24,"./modules/ui/focusGuide":26,"./ui":29}],2:[function(require,module,exports){
+},{"./modules/canvas":2,"./modules/classes/prefab":4,"./modules/classes/rect":5,"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/event":12,"./modules/initDOM":14,"./modules/makePrefabDataUrls":16,"./modules/model/editorModel":17,"./modules/model/packModel":18,"./modules/model/preferencesModel":19,"./modules/model/stageEffectsModel":21,"./modules/model/stageItemsModel":22,"./modules/model/trayModel":23,"./modules/packUtil/packLoader":24,"./modules/packUtil/packManager":25,"./modules/stage":27,"./modules/tray":28,"./modules/ui/focusGuide":30,"./modules/view/stageRenderView":33,"./ui":34}],2:[function(require,module,exports){
 /// <reference path="../definitely/canvasRenderingContext2D.d.ts" />
 var initDOM_1 = require("./initDOM");
 /**
  * Canvasへの描画に関係する処理を行います。
+ * (#43) Viewに入れる
  */
 var canvas;
 var ctx;
@@ -270,6 +276,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Vector2;
 },{}],8:[function(require,module,exports){
 var list_1 = require("./classes/list");
+var editorModel_1 = require("./model/editorModel");
+var preferencesModel_1 = require("./model/preferencesModel");
 /**
  * Planetの情報を保存します。
  */
@@ -280,25 +288,27 @@ var data = (function () {
      * 全ての Data メンバーを、初期化します。
      */
     data.dataInit = function () {
+        // インスタンスの初期化
         this.trayItemDataURLs = new list_1.default();
-        this.defaultPackName = "oa";
-        //this.pack = new packManager.packModule({});
-        this.defaultGridSize = 25;
-        this.defaultBlockSize = 50;
+        preferencesModel_1.setDefaultValues();
+        // デフォの値を指定する
         this.activeToolName = "pencil";
         this.isObjMode = false;
         this.isFullscreenTray = false;
         this.isShowInspector = false;
-        this.activeStageLayer = 0;
+        editorModel_1.setActiveStageLayer(0);
     };
     return data;
 })();
 exports.data = data;
-},{"./classes/list":3}],9:[function(require,module,exports){
+},{"./classes/list":3,"./model/editorModel":17,"./model/preferencesModel":19}],9:[function(require,module,exports){
 var data_1 = require("./data");
 var stageAttrs = require("./model/stageAttrsModel");
-/**
+/*
  * Inspector内、EditBlockのデータ化
+ * (#43) Viewになる。
+ * AttributeのUIの部分は分けたい。
+ * - React への対応
  */
 var EditBlock = (function () {
     function EditBlock(blockName, blockPos, blockId) {
@@ -397,9 +407,9 @@ function clickRemoveAttr(e) {
     document.getElementsByClassName("ed-attr-view")[0].removeChild(document.getElementById("ed-attr-field-" + attrId));
 }
 exports.clickRemoveAttr = clickRemoveAttr;
-},{"./data":8,"./model/stageAttrsModel":17}],10:[function(require,module,exports){
+},{"./data":8,"./model/stageAttrsModel":20}],10:[function(require,module,exports){
 /**
- * (#41) lodashとかでかぶるかな・・
+ * (#41) lodashとかでかぶ~~るかな・・~~らない
  */
 function addEventListenerforQuery(query, eventName, listener) {
     forEachforQuery(query, function (i) {
@@ -610,31 +620,96 @@ var jsonPlanet = (function () {
     return jsonPlanet;
 })();
 exports.jsonPlanet = jsonPlanet;
-},{"./version":28}],16:[function(require,module,exports){
-var data_1 = require("./data");
+},{"./version":32}],16:[function(require,module,exports){
 var list_1 = require("./classes/list");
 var packManager_1 = require("./packUtil/packManager");
 var vector2_1 = require("./classes/vector2");
 var image_1 = require("./image");
+var packModel_1 = require("./model/packModel");
+var preferencesModel_1 = require("./model/preferencesModel");
 /**
  * Todo: 必要性 -> image.tsとの統合
  */
 function makeDataUrl() {
     var result = new list_1.default();
-    var blockList = data_1.data.pack.blocks.getAll();
+    var blockList = packModel_1.pack.blocks.getAll();
     Object.keys(blockList).forEach(function (i) {
-        result.push(i, image_1.default(packManager_1.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.blocks.get(i).data.filename, true, new vector2_1.default(data_1.data.defaultGridSize, data_1.data.defaultGridSize)).src);
+        result.push(i, image_1.default(packManager_1.getPackPath(preferencesModel_1.currentPackName) + packModel_1.pack.blocks.get(i).data.filename, true, new vector2_1.default(preferencesModel_1.defaultGridSize, preferencesModel_1.defaultGridSize)).src);
     });
-    var objList = data_1.data.pack.objs.getAll();
+    var objList = packModel_1.pack.objs.getAll();
     Object.keys(objList).forEach(function (i) {
-        var item = data_1.data.pack.objs.get(i).data;
-        result.push(i, image_1.default(packManager_1.getPackPath(data_1.data.defaultPackName) + item.filename, true, new vector2_1.default(item.width, item.height)).src);
+        var item = packModel_1.pack.objs.get(i).data;
+        result.push(i, image_1.default(packManager_1.getPackPath(preferencesModel_1.currentPackName) + item.filename, true, new vector2_1.default(item.width, item.height)).src);
     });
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = makeDataUrl;
-},{"./classes/list":3,"./classes/vector2":7,"./data":8,"./image":13,"./packUtil/packManager":21}],17:[function(require,module,exports){
+},{"./classes/list":3,"./classes/vector2":7,"./image":13,"./model/packModel":18,"./model/preferencesModel":19,"./packUtil/packManager":25}],17:[function(require,module,exports){
+/**
+ * (#43) Controllerにしたい
+ * でも、export var が readonlyになっちゃうんだよねー。
+ * だから、ModelとControllerを共存させてしまっている
+ */
+function setActiveStageLayer(layerIndex) {
+    exports.activeStageLayerInEditor = layerIndex;
+}
+exports.setActiveStageLayer = setActiveStageLayer;
+function setIsTrayFullscreen(isFullscreen) {
+    exports.isTrayFullscreen = isFullscreen;
+}
+exports.setIsTrayFullscreen = setIsTrayFullscreen;
+function setIsVisibleInspector(isVisible) {
+    exports.isVisibleInspector = isVisible;
+}
+exports.setIsVisibleInspector = setIsVisibleInspector;
+function setEditingBlockId(blockId) {
+    exports.editingBlockIdByInspector = blockId;
+}
+exports.setEditingBlockId = setEditingBlockId;
+function setIsObjMode(isObjMode) {
+    exports.isObjModeInEditor = isObjMode;
+}
+exports.setIsObjMode = setIsObjMode;
+/**
+ * EditorModelのフィールドに、デフォルトの値を設定します。
+ */
+function setDefaultValues() {
+    exports.activeStageLayerInEditor = 0;
+    exports.isTrayFullscreen = false;
+    exports.isObjModeInEditor = false;
+    exports.isVisibleInspector = false;
+}
+exports.setDefaultValues = setDefaultValues;
+},{}],18:[function(require,module,exports){
+function setPack(p) {
+    exports.pack = p;
+}
+exports.setPack = setPack;
+},{}],19:[function(require,module,exports){
+function setCurrentPackName(packName) {
+    exports.currentPackName = packName;
+}
+exports.setCurrentPackName = setCurrentPackName;
+function setDefaultGridSize(gridSize) {
+    exports.defaultGridSize = gridSize;
+}
+exports.setDefaultGridSize = setDefaultGridSize;
+function setDefaultBlockSize(blockSize) {
+    exports.defaultBlockSize = blockSize;
+}
+exports.setDefaultBlockSize = setDefaultBlockSize;
+/**
+  * PreferencesModelのフィールドに、デフォルトの値を設定します。
+ */
+function setDefaultValues() {
+    // ココらへんの値、jsonからとりたい。
+    exports.currentPackName = "oa";
+    exports.defaultGridSize = 25;
+    exports.defaultBlockSize = 50;
+}
+exports.setDefaultValues = setDefaultValues;
+},{}],20:[function(require,module,exports){
 // Todo: このクラスを分離
 var Attr = (function () {
     function Attr(attrName, attrVal) {
@@ -729,7 +804,7 @@ function init() {
     blockAttrsList = {};
 }
 exports.init = init;
-},{}],18:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var StageEffects = (function () {
     function StageEffects() {
         this.skyboxes = [""];
@@ -742,7 +817,7 @@ function setStageEffects(effect) {
     exports.stageEffects = effect;
 }
 exports.setStageEffects = setStageEffects;
-},{}],19:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var list_1 = require("./../classes/list");
 /**
  * ステージ上のすべてのPrefabのリスト
@@ -823,7 +898,30 @@ function init() {
     maxId = 0;
 }
 exports.init = init;
-},{"./../classes/list":3}],20:[function(require,module,exports){
+},{"./../classes/list":3}],23:[function(require,module,exports){
+function setActiveBlock(trayBlockDetails) {
+    exports.activeBlock = trayBlockDetails;
+}
+exports.setActiveBlock = setActiveBlock;
+function setActiveBlockImage(image) {
+    exports.activeBlockImage = image;
+}
+exports.setActiveBlockImage = setActiveBlockImage;
+function setActiveToolName(toolName) {
+}
+exports.setActiveToolName = setActiveToolName;
+function setTrayBlockDataUrls(dataUrls) {
+}
+exports.setTrayBlockDataUrls = setTrayBlockDataUrls;
+/**
+ * TrayModelのフィールドに、デフォルトの値を設定します。
+ */
+function setDefaultValues() {
+    exports.activeToolName = "pencil";
+    exports.trayBlockDataUrls = {};
+}
+exports.setDefaultValues = setDefaultValues;
+},{}],24:[function(require,module,exports){
 /// <reference path="../../../typings/es6-promise/es6-promise.d.ts" />
 var packManager_1 = require("./../packUtil/packManager");
 function load(packName) {
@@ -840,7 +938,7 @@ function load(packName) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = load;
-},{"./../packUtil/packManager":21}],21:[function(require,module,exports){
+},{"./../packUtil/packManager":25}],25:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -958,15 +1056,17 @@ var skyboxInfoList = (function (_super) {
     return skyboxInfoList;
 })(list_1.default);
 exports.skyboxInfoList = skyboxInfoList;
-},{"./../classes/list":3}],22:[function(require,module,exports){
+},{"./../classes/list":3}],26:[function(require,module,exports){
 var stage = require("./stage");
 var stageEffectsModel_1 = require("./model/stageEffectsModel");
 var stageItems = require("./model/stageItemsModel");
 var stageAttrs = require("./model/stageAttrsModel");
 var prefab_1 = require("./classes/prefab");
-var data_1 = require("./data");
 var jsonPlanet_1 = require("./jsonPlanet");
 var version_1 = require("./version");
+var editorModel_1 = require("./model/editorModel");
+var packModel_1 = require("./model/packModel");
+var preferencesModel_1 = require("./model/preferencesModel");
 // stageから、compilerを利用して、外部形式へ入出力する機能を提供します。
 /**
  * stageを、jsonPlanetへ変換します。
@@ -1010,13 +1110,13 @@ function fromJsonPlanet(jsonPla) {
     for (var i = 0; i < jsonPla.stage.length; i++) {
         jsonPla.stage[i].forEach(function (j) {
             var id = stageItems.getId();
-            if (data_1.data.pack.objs.contains(j.blockName)) {
-                var objData = data_1.data.pack.objs.get(j.blockName);
+            if (packModel_1.pack.objs.contains(j.blockName)) {
+                var objData = packModel_1.pack.objs.get(j.blockName);
                 stageItems.push(id, new prefab_1.default(j.posX, j.posY, objData.data.filename, j.blockName, stage.toGridPos(objData.data.width), stage.toGridPos(objData.data.height)), i);
             }
             else {
-                var blockData = data_1.data.pack.blocks.get(j.blockName);
-                stageItems.push(id, new prefab_1.default(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(data_1.data.defaultBlockSize), stage.toGridPos(data_1.data.defaultBlockSize)), i);
+                var blockData = packModel_1.pack.blocks.get(j.blockName);
+                stageItems.push(id, new prefab_1.default(j.posX, j.posY, blockData.data.filename, j.blockName, stage.toGridPos(preferencesModel_1.defaultBlockSize), stage.toGridPos(preferencesModel_1.defaultBlockSize)), i);
             }
             if (typeof j.attr !== "undefined") {
                 Object.keys(j.attr).forEach(function (k) {
@@ -1025,22 +1125,22 @@ function fromJsonPlanet(jsonPla) {
             }
         });
     }
-    data_1.data.activeStageLayer = 0;
+    editorModel_1.setActiveStageLayer(0);
     var result = new stageEffectsModel_1.StageEffects();
     // skyboxes
     result.skyboxes = jsonPla.skyboxes;
     return result;
 }
 exports.fromJsonPlanet = fromJsonPlanet;
-},{"./classes/prefab":4,"./data":8,"./jsonPlanet":15,"./model/stageAttrsModel":17,"./model/stageEffectsModel":18,"./model/stageItemsModel":19,"./stage":23,"./version":28}],23:[function(require,module,exports){
-var canvas = require("./canvas");
-var image_1 = require("./image");
-var data_1 = require("./data");
+},{"./classes/prefab":4,"./jsonPlanet":15,"./model/editorModel":17,"./model/packModel":18,"./model/preferencesModel":19,"./model/stageAttrsModel":20,"./model/stageEffectsModel":21,"./model/stageItemsModel":22,"./stage":27,"./version":32}],27:[function(require,module,exports){
 var rect_1 = require("./classes/rect");
 var event_1 = require("./event");
 var vector2_1 = require("./classes/vector2");
 var stageAttrsModel_1 = require("./model/stageAttrsModel");
 var stageItems = require("./model/stageItemsModel");
+var editorModel_1 = require("./model/editorModel");
+var stageRenderView_1 = require("./view/stageRenderView");
+var preferencesModel_1 = require("./model/preferencesModel");
 /**
  * 現在のStage情報を保存します。
  */
@@ -1050,9 +1150,9 @@ var stage;
      * アクティブなstageLayerを変えるほか、画面の切り替えも行います。
      */
     function changeActiveStageLayer(stageLayer) {
-        data_1.data.activeStageLayer = stageLayer;
+        editorModel_1.setActiveStageLayer(stageLayer);
         // 描画
-        renderStage(stageLayer);
+        stageRenderView_1.default(stageLayer);
     }
     stage.changeActiveStageLayer = changeActiveStageLayer;
     function init() {
@@ -1060,27 +1160,6 @@ var stage;
         stageAttrsModel_1.init();
     }
     init();
-    /**
-     * ステージをstageLayerに基づき描画します。
-     */
-    function renderStage(renderStageLayer) {
-        if (renderStageLayer === void 0) { renderStageLayer = 0; }
-        canvas.clear();
-        var l = stageItems.getLayerItems(renderStageLayer).getAll();
-        Object.keys(l).forEach(function (i) {
-            var item = stageItems.get(parseInt(i));
-            var x = stage.scrollX + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridX), stage.toMousePos(item.gridW));
-            var y = stage.scrollY + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridY), stage.toMousePos(item.gridH));
-            var width = stage.toMousePos(item.gridW);
-            var height = stage.toMousePos(item.gridH);
-            // 画面内に入っているか
-            if (x + width >= 0 && x <= canvas.canvasRect.width &&
-                y + height >= 0 && y <= canvas.canvasRect.height) {
-                canvas.render(image_1.default(data_1.data.trayItemDataURLs.get(item.blockName)), new rect_1.default(x, y, width, height));
-            }
-        });
-    }
-    stage.renderStage = renderStage;
     var isResizeRequest = false;
     var resizeTimerId;
     event_1.addEventListener("resize", function () {
@@ -1090,7 +1169,7 @@ var stage;
         isResizeRequest = true;
         resizeTimerId = setTimeout(function () {
             isResizeRequest = false;
-            renderStage(data_1.data.activeStageLayer);
+            stageRenderView_1.default(editorModel_1.activeStageLayerInEditor);
         }, 100);
     });
     var gridDetail = (function () {
@@ -1103,7 +1182,7 @@ var stage;
     })();
     stage.gridDetail = gridDetail;
     function getMousePosFromCenterAndSize(center, size) {
-        return center - ((size - data_1.data.defaultGridSize) / 2);
+        return center - ((size - preferencesModel_1.defaultGridSize) / 2);
     }
     stage.getMousePosFromCenterAndSize = getMousePosFromCenterAndSize;
     stage.scrollX = 0;
@@ -1113,10 +1192,10 @@ var stage;
     function getGridPosFromMousePos(mousePos) {
         var cX = mousePos.x - stage.scrollX;
         var cY = mousePos.y - stage.scrollY;
-        var eX = cX - (cX % data_1.data.defaultGridSize);
-        var eY = cY - (cY % data_1.data.defaultGridSize);
-        var gridX = eX / data_1.data.defaultGridSize;
-        var gridY = eY / data_1.data.defaultGridSize;
+        var eX = cX - (cX % preferencesModel_1.defaultGridSize);
+        var eY = cY - (cY % preferencesModel_1.defaultGridSize);
+        var gridX = eX / preferencesModel_1.defaultGridSize;
+        var gridY = eY / preferencesModel_1.defaultGridSize;
         return new vector2_1.default(gridX, gridY);
     }
     stage.getGridPosFromMousePos = getGridPosFromMousePos;
@@ -1151,11 +1230,11 @@ var stage;
     }
     stage.getPrefabFromGrid = getPrefabFromGrid;
     function toMousePos(gridPos) {
-        return gridPos * data_1.data.defaultGridSize;
+        return gridPos * preferencesModel_1.defaultGridSize;
     }
     stage.toMousePos = toMousePos;
     function toGridPos(mousePos) {
-        return (mousePos - (mousePos % data_1.data.defaultGridSize)) / data_1.data.defaultGridSize;
+        return (mousePos - (mousePos % preferencesModel_1.defaultGridSize)) / preferencesModel_1.defaultGridSize;
     }
     stage.toGridPos = toGridPos;
     /**
@@ -1167,29 +1246,32 @@ var stage;
     stage.toDrawRect = toDrawRect;
 })(stage || (stage = {}));
 module.exports = stage;
-},{"./canvas":2,"./classes/rect":5,"./classes/vector2":7,"./data":8,"./event":12,"./image":13,"./model/stageAttrsModel":17,"./model/stageItemsModel":19}],24:[function(require,module,exports){
+},{"./classes/rect":5,"./classes/vector2":7,"./event":12,"./model/editorModel":17,"./model/preferencesModel":19,"./model/stageAttrsModel":20,"./model/stageItemsModel":22,"./view/stageRenderView":33}],28:[function(require,module,exports){
 var image_1 = require("./image");
 var trayBlockDetails_1 = require("./classes/trayBlockDetails");
 var data_1 = require("./data");
 var event_1 = require("./event");
 var packManager_1 = require("./packUtil/packManager");
+var packModel_1 = require("./model/packModel");
+var trayModel = require("./model/trayModel");
+var preferencesModel_1 = require("./model/preferencesModel");
 /**
  * Tray（UI下部分）のUI、Controllerを構成します。
  */
 function updateActiveBlock(blockName, fileName, label, width, height) {
-    var w = width || data_1.data.defaultBlockSize;
-    var h = height || data_1.data.defaultBlockSize;
-    data_1.data.selectBlock = new trayBlockDetails_1.default(blockName, fileName, label, w, h);
+    var w = width || preferencesModel_1.defaultBlockSize;
+    var h = height || preferencesModel_1.defaultBlockSize;
+    trayModel.setActiveBlock(new trayBlockDetails_1.default(blockName, fileName, label, w, h));
     updateSelectImage();
 }
 exports.updateActiveBlock = updateActiveBlock;
 function updateSelectImage() {
-    data_1.data.selectImage = image_1.default(data_1.data.trayItemDataURLs.get(data_1.data.selectBlock.blockName));
+    trayModel.setActiveBlockImage(image_1.default(data_1.data.trayItemDataURLs.get(trayModel.activeBlock.blockName)));
 }
 exports.updateSelectImage = updateSelectImage;
 function initTrayBlock(finishedOne) {
     return new Promise(function (resolve) {
-        var list = Object.keys(data_1.data.pack.blocks.getAll());
+        var list = Object.keys(packModel_1.pack.blocks.getAll());
         var result = [];
         var async = function (i) {
             var item = list[i];
@@ -1197,9 +1279,9 @@ function initTrayBlock(finishedOne) {
             li.classList.add("tray-list", "tray-list-block");
             li.addEventListener("mousedown", function (e) { event_1.raiseEvent("ui_clickTray", e); });
             var img = document.createElement("img");
-            img.src = packManager_1.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.blocks.get(item).data.filename;
+            img.src = packManager_1.getPackPath(preferencesModel_1.currentPackName) + packModel_1.pack.blocks.get(item).data.filename;
             img.onload = function () {
-                img.alt = data_1.data.pack.blocks.get(item).data.bName;
+                img.alt = packModel_1.pack.blocks.get(item).data.bName;
                 img.dataset["block"] = item;
                 li.appendChild(img);
                 result.push(li);
@@ -1218,7 +1300,7 @@ function initTrayBlock(finishedOne) {
 exports.initTrayBlock = initTrayBlock;
 function initTrayObj(finishedOne) {
     return new Promise(function (resolve) {
-        var list = Object.keys(data_1.data.pack.objs.getAll());
+        var list = Object.keys(packModel_1.pack.objs.getAll());
         var result = [];
         var async = function (i) {
             var item = list[i];
@@ -1226,12 +1308,12 @@ function initTrayObj(finishedOne) {
             li.classList.add("tray-list", "tray-list-obj");
             li.addEventListener("click", function (e) { event_1.raiseEvent("ui_clickTray", e); });
             var img = document.createElement("img");
-            img.src = packManager_1.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.objs.get(item).data.filename;
+            img.src = packManager_1.getPackPath(preferencesModel_1.currentPackName) + packModel_1.pack.objs.get(item).data.filename;
             img.onload = function () {
-                img.alt = data_1.data.pack.objs.get(item).data.oName;
+                img.alt = packModel_1.pack.objs.get(item).data.oName;
                 img.dataset["block"] = item;
                 li.style.width = img.style.width =
-                    data_1.data.pack.objs.get(item).data.width / (data_1.data.pack.objs.get(item).data.height / 50) + "px";
+                    packModel_1.pack.objs.get(item).data.width / (packModel_1.pack.objs.get(item).data.height / 50) + "px";
                 li.style.height = img.style.height = "50px";
                 li.appendChild(img);
                 result.push(li);
@@ -1248,7 +1330,7 @@ function initTrayObj(finishedOne) {
     });
 }
 exports.initTrayObj = initTrayObj;
-},{"./classes/trayBlockDetails":6,"./data":8,"./event":12,"./image":13,"./packUtil/packManager":21}],25:[function(require,module,exports){
+},{"./classes/trayBlockDetails":6,"./data":8,"./event":12,"./image":13,"./model/packModel":18,"./model/preferencesModel":19,"./model/trayModel":23,"./packUtil/packManager":25}],29:[function(require,module,exports){
 /// <reference path="../../definitely/move.d.ts" />
 function showTrayFull() {
     move(".pla-footer").set("height", "100%").duration("0.5s").end();
@@ -1282,7 +1364,7 @@ function hideLoading() {
         .end();
 }
 exports.hideLoading = hideLoading;
-},{}],26:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var initDOM_1 = require("./../initDOM");
 var guideElement;
 initDOM_1.default(function () {
@@ -1306,7 +1388,7 @@ function hide() {
     guideElement.style.visibility = "hidden";
 }
 exports.hide = hide;
-},{"./../initDOM":14}],27:[function(require,module,exports){
+},{"./../initDOM":14}],31:[function(require,module,exports){
 /**
  * Todo: 必要性
  * - react?
@@ -1328,14 +1410,43 @@ function obj2SelectElem(obj) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = obj2SelectElem;
-},{}],28:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 /**
  * Planetのバージョン情報
  */
 exports.version = "v1.0";
 exports.author = "shundroid";
 exports.jsonPlanetVersion = 0.1;
-},{}],29:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
+var stage = require("./../stage");
+var canvas = require("./../canvas");
+var stageItems = require("./../model/stageItemsModel");
+var data_1 = require("./../data");
+var image_1 = require("./../image");
+var rect_1 = require("./../classes/rect");
+/**
+ * ステージをstageLayerに基づき描画します。
+ */
+function renderStage(renderStageLayer) {
+    if (renderStageLayer === void 0) { renderStageLayer = 0; }
+    canvas.clear();
+    var l = stageItems.getLayerItems(renderStageLayer).getAll();
+    Object.keys(l).forEach(function (i) {
+        var item = stageItems.get(parseInt(i));
+        var x = stage.scrollX + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridX), stage.toMousePos(item.gridW));
+        var y = stage.scrollY + stage.getMousePosFromCenterAndSize(stage.toMousePos(item.gridY), stage.toMousePos(item.gridH));
+        var width = stage.toMousePos(item.gridW);
+        var height = stage.toMousePos(item.gridH);
+        // 画面内に入っているか
+        if (x + width >= 0 && x <= canvas.canvasRect.width &&
+            y + height >= 0 && y <= canvas.canvasRect.height) {
+            canvas.render(image_1.default(data_1.data.trayItemDataURLs.get(item.blockName)), new rect_1.default(x, y, width, height));
+        }
+    });
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = renderStage;
+},{"./../canvas":2,"./../classes/rect":5,"./../data":8,"./../image":13,"./../model/stageItemsModel":22,"./../stage":27}],34:[function(require,module,exports){
 /// <reference path="../typings/es6-promise/es6-promise.d.ts" />
 /// <reference path="definitely/move.d.ts" />
 var data_1 = require("./modules/data");
@@ -1355,6 +1466,10 @@ var evElems_1 = require("./modules/evElems");
 var anim = require("./modules/ui/anim");
 var editBlock_1 = require("./modules/editBlock");
 var jsonPlanet_1 = require("./modules/jsonPlanet");
+var editorModel = require("./modules/model/editorModel");
+var stageRenderView_1 = require("./modules/view/stageRenderView");
+var packModel_1 = require("./modules/model/packModel");
+var preferencesModel_1 = require("./modules/model/preferencesModel");
 /**
  * UIに関する処理を行います。
  */
@@ -1368,11 +1483,11 @@ var ui;
             var target = e.target;
             data_1.data.isObjMode = target.parentElement.classList.contains("tray-list-obj");
             if (!data_1.data.isObjMode) {
-                var item = data_1.data.pack.blocks.get(target.dataset["block"]).data;
+                var item = packModel_1.pack.blocks.get(target.dataset["block"]).data;
                 tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName);
             }
             else {
-                var item = data_1.data.pack.objs.get(target.dataset["block"]).data;
+                var item = packModel_1.pack.objs.get(target.dataset["block"]).data;
                 tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
             }
             changeActiveBlock(target.dataset["block"]);
@@ -1383,11 +1498,11 @@ var ui;
         });
         event.addEventListener("initedPack", function () {
             // SkyboxMode
-            if (typeof data_1.data.pack.editor.skyboxMode !== "undefined") {
-                if (data_1.data.pack.editor.skyboxMode === "repeat") {
+            if (typeof packModel_1.pack.editor.skyboxMode !== "undefined") {
+                if (packModel_1.pack.editor.skyboxMode === "repeat") {
                     document.body.style.backgroundRepeat = "repeat";
-                    if (typeof data_1.data.pack.editor.skyboxSize !== "undefined") {
-                        document.body.style.backgroundSize = data_1.data.pack.editor.skyboxSize;
+                    if (typeof packModel_1.pack.editor.skyboxSize !== "undefined") {
+                        document.body.style.backgroundSize = packModel_1.pack.editor.skyboxSize;
                     }
                     else {
                         document.body.style.backgroundSize = "auto";
@@ -1396,9 +1511,9 @@ var ui;
             }
             elem_1.forEachforQuery(".pack-select", function (i) {
                 var elem = i;
-                elem.innerHTML = util_1.default(data_1.data.pack[elem.dataset["items"]].toSimple());
+                elem.innerHTML = util_1.default(packModel_1.pack[elem.dataset["items"]].toSimple());
             });
-            document.getElementById("stg-skybox").value = data_1.data.pack.editor.defaultSkybox;
+            document.getElementById("stg-skybox").value = packModel_1.pack.editor.defaultSkybox;
         });
     }
     initDOM_1.default(function () {
@@ -1467,11 +1582,11 @@ var ui;
     }
     ui.clickExport = clickExport;
     function clickImport() {
-        // fromJSONPlanet内で、d.activeStageLayerは0になる。
+        // fromJSONPlanet内で、editorModel.activeStageLayerは0になる。
         var effects = planet_1.fromJsonPlanet(jsonPlanet_1.jsonPlanet.importJson(JSON.parse(document.getElementById("pla-io").value)));
         stageEffectsModel_1.setStageEffects(effects);
-        setSkybox(packManager_1.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
-        stage.renderStage(0);
+        setSkybox(packManager_1.getPackPath(preferencesModel_1.currentPackName) + packModel_1.pack.skyboxes.get(effects.skyboxes[0]).data.filename);
+        stageRenderView_1.default(0);
     }
     ui.clickImport = clickImport;
     function clickInsShowBtn(e) {
@@ -1548,8 +1663,8 @@ var ui;
     }
     ui.clickConvertOldFile = clickConvertOldFile;
     function changeSkybox(e) {
-        stageEffectsModel_1.stageEffects.skyboxes[data_1.data.activeStageLayer] = e.target.value;
-        setSkybox(packManager_1.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(stageEffectsModel_1.stageEffects.skyboxes[data_1.data.activeStageLayer]).data.filename);
+        stageEffectsModel_1.stageEffects.skyboxes[editorModel.activeStageLayerInEditor] = e.target.value;
+        setSkybox(packManager_1.getPackPath(preferencesModel_1.currentPackName) + packModel_1.pack.skyboxes.get(stageEffectsModel_1.stageEffects.skyboxes[editorModel.activeStageLayerInEditor]).data.filename);
     }
     ui.changeSkybox = changeSkybox;
     function clickAddAttr() {
@@ -1563,14 +1678,14 @@ var ui;
     //  }
     function changeActiveStageLayer(e) {
         stage.changeActiveStageLayer(parseInt(e.target.value));
-        if (typeof stageEffectsModel_1.stageEffects.skyboxes[data_1.data.activeStageLayer] === "undefined") {
-            stageEffectsModel_1.stageEffects.skyboxes[data_1.data.activeStageLayer] = data_1.data.pack.editor.defaultSkybox;
+        if (typeof stageEffectsModel_1.stageEffects.skyboxes[editorModel.activeStageLayerInEditor] === "undefined") {
+            stageEffectsModel_1.stageEffects.skyboxes[editorModel.activeStageLayerInEditor] = packModel_1.pack.editor.defaultSkybox;
         }
-        setSkybox(packManager_1.getPackPath(data_1.data.defaultPackName) + data_1.data.pack.skyboxes.get(stageEffectsModel_1.stageEffects.skyboxes[data_1.data.activeStageLayer]).data.filename);
-        document.getElementById("stg-skybox").value = stageEffectsModel_1.stageEffects.skyboxes[data_1.data.activeStageLayer];
+        setSkybox(packManager_1.getPackPath(preferencesModel_1.currentPackName) + packModel_1.pack.skyboxes.get(stageEffectsModel_1.stageEffects.skyboxes[editorModel.activeStageLayerInEditor]).data.filename);
+        document.getElementById("stg-skybox").value = stageEffectsModel_1.stageEffects.skyboxes[editorModel.activeStageLayerInEditor];
     }
     ui.changeActiveStageLayer = changeActiveStageLayer;
     init();
 })(ui || (ui = {}));
 module.exports = ui;
-},{"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/model/stageAttrsModel":17,"./modules/model/stageEffectsModel":18,"./modules/packUtil/packManager":21,"./modules/planet":22,"./modules/stage":23,"./modules/tray":24,"./modules/ui/anim":25,"./modules/util":27,"./modules/version":28}]},{},[1]);
+},{"./modules/classes/vector2":7,"./modules/data":8,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/model/editorModel":17,"./modules/model/packModel":18,"./modules/model/preferencesModel":19,"./modules/model/stageAttrsModel":20,"./modules/model/stageEffectsModel":21,"./modules/packUtil/packManager":25,"./modules/planet":26,"./modules/stage":27,"./modules/tray":28,"./modules/ui/anim":29,"./modules/util":31,"./modules/version":32,"./modules/view/stageRenderView":33}]},{},[1]);

@@ -2,6 +2,7 @@ import list from "./classes/list";
 import {packModule} from "./packUtil/packManager";
 import TrayBlockDetails from "./classes/trayBlockDetails";
 import {setActiveStageLayer} from "./model/editorModel";
+import {setDefaultValues as setDefaultValuesForPreferences} from "./model/preferencesModel";
 
 /**
  * Planetの情報を保存します。
@@ -9,16 +10,6 @@ import {setActiveStageLayer} from "./model/editorModel";
 class data {
   
   static trayItemDataURLs: list<string>; // [ ] trayModel
-  
-  // ココらへんはエディタの環境設定になる
-  static defaultPackName: string; // [ ] preferencesModel
-  static defaultGridSize: number; // [ ] preferencesModel
-  static defaultBlockSize: number; // [ ] preferencesModel
-  static setPreferences() {
-    this.defaultPackName = "oa";
-    this.defaultGridSize = 25;
-    this.defaultBlockSize = 50;
-  }
   
   static activeToolName: string; // [x] trayModel
   static isObjMode: boolean; // [x] editorModel
@@ -34,7 +25,7 @@ class data {
     // インスタンスの初期化
     this.trayItemDataURLs = new list<string>();
 
-    this.setPreferences();
+    setDefaultValuesForPreferences();
     
     // デフォの値を指定する
     this.activeToolName = "pencil";

@@ -5,14 +5,15 @@ import {raiseEvent} from "./event";
 import {getPackPath} from "./packUtil/packManager";
 import {pack} from "./model/packModel";
 import * as trayModel from "./model/trayModel";
+import {currentPackName, defaultBlockSize} from "./model/preferencesModel";
 
 /**
  * Tray（UI下部分）のUI、Controllerを構成します。
  */
 
 export function updateActiveBlock(blockName: string, fileName: string, label: string, width?: number, height?: number) {
-  var w = width || d.defaultBlockSize;
-  var h = height || d.defaultBlockSize;
+  var w = width || defaultBlockSize;
+  var h = height || defaultBlockSize;
   trayModel.setActiveBlock(new TrayBlockDetails(blockName, fileName, label, w, h));
   updateSelectImage();
 }
@@ -29,7 +30,7 @@ export function initTrayBlock(finishedOne: (numerator: number, denominator: numb
       li.classList.add("tray-list", "tray-list-block");
       li.addEventListener("mousedown", (e) => { raiseEvent("ui_clickTray", e); });
       var img = document.createElement("img");
-      img.src = getPackPath(d.defaultPackName) + pack.blocks.get(item).data.filename;
+      img.src = getPackPath(currentPackName) + pack.blocks.get(item).data.filename;
       img.onload = () => {
         img.alt = pack.blocks.get(item).data.bName;
         img.dataset["block"] = item;
@@ -56,7 +57,7 @@ export function initTrayObj(finishedOne: (numerator: number, denominator: number
       li.classList.add("tray-list", "tray-list-obj");
       li.addEventListener("click", (e) => { raiseEvent("ui_clickTray", e); });
       var img = document.createElement("img");
-      img.src = getPackPath(d.defaultPackName) + pack.objs.get(item).data.filename;
+      img.src = getPackPath(currentPackName) + pack.objs.get(item).data.filename;
       img.onload = () => {
         img.alt = pack.objs.get(item).data.oName;
         img.dataset["block"] = item;

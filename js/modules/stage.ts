@@ -10,6 +10,7 @@ import {init as stageAttrsInit} from "./model/stageAttrsModel";
 import * as stageItems from "./model/stageItemsModel";
 import {setActiveStageLayer, activeStageLayerInEditor} from "./model/editorModel";
 import renderStage from "./view/stageRenderView";
+import {defaultGridSize} from "./model/preferencesModel";
 
 /**
  * 現在のStage情報を保存します。
@@ -47,7 +48,7 @@ namespace stage {
     constructor(public gridPos: Vector2, public eventName: string, public mousePos: Vector2) { }
   }
   export function getMousePosFromCenterAndSize(center: number, size: number) {
-    return center - ((size - d.defaultGridSize) / 2);
+    return center - ((size - defaultGridSize) / 2);
   }
   export var scrollX = 0;
   export var scrollY = 0;
@@ -55,10 +56,10 @@ namespace stage {
   export var scrollBeforeY = 0;
   export function getGridPosFromMousePos(mousePos: Vector2) {
     var cX = mousePos.x - scrollX; var cY = mousePos.y - scrollY;
-    var eX = cX - (cX % d.defaultGridSize);
-    var eY = cY - (cY % d.defaultGridSize);
-    var gridX = eX / d.defaultGridSize;
-    var gridY = eY / d.defaultGridSize;
+    var eX = cX - (cX % defaultGridSize);
+    var eY = cY - (cY % defaultGridSize);
+    var gridX = eX / defaultGridSize;
+    var gridY = eY / defaultGridSize;
     return new Vector2(gridX, gridY);
   }
   export class getPrefabFromGridDetails {
@@ -87,10 +88,10 @@ namespace stage {
     return result;
   }
   export function toMousePos(gridPos: number) {
-    return gridPos * d.defaultGridSize;
+    return gridPos * defaultGridSize;
   }
   export function toGridPos(mousePos: number) {
-    return (mousePos - (mousePos % d.defaultGridSize)) / d.defaultGridSize;
+    return (mousePos - (mousePos % defaultGridSize)) / defaultGridSize;
   }
   /**
    * すべてgridPosで指定された4点のrectを、描画領域に変換します。

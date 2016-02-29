@@ -22,6 +22,7 @@ import * as editorModel from "./modules/model/editorModel";
 import renderStage from "./modules/view/stageRenderView";
 import {pack} from "./modules/model/packModel";
 import {currentPackName} from "./modules/model/preferencesModel";
+import {activeToolName, setActiveToolName} from "./modules/model/trayModel";
 
 /**
  * UIに関する処理を行います。
@@ -34,8 +35,8 @@ namespace ui {
     });
     event.addEventListener("ui_clickTray", (e: MouseEvent) => {
       var target = <HTMLImageElement>e.target;
-      d.isObjMode = target.parentElement.classList.contains("tray-list-obj");
-      if (!d.isObjMode) {
+      editorModel.setIsObjMode(target.parentElement.classList.contains("tray-list-obj"));
+      if (!editorModel.isObjModeInEditor) {
         let item = pack.blocks.get(target.dataset["block"]).data;
         tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName);
       } else {
@@ -100,7 +101,7 @@ namespace ui {
     });
   }
   export function togglefullScreen(e: MouseEvent) {
-    if (!d.isFullscreenTray) {
+    if (!editorModel.isTrayFullscreen) {
       closeInspector();
       anim.showTrayFull();
       (<HTMLElement>e.target).textContent = "↓";
@@ -108,19 +109,19 @@ namespace ui {
       anim.hideTrayFull();
       (<HTMLElement>e.target).textContent = "↑";
     }
-    d.isFullscreenTray = !d.isFullscreenTray;
+    editorModel.setIsTrayFullscreen(!editorModel.isTrayFullscreen);
   }
 
   export function closeInspector() {
-    if (!d.isShowInspector) return;
-    d.isShowInspector = false;
+    if (!editorModel.isVisibleInspector) return;
+    editorModel.setIsVisibleInspector(false);
     anim.hideInspector();
   }
   export function showInspector(inspectorName: string) {
     document.querySelector(".ins-article-active") && document.querySelector(".ins-article-active").classList.remove("ins-article-active");
     document.getElementById("ins-" + inspectorName).classList.add("ins-article-active");
-    if (d.isShowInspector) return;
-    d.isShowInspector = true;
+    if (editorModel.isVisibleInspector) return;
+    editorModel.setIsVisibleInspector(true);
     anim.showInspector();
   }
 
@@ -150,7 +151,7 @@ namespace ui {
     }
     (<HTMLElement>document.getElementsByClassName("tool-active")[0]).classList.remove("tool-active");
     elem.classList.add("tool-active");
-    d.activeToolName = elem.dataset["toolname"];
+    setActiveToolName(elem.dataset["toolname"]);
   }
 
   export function setSkybox(fileName: string) {
@@ -214,12 +215,12 @@ namespace ui {
   }
 
   export function clickAddAttr() {
-    var attrId = stageAttrs.getMaxAttrId(d.editingBlockId);
-    stageAttrs.push(d.editingBlockId, attrId, new stageAttrs.Attr());
+    var attrId = stageAttrs.getMaxAttrId(editorModel.editingBlockIdByInspector);
+    stageAttrs.push(editorModel.editingBlockIdByInspector, attrId, new stageAttrs.Attr());
     renderAttributeUI(attrId);
   }
   //  export function changeAttrInput(e:Event) {
-  //    stage.blockAttrs.update(d.editingBlockId, parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")), (<HTMLInputElement>e.target).value);
+  //    stage.blockAttrs.update(editorModel.editingBlockIdByInspector, parseInt((<HTMLElement>e.target).id.replace("ed-attr-", "")), (<HTMLInputElement>e.target).value);
   //  }
   export function changeActiveStageLayer(e: Event) {
     stage.changeActiveStageLayer(parseInt((<HTMLInputElement>e.target).value));

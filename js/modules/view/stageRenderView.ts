@@ -4,6 +4,7 @@ import * as stageItems from "./../model/stageItemsModel";
 import {data as d} from "./../data";
 import image from "./../image";
 import rect from "./../classes/rect";
+import {trayBlockDataUrls} from "./../model/trayModel";
 
 /**
  * ステージをstageLayerに基づき描画します。
@@ -20,7 +21,7 @@ export default function renderStage(renderStageLayer: number = 0) {
     // 画面内に入っているか
     if (x + width >= 0 && x <= canvas.canvasRect.width &&
       y + height >= 0 && y <= canvas.canvasRect.height) {
-      canvas.render(image(d.trayItemDataURLs.get(item.blockName)), new rect(x, y, width, height));
+      canvas.render(image(trayBlockDataUrls[item.blockName]), new rect(x, y, width, height));
     }
   });
 }

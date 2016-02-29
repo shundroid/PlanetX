@@ -18,7 +18,7 @@ export function updateActiveBlock(blockName: string, fileName: string, label: st
   updateSelectImage();
 }
 export function updateSelectImage() {
-  trayModel.setActiveBlockImage(image(d.trayItemDataURLs.get(trayModel.activeBlock.blockName)));
+  trayModel.setActiveBlockImage(image(trayModel.trayBlockDataUrls[trayModel.activeBlock.blockName]));
 }
 export function initTrayBlock(finishedOne: (numerator: number, denominator: number) => void) {
   return new Promise(resolve => {

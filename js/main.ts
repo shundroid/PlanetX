@@ -19,7 +19,7 @@ import * as fGuide from "./modules/ui/focusGuide";
 import * as editorModel from "./modules/model/editorModel";
 import renderStage from "./modules/view/stageRenderView";
 import {pack, setPack} from "./modules/model/packModel";
-import {activeBlock, activeBlockImage} from "./modules/model/trayModel";
+import {activeBlock, activeBlockImage, setTrayBlockDataUrls, activeToolName} from "./modules/model/trayModel";
 import {currentPackName} from "./modules/model/preferencesModel";
 
 /**
@@ -49,7 +49,7 @@ namespace main {
     });
     event.addEventListener("initedTray", () => {
       ui.changeLoadingStatus("making DataURL");
-      d.trayItemDataURLs = makeDataUrl();
+      setTrayBlockDataUrls(makeDataUrl());
       var item = pack.blocks.get(pack.editor.defaultBlock);
       updateActiveBlock(pack.editor.defaultBlock, item.data.filename, item.data.bName);
       ui.changeLoadingStatus("Are you ready?");
@@ -63,7 +63,7 @@ namespace main {
       var detail = stage.getPrefabFromGrid(new Vector2(pre.gridX, pre.gridY), editorModel.activeStageLayerInEditor);
       var rect = stage.toDrawRect(new Rect(pre.gridX, pre.gridY, pre.gridW, pre.gridH));
       fGuide.hide();
-      switch (d.activeToolName) {
+      switch (activeToolName) {
         case "pencil":
           if (e.eventName === "down") {
             if (!detail.contains) {
@@ -104,13 +104,13 @@ namespace main {
         case "edit":
           if (e.eventName === "down" && detail.contains) {
             ui.showInspector("edit-block");
-            d.editingBlockId = detail.id;
+            editorModel.setEditingBlockId(detail.id);
             updateEditBlock(new EditBlock(detail.prefab.blockName, new Vector2(detail.prefab.gridX, detail.prefab.gridY), detail.id));
           }
           break;
         default:
           if (e.eventName === "move" || e.eventName === "down") {
-            if (d.activeToolName === "brush") {
+            if (activeToolName === "brush") {
               if (detail.contains && detail.prefab.blockName !== activeBlock.blockName) {
                 stageItems.remove(detail.id, editorModel.activeStageLayerInEditor);
                 renderStage(editorModel.activeStageLayerInEditor);
@@ -119,7 +119,7 @@ namespace main {
                 canvas.render(activeBlockImage, rect);
                 stageItems.push(stageItems.getId(), pre, editorModel.activeStageLayerInEditor);
               }
-            } else if (d.activeToolName === "erase" && detail.contains) {
+            } else if (activeToolName === "erase" && detail.contains) {
               stageItems.remove(detail.id, editorModel.activeStageLayerInEditor);
               renderStage(editorModel.activeStageLayerInEditor);
             }

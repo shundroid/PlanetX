@@ -1463,50 +1463,52 @@ var preferencesModel_1 = require("./modules/model/preferencesModel");
 var trayModel_1 = require("./modules/model/trayModel");
 /**
  * UIに関する処理を行います。
+ * - 分割したい・・
  */
 var ui;
 (function (ui) {
-    function init() {
-        window.addEventListener("resize", function () {
-            event.raiseEvent("resize", null);
-        });
-        event.addEventListener("ui_clickTray", function (e) {
-            var target = e.target;
-            editorModel.setIsObjMode(target.parentElement.classList.contains("tray-list-obj"));
-            if (!editorModel.isObjModeInEditor) {
-                var item = packModel_1.pack.blocks.get(target.dataset["block"]).data;
-                tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName);
-            }
-            else {
-                var item = packModel_1.pack.objs.get(target.dataset["block"]).data;
-                tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
-            }
-            changeActiveBlock(target.dataset["block"]);
-        });
-        event.addEventListener("ui_downCanvas|ui_moveCanvas|ui_upCanvas|ui_hoveringCanvas", function (e, eventName) {
-            var g = stage.getGridPosFromMousePos(new vector2_1.default(e.clientX, e.clientY));
-            event.raiseEvent("gridCanvas", new stage.gridDetail(g, eventName.replace("ui_", "").replace("Canvas", ""), new vector2_1.default(e.clientX, e.clientY)));
-        });
-        event.addEventListener("initedPack", function () {
-            // SkyboxMode
-            if (typeof packModel_1.pack.editor.skyboxMode !== "undefined") {
-                if (packModel_1.pack.editor.skyboxMode === "repeat") {
-                    document.body.style.backgroundRepeat = "repeat";
-                    if (typeof packModel_1.pack.editor.skyboxSize !== "undefined") {
-                        document.body.style.backgroundSize = packModel_1.pack.editor.skyboxSize;
-                    }
-                    else {
-                        document.body.style.backgroundSize = "auto";
-                    }
+    /**
+     * Canvasの再描画のために、windowのりサイズを検知する
+     */
+    window.addEventListener("resize", function () {
+        event.raiseEvent("resize", null);
+    });
+    event.addEventListener("ui_clickTray", function (e) {
+        var target = e.target;
+        editorModel.setIsObjMode(target.parentElement.classList.contains("tray-list-obj"));
+        if (!editorModel.isObjModeInEditor) {
+            var item = packModel_1.pack.blocks.get(target.dataset["block"]).data;
+            tray.updateActiveBlock(target.dataset["block"], item.filename, item.bName);
+        }
+        else {
+            var item = packModel_1.pack.objs.get(target.dataset["block"]).data;
+            tray.updateActiveBlock(target.dataset["block"], item.filename, item.oName, item.width, item.height);
+        }
+        changeActiveBlock(target.dataset["block"]);
+    });
+    event.addEventListener("ui_downCanvas|ui_moveCanvas|ui_upCanvas|ui_hoveringCanvas", function (e, eventName) {
+        var g = stage.getGridPosFromMousePos(new vector2_1.default(e.clientX, e.clientY));
+        event.raiseEvent("gridCanvas", new stage.gridDetail(g, eventName.replace("ui_", "").replace("Canvas", ""), new vector2_1.default(e.clientX, e.clientY)));
+    });
+    event.addEventListener("initedPack", function () {
+        // SkyboxMode
+        if (typeof packModel_1.pack.editor.skyboxMode !== "undefined") {
+            if (packModel_1.pack.editor.skyboxMode === "repeat") {
+                document.body.style.backgroundRepeat = "repeat";
+                if (typeof packModel_1.pack.editor.skyboxSize !== "undefined") {
+                    document.body.style.backgroundSize = packModel_1.pack.editor.skyboxSize;
+                }
+                else {
+                    document.body.style.backgroundSize = "auto";
                 }
             }
-            elem_1.forEachforQuery(".pack-select", function (i) {
-                var elem = i;
-                elem.innerHTML = util_1.default(packModel_1.pack[elem.dataset["items"]].toSimple());
-            });
-            document.getElementById("stg-skybox").value = packModel_1.pack.editor.defaultSkybox;
+        }
+        elem_1.forEachforQuery(".pack-select", function (i) {
+            var elem = i;
+            elem.innerHTML = util_1.default(packModel_1.pack[elem.dataset["items"]].toSimple());
         });
-    }
+        document.getElementById("stg-skybox").value = packModel_1.pack.editor.defaultSkybox;
+    });
     initDOM_1.default(function () {
         evElems_1.default(ui);
         document.getElementById("pla-ver").innerHTML = "Planet " + v.version + " by " + v.author;
@@ -1676,7 +1678,6 @@ var ui;
         document.getElementById("stg-skybox").value = stageEffectsModel_1.stageEffects.skyboxes[editorModel.activeStageLayerInEditor];
     }
     ui.changeActiveStageLayer = changeActiveStageLayer;
-    init();
 })(ui || (ui = {}));
 module.exports = ui;
 },{"./modules/classes/vector2":7,"./modules/editBlock":9,"./modules/elem":10,"./modules/evElems":11,"./modules/event":12,"./modules/initDOM":14,"./modules/jsonPlanet":15,"./modules/model/editorModel":17,"./modules/model/packModel":18,"./modules/model/preferencesModel":19,"./modules/model/stageAttrsModel":20,"./modules/model/stageEffectsModel":21,"./modules/model/trayModel":23,"./modules/packUtil/packManager":25,"./modules/planet":26,"./modules/stage":27,"./modules/tray":28,"./modules/ui/anim":29,"./modules/util":31,"./modules/version":32,"./modules/view/stageRenderView":33}]},{},[1]);

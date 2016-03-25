@@ -5,32 +5,32 @@ var jade = require("gulp-jade");
 // Browserify 関連
 var browserify = require('browserify');
 var source = require("vinyl-source-stream"); // BrowserifyをGulpで使える「Vinyl」形式へ変換
-var tsify = require("tsify"); // TypescriptでBrowserify
+var babelify = require("babelify"); // ES6 を使うため
 var uglify = require("gulp-uglify"); // --min オプションの時、minする
 var watchify = require("watchify"); // Browserifyをwatchする
 var streamify = require("gulp-streamify"); // gulp-uglifyで使う
 var minimist = require("minimist"); // --dev --min などのオプションを扱う
 
 // Less をコンパイル
-gulp.task("less", function() {
+gulp.task("less", function () {
   gulp.src('css/*.less').pipe(less()).pipe(gulp.dest('./css/'));
 });
 
 // Jade をコンパイル
-gulp.task("jade", function() {
+gulp.task("jade", function () {
   gulp.src('*.jade').pipe(jade({
     pretty: true
   })).pipe(gulp.dest('./'));
 });
 
 // Less + Jade を Watch
-gulp.task("build", function() {
+gulp.task("build", function () {
   gulp.watch("./css/*.less", ["less"]);
   gulp.watch("./*.jade", ["jade"]);
 });
 
 // Browserify 関係
-gulp.task("brify", function(callBack) {
+gulp.task("brify", function (callBack) {
   runBrowserify(minimist(process.argv.slice(2)).watch, minimist(process.argv.slice(2)).min);
 });
 function runBrowserify(watch, min) {
@@ -38,11 +38,11 @@ function runBrowserify(watch, min) {
   var isMin = typeof min !== "undefined";
   console.log("isWatch: " + isWatch);
   console.log("isMin: " + isMin);
-  
+
   var options = {
-    entries: [ "./js/main.ts" ]
+    entries: ["./js/modules/main.js"]
   };
-  
+
   var bundler = null;
   if (isWatch) {
     options.cache = {};
@@ -53,11 +53,8 @@ function runBrowserify(watch, min) {
   }
 
   function bundle() {
-    console.log("tsify...");
-    var f = bundler.plugin(tsify, {
-      noImplicitAny: true,
-      target: "es5"
-    }).bundle();
+    console.log("babelify...");
+    var f = bundler.transform(babelify, { presets: ['es2015'] }).bundle();
     console.log("source...");
     if (isMin) {
       f.pipe(source("./all.min.js")).pipe(streamify(uglify())).pipe(gulp.dest("./js/"));
@@ -67,7 +64,7 @@ function runBrowserify(watch, min) {
   }
   if (isWatch) {
     bundler.on("update", bundle);
-    bundler.on("log", function(msg) {
+    bundler.on("log", function (msg) {
       console.log(msg);
     });
   }

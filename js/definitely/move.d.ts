@@ -1,1 +1,0 @@
-declare function move(query:any):any;

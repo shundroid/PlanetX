@@ -1,7 +1,7 @@
 var eventer = {};
 var listeners = {};
 eventer.on = (event, fn) => {
-  if (!listeners[event] instanceof Array) {
+  if (!(listeners[event] instanceof Array)) {
     listeners[event] = [];
   }
   listeners[event].push(fn);

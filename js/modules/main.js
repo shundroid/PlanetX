@@ -17,10 +17,10 @@ import Rx from "rx";
     });
   });
   on.on("initializedTray", () => {
-    ui.changeLoadingStatusUI("making DataUrl");
+    changeLoadingStatusUI("making DataUrl");
     temp.tray.dataUrls = makeDataUrl();
     let defaultItem = pack.blocks[pack.editor.defaultBlock];
-    updateActiveBlock(pack.editor.defaultBlock, item.filename, item.bName);
+    updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName);
     on.raise("ready", null);
   });
 
@@ -57,8 +57,8 @@ import Rx from "rx";
     }
   }
   function updateActiveBlock(blockName, fileName, label, width, height) {
-    let w = width || editor.grid * 2;
-    let h = height || editor.grid * 2;
+    let w = width || config.grid * 2;
+    let h = height || config.grid * 2;
     temp.tray.activeBlock = {blockName, fileName, label, w, h};
   }
 

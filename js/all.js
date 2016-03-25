@@ -46,10 +46,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     });
   });
   on.on("initializedTray", function () {
-    ui.changeLoadingStatusUI("making DataUrl");
+    changeLoadingStatusUI("making DataUrl");
     temp.tray.dataUrls = makeDataUrl();
     var defaultItem = pack.blocks[pack.editor.defaultBlock];
-    updateActiveBlock(pack.editor.defaultBlock, item.filename, item.bName);
+    updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName);
     on.raise("ready", null);
   });
 
@@ -86,8 +86,8 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     }
   }
   function updateActiveBlock(blockName, fileName, label, width, height) {
-    var w = width || editor.grid * 2;
-    var h = height || editor.grid * 2;
+    var w = width || config.grid * 2;
+    var h = height || config.grid * 2;
     temp.tray.activeBlock = { blockName: blockName, fileName: fileName, label: label, w: w, h: h };
   }
 
@@ -182,7 +182,7 @@ var _arguments = arguments;
 var eventer = {};
 var listeners = {};
 eventer.on = function (event, fn) {
-  if (!listeners[event] instanceof Array) {
+  if (!(listeners[event] instanceof Array)) {
     listeners[event] = [];
   }
   listeners[event].push(fn);

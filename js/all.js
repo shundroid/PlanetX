@@ -45,7 +45,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
       initilizeTray();
     });
   });
-  on.on("initilizedTray", function () {
+  on.on("initializedTray", function () {
     ui.changeLoadingStatusUI("making DataUrl");
     temp.tray.dataUrls = makeDataUrl();
     var defaultItem = pack.blocks[pack.editor.defaultBlock];
@@ -108,7 +108,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     }, function (err) {
       console.log("Tray Observe Error: " + err);
     }, function () {
-      on.raise("initilizedTray", null);
+      on.raise("initializedTray", null);
     });
   }
   function getInitializeTrayObserve() {
@@ -130,7 +130,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
         });
         var trayItemThumbnail = document.createElement("img");
         var packItem = isModeObj ? pack.objs[item] : pack.blocks[item];
-        console.log(packItem, i);
         trayItemThumbnail.src = getPackPath(config.pack, packItem.filename);
         trayItemThumbnail.alt = packItem.bName;
         trayItemThumbnail.dataset["block"] = item;

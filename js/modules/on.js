@@ -17,7 +17,7 @@ eventer.raise = (event) => {
   if (listeners[event] instanceof Array) {
     listeners[event].forEach(listener => {
       listener.apply(this, args);
-    })
+    });
   }
 };
 module.exports = eventer;

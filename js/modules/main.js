@@ -16,7 +16,7 @@ import Rx from "rx";
       initilizeTray();
     });
   });
-  on.on("initilizedTray", () => {
+  on.on("initializedTray", () => {
     ui.changeLoadingStatusUI("making DataUrl");
     temp.tray.dataUrls = makeDataUrl();
     let defaultItem = pack.blocks[pack.editor.defaultBlock];
@@ -80,7 +80,7 @@ import Rx from "rx";
       }, err => {
         console.log("Tray Observe Error: " + err);
       }, () => {
-        on.raise("initilizedTray", null);
+        on.raise("initializedTray", null);
       }
     );
   }
@@ -101,7 +101,6 @@ import Rx from "rx";
         trayItem.addEventListener("mousedown", (e) => { on.raise("clickedTray", e) });
         let trayItemThumbnail = document.createElement("img");
         let packItem = isModeObj ? pack.objs[item] : pack.blocks[item];
-        console.log(packItem, i);
         trayItemThumbnail.src = getPackPath(config.pack, packItem.filename);
         trayItemThumbnail.alt = packItem.bName;
         trayItemThumbnail.dataset["block"] = item;

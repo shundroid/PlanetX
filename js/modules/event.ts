@@ -6,12 +6,14 @@ import list from "./classes/list";
  * - observe？
  */
 var eventHandlers = new list<Array<(e:any, eventName:string)=>void>>();
-export function addEventListener(eventName:string, fn:(e:any, eventName:string)=>void) {
-  if (eventName.indexOf("|") !== -1) {
-    eventName.split("|").forEach(i => {
-      addEventListener(i, fn);
+export function addEventListener(eventName:string, fn:(e:any, eventName:string)=>void):void;
+export function addEventListener(eventName:Array<string>, fn:(e:any, eventName:string)=>void):void; 
+export function addEventListener(eventName:any, fn:(e:any, eventName:string)=>void):void {
+  if (eventName instanceof Array) {
+    (<Array<string>>eventName).forEach(event => {
+      addEventListener(event, fn);
     });
-  } else {
+  } else if (typeof eventName === "string") {
     if (eventHandlers.contains(eventName)) {
       eventHandlers.get(eventName).push(fn);
     } else {

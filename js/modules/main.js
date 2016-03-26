@@ -21,7 +21,10 @@ import Rx from "rx";
     temp.tray.dataUrls = makeDataUrl();
     let defaultItem = pack.blocks[pack.editor.defaultBlock];
     updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName);
+    hideLoadingUI();
     on.raise("ready", null);
+  });
+  on.on("ready", () => {
   });
 
   // stage 関係
@@ -31,12 +34,12 @@ import Rx from "rx";
     let urls = {};
     let blockList = Object.keys(pack.blocks);
     blockList.forEach(item => {
-      urls[item] = image(getPackPath(config.pack, pack.blocks[item].filename), true, {x: config.grid, y: config.grid}).src;
+      urls[item] = image(getPackPath(config.pack, pack.blocks[item].filename), true, { x: config.grid, y: config.grid }).src;
     });
     let objList = Object.keys(pack.objs);
     objList.forEach(itemName => {
       let item = pack.objs[itemName];
-      urls[itemName] = image(getPackPath(config.pack, item.filename), true, {x: item.width, y: item.height});
+      urls[itemName] = image(getPackPath(config.pack, item.filename), true, { x: item.width, y: item.height });
     });
     return urls;
   }
@@ -59,7 +62,7 @@ import Rx from "rx";
   function updateActiveBlock(blockName, fileName, label, width, height) {
     let w = width || config.grid * 2;
     let h = height || config.grid * 2;
-    temp.tray.activeBlock = {blockName, fileName, label, w, h};
+    temp.tray.activeBlock = { blockName, fileName, label, w, h };
   }
 
   // ui 関係
@@ -72,6 +75,9 @@ import Rx from "rx";
   }
   function changeLoadingStatusUI(status) {
     document.querySelector(".loading").innerHTML = `Loading...<br />${status}`;
+  }
+  function hideLoadingUI() {
+    move(".loading").set("opacity", 0).duration("1s").then().set("display", "none").pop().end();
   }
   function initilizeTray() {
     getInitializeTrayObserve().subscribe(

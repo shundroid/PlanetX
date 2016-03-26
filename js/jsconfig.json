@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
-    "sourceType": "module"
-  }
+    "module": "commonjs",
+    "target": "ES6"
+  },
+  "exclude": [
+    "./modules"
+  ]
 }

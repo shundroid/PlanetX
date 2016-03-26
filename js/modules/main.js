@@ -78,6 +78,9 @@ import Rx from "rx";
   }
   function hideLoadingUI() {
     document.querySelector(".loading").classList.add("loading-closing");
+    setTimeout(() => {
+      document.querySelector(".loading").style.display = "none";
+    }, 1000);
   }
   function initilizeTray() {
     getInitializeTrayObserve().subscribe(

@@ -106,6 +106,9 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
   }
   function hideLoadingUI() {
     document.querySelector(".loading").classList.add("loading-closing");
+    setTimeout(function () {
+      document.querySelector(".loading").style.display = "none";
+    }, 1000);
   }
   function initilizeTray() {
     getInitializeTrayObserve().subscribe(function (conf) {

@@ -83,6 +83,10 @@ footer.pla-footer {
   font-size: 20px;
   padding-top: 20px;
   opacity: 0.8;
+  transition: opacity 1s cubic-bezier(.01,.64,.43,2.12) 0s;
+  &.loading-closing {
+    opacity: 0;
+  }
 }
 .tray-active {
   border: 1px solid black;

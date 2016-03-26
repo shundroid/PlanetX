@@ -50,8 +50,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     temp.tray.dataUrls = makeDataUrl();
     var defaultItem = pack.blocks[pack.editor.defaultBlock];
     updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName);
+    hideLoadingUI();
     on.raise("ready", null);
   });
+  on.on("ready", function () {});
 
   // stage 関係
 
@@ -101,6 +103,9 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
   }
   function changeLoadingStatusUI(status) {
     document.querySelector(".loading").innerHTML = "Loading...<br />" + status;
+  }
+  function hideLoadingUI() {
+    document.querySelector(".loading").classList.add("loading-closing");
   }
   function initilizeTray() {
     getInitializeTrayObserve().subscribe(function (conf) {

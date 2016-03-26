@@ -77,7 +77,7 @@ import Rx from "rx";
     document.querySelector(".loading").innerHTML = `Loading...<br />${status}`;
   }
   function hideLoadingUI() {
-    move(".loading").set("opacity", 0).duration("1s").then().set("display", "none").pop().end();
+    document.querySelector(".loading").classList.add("loading-closing");
   }
   function initilizeTray() {
     getInitializeTrayObserve().subscribe(

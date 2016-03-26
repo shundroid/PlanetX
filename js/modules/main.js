@@ -86,6 +86,7 @@ import Rx from "rx";
     getInitializeTrayObserve().subscribe(
       (conf) => {
         changeLoadingStatusUI(`Loading Tray(${conf.mode}) : ${conf.numerator} / ${conf.denominator}`);
+        document.querySelector(".tray-items").appendChild(conf.item);
       }, err => {
         console.log("Tray Observe Error: " + err);
       }, () => {
@@ -97,7 +98,6 @@ import Rx from "rx";
     return Rx.Observable.create(function (observer) {
       let blockList = Object.keys(pack.blocks);
       let objList = Object.keys(pack.objs);
-      let trayItems = [];
       let isModeObj = false;
       let appendTrayItem = (i) => {
         let item = isModeObj ? objList[i] : blockList[i];
@@ -114,7 +114,6 @@ import Rx from "rx";
         trayItemThumbnail.alt = packItem.bName;
         trayItemThumbnail.dataset["block"] = item;
         trayItemThumbnail.onload = () => {
-          trayItems.push(trayItem);
           if (isModeObj) {
             trayItem.style.width = trayItemThumbnail.style.width =
               `${pack.objs[item].width / (pack.objs[item].height / 50)}px`;
@@ -122,14 +121,14 @@ import Rx from "rx";
             trayItem.appendChild(trayItemThumbnail);
           }
           if (isModeObj && i === objList.length - 1) {
-            observer.onCompleted(trayItems);
+            observer.onCompleted();
           } else if (!isModeObj && i === blockList.length - 1) {
             isModeObj = true;
             appendTrayItem(0);
           } else {
             let maxLength =
               isModeObj ? objList.length - 1 : blockList.length - 1;
-            observer.onNext({ numerator: i, denominator: maxLength, mode: isModeObj ? "obj" : "block" });
+            observer.onNext({ numerator: i, denominator: maxLength, mode: isModeObj ? "obj" : "block", item: trayItem });
             appendTrayItem(i + 1);
           }
         };

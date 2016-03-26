@@ -113,6 +113,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
   function initilizeTray() {
     getInitializeTrayObserve().subscribe(function (conf) {
       changeLoadingStatusUI("Loading Tray(" + conf.mode + ") : " + conf.numerator + " / " + conf.denominator);
+      document.querySelector(".tray-items").appendChild(conf.item);
     }, function (err) {
       console.log("Tray Observe Error: " + err);
     }, function () {
@@ -123,7 +124,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     return _rx2.default.Observable.create(function (observer) {
       var blockList = Object.keys(pack.blocks);
       var objList = Object.keys(pack.objs);
-      var trayItems = [];
       var isModeObj = false;
       var appendTrayItem = function appendTrayItem(i) {
         var item = isModeObj ? objList[i] : blockList[i];
@@ -142,20 +142,19 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
         trayItemThumbnail.alt = packItem.bName;
         trayItemThumbnail.dataset["block"] = item;
         trayItemThumbnail.onload = function () {
-          trayItems.push(trayItem);
           if (isModeObj) {
             trayItem.style.width = trayItemThumbnail.style.width = pack.objs[item].width / (pack.objs[item].height / 50) + "px";
             trayItem.style.height = trayItemThumbnail.style.height = "50px";
             trayItem.appendChild(trayItemThumbnail);
           }
           if (isModeObj && i === objList.length - 1) {
-            observer.onCompleted(trayItems);
+            observer.onCompleted();
           } else if (!isModeObj && i === blockList.length - 1) {
             isModeObj = true;
             appendTrayItem(0);
           } else {
             var maxLength = isModeObj ? objList.length - 1 : blockList.length - 1;
-            observer.onNext({ numerator: i, denominator: maxLength, mode: isModeObj ? "obj" : "block" });
+            observer.onNext({ numerator: i, denominator: maxLength, mode: isModeObj ? "obj" : "block", item: trayItem });
             appendTrayItem(i + 1);
           }
         };

@@ -1,4 +1,3 @@
-import Rx from "rx";
 import {getPackPath} from "./pack";
 import * as on from "./on";
 import {pack as packName} from "./editor-config";
@@ -30,7 +29,7 @@ var uiModule = {
     }, 1000);
   },
   initilizeTray: function (blocks, objs) {
-    Rx.Observable.create(function (observer) {
+    var initializeTrayObserve = function (nextCallback, completedCallback) {
       let blockList = Object.keys(blocks);
       let objList = Object.keys(objs);
       let isModeObj = false;
@@ -39,29 +38,25 @@ var uiModule = {
         let packItem = isModeObj ? objs[blockName] : blocks[blockName];
         uiModule.makeTrayItem(isModeObj ? "obj" : "block", packItem, blockName, (trayItem) => {
           if (isModeObj && i === objList.length - 1) {
-            observer.onCompleted();
+            completedCallback();
           } else if (!isModeObj && i === blockList.length - 1) {
             isModeObj = true;
             appendTrayItem(0);
           } else {
             let maxLength =
               isModeObj ? objList.length - 1 : blockList.length - 1;
-            observer.onNext({ numerator: i, denominator: maxLength, mode: isModeObj ? "obj" : "block", item: trayItem });
+            nextCallback({ numerator: i, denominator: maxLength, mode: isModeObj ? "obj" : "block", item: trayItem });
             appendTrayItem(i + 1);
           }
         });
       };
       appendTrayItem(0);
-    }).subscribe(
-      (conf) => {
-        uiModule.changeLoadingStatusUI(`Loading Tray(${conf.mode}) : ${conf.numerator} / ${conf.denominator}`);
-        document.querySelector(".tray-items").appendChild(conf.item);
-      }, err => {
-        console.log("Tray Observe Error: " + err);
-      }, () => {
-        on.raise("initializedTray", null);
-      }
-    );
+    }((conf) => {
+      uiModule.changeLoadingStatusUI(`Loading Tray(${conf.mode}) : ${conf.numerator} / ${conf.denominator}`);
+      document.querySelector(".tray-items").appendChild(conf.item);
+    }, () => {
+      on.raise("initializedTray", null);
+    });
   },
   makeTrayItem: (mode, packItem, blockName, onloadCallback) => {
     let trayItem = document.createElement("div");

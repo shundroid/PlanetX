@@ -301,27 +301,9 @@ var uiModule = {
       var objList = Object.keys(objs);
       var isModeObj = false;
       var appendTrayItem = function appendTrayItem(i) {
-        var item = isModeObj ? objList[i] : blockList[i];
-        var trayItem = document.createElement("div");
-        if (!isModeObj) {
-          trayItem.classList.add("tray-list", "tray-list-block");
-        } else {
-          trayItem.classList.add("tray-list", "tray-list-obj");
-        }
-        trayItem.addEventListener("mousedown", function (e) {
-          return void on.raise("clickedTray", e);
-        });
-        var trayItemThumbnail = document.createElement("img");
-        var packItem = isModeObj ? objs[item] : blocks[item];
-        trayItemThumbnail.src = (0, _pack.getPackPath)(packName, packItem.filename);
-        trayItemThumbnail.alt = packItem.bName;
-        trayItemThumbnail.dataset["block"] = item;
-        trayItemThumbnail.onload = function () {
-          if (isModeObj) {
-            trayItem.style.width = trayItemThumbnail.style.width = objs[item].width / (objs[item].height / 50) + "px";
-            trayItem.style.height = trayItemThumbnail.style.height = "50px";
-            trayItem.appendChild(trayItemThumbnail);
-          }
+        var blockName = isModeObj ? objList[i] : blockList[i];
+        var packItem = isModeObj ? objs[blockName] : blocks[blockName];
+        uiModule.makeTrayItem(isModeObj ? "obj" : "block", packItem, packName, blockName, function (trayItem) {
           if (isModeObj && i === objList.length - 1) {
             observer.onCompleted();
           } else if (!isModeObj && i === blockList.length - 1) {
@@ -332,8 +314,7 @@ var uiModule = {
             observer.onNext({ numerator: i, denominator: maxLength, mode: isModeObj ? "obj" : "block", item: trayItem });
             appendTrayItem(i + 1);
           }
-        };
-        trayItem.appendChild(trayItemThumbnail);
+        });
       };
       appendTrayItem(0);
     }).subscribe(function (conf) {
@@ -344,6 +325,26 @@ var uiModule = {
     }, function () {
       on.raise("initializedTray", null);
     });
+  },
+  makeTrayItem: function makeTrayItem(mode, packItem, packName, blockName, onloadCallback) {
+    var trayItem = document.createElement("div");
+    trayItem.classList.add("tray-list", "tray-list-" + mode);
+    trayItem.addEventListener("mousedown", function (e) {
+      return void on.raise("clickedTray", e);
+    });
+    var trayItemThumbnail = document.createElement("img");
+    trayItemThumbnail.src = (0, _pack.getPackPath)(packName, packItem.filename);
+    trayItemThumbnail.alt = packItem.name;
+    trayItemThumbnail.dataset["block"] = blockName;
+    trayItemThumbnail.onload = function () {
+      if (mode === "obj") {
+        trayItem.style.width = trayItemThumbnail.style.width = packItem.width / (packItem.height / 50) + "px";
+        trayItem.style.height = trayItemThumbnail.style.height = "50px";
+        trayItem.appendChild(trayItemThumbnail);
+      }
+      onloadCallback(trayItem);
+    };
+    trayItem.appendChild(trayItemThumbnail);
   },
   setEditorBackgroundMode: function setEditorBackgroundMode(editor) {
     // ui での pack の配置方法を決める

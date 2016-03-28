@@ -6,10 +6,16 @@ var ctx;
 
 var canvasModule = {
   canvasRect: {},
-  // initializeCanvas という名前にするのではなく、
-  // この中で処理がわかれている部分は 別関数にしたい。
-  // -> attachListeners resizeCanvas disableSmoothing
+  // [x] initializeCanvas という名前にするのではなく、
+  // [x] この中で処理がわかれている部分は 別関数にしたい。
+  // [x] -> attachListeners resizeCanvas disableSmoothing
   initializeCanvas: function () {
+    canvasModule.attachListeners();
+    // リサイズ処理を行う
+    canvasModule.resizeCanvas();
+    canvasModule.disableSmoothing();
+  },
+  attachListeners: function() {
     // ui.setupCanvas
     canvasElem = document.getElementById("pla-canvas");
     canvasElem.addEventListener("mousedown", (e) => { on.raise("mousedownCanvas") });
@@ -21,10 +27,8 @@ var canvasModule = {
       }
     });
     canvasElem.addEventListener("mouseup", (e) => { on.raise("mouseupCanvas") });
-
-    // リサイズ処理を行う
-    canvasModule.resizeCanvas();
-
+  },
+  disableSmoothing: function() {
     // canvas.ts initDOM
     if (canvasElem && canvasElem.getContext) {
       // 次 : ここから

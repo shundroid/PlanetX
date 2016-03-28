@@ -5,17 +5,7 @@ var _on = require("./on");
 
 var on = _interopRequireWildcard(_on);
 
-function _interopRequireWildcard(obj) {
-  if (obj && obj.__esModule) {
-    return obj;
-  } else {
-    var newObj = {};if (obj != null) {
-      for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
-      }
-    }newObj.default = obj;return newObj;
-  }
-}
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 // main.js から ctx、canvasElem へはアクセスしないようにする
 var canvasElem;
@@ -23,10 +13,16 @@ var ctx;
 
 var canvasModule = {
   canvasRect: {},
-  // initializeCanvas という名前にするのではなく、
-  // この中で処理がわかれている部分は 別関数にしたい。
-  // -> attachListeners resizeCanvas disableSmoothing
+  // [x] initializeCanvas という名前にするのではなく、
+  // [x] この中で処理がわかれている部分は 別関数にしたい。
+  // [x] -> attachListeners resizeCanvas disableSmoothing
   initializeCanvas: function initializeCanvas() {
+    canvasModule.attachListeners();
+    // リサイズ処理を行う
+    canvasModule.resizeCanvas();
+    canvasModule.disableSmoothing();
+  },
+  attachListeners: function attachListeners() {
     // ui.setupCanvas
     canvasElem = document.getElementById("pla-canvas");
     canvasElem.addEventListener("mousedown", function (e) {
@@ -42,10 +38,8 @@ var canvasModule = {
     canvasElem.addEventListener("mouseup", function (e) {
       on.raise("mouseupCanvas");
     });
-
-    // リサイズ処理を行う
-    canvasModule.resizeCanvas();
-
+  },
+  disableSmoothing: function disableSmoothing() {
     // canvas.ts initDOM
     if (canvasElem && canvasElem.getContext) {
       // 次 : ここから

@@ -16,7 +16,7 @@ import * as tray from "./tray";
       pack = packObject;
       stage.skyboxes.push(pack.editor.defaultSkybox);
       ui.setEditorBackground(getPackPath(config.pack, pack.skyboxes[pack.editor.defaultSkybox].filename));
-      on.raise("initializedPack", null);
+      ui.setEditorBackgroundMode(pack.editor);
       ui.initilizeTray(pack.blocks, pack.objs);
     });
   });
@@ -28,12 +28,4 @@ import * as tray from "./tray";
     ui.hideLoadingUI();
     on.raise("ready", null);
   });
-
-  // stage 関係
-
-  // tray 関係
-
-  // ui 関係
-  on.on("initializedPack", ui.setEditorBackgroundMode);
-  // pack 関係
 } ();

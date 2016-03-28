@@ -117,7 +117,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
       pack = packObject;
       stage.skyboxes.push(pack.editor.defaultSkybox);
       ui.setEditorBackground((0, _pack.getPackPath)(config.pack, pack.skyboxes[pack.editor.defaultSkybox].filename));
-      on.raise("initializedPack", null);
+      ui.setEditorBackgroundMode(pack.editor);
       ui.initilizeTray(pack.blocks, pack.objs);
     });
   });
@@ -129,14 +129,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     ui.hideLoadingUI();
     on.raise("ready", null);
   });
-
-  // stage 関係
-
-  // tray 関係
-
-  // ui 関係
-  on.on("initializedPack", ui.setEditorBackgroundMode);
-  // pack 関係
 }();
 
 },{"./canvas":1,"./editor-config":2,"./on":4,"./pack":5,"./stage":6,"./temp-datas":7,"./tray":8,"./ui":9}],4:[function(require,module,exports){

@@ -134,6 +134,7 @@ var uiModule = {
         inspector.classList.remove("pla-inspector-animate-showing");
       }, 1000);
     }
-  }
+  },
+  isTrayItemObj: (elem) => elem.parentElement.classList.contains("tray-list-obj")
 };
 module.exports = uiModule;

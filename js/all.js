@@ -126,7 +126,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
   });
   on.on("initializedTray", function () {
     ui.changeLoadingStatusUI("making DataUrl");
-    temp.tray.dataUrls = tray.makeDataUrl(pack.blocks, pack.objs, config.grid);
+    temp.tray.dataUrls = tray.makeDataUrls(pack.blocks, pack.objs, config.grid);
     var defaultItem = pack.blocks[pack.editor.defaultBlock];
     temp.tray.activeBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName, config.grid);
     ui.hideLoadingUI();
@@ -135,13 +135,14 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
   on.on("clickInspectorShowButton", function (e) {
     ui.showInspector();
   });
-  on.on("clickedTrayItem", function (e) {});
+  on.on("clickedTrayItem", function (e) {
+    console.log(e);
+  });
 }();
 
 },{"./canvas":1,"./editor-config":2,"./on":4,"./pack":5,"./stage":6,"./temp-datas":7,"./tray":8,"./ui":9}],4:[function(require,module,exports){
 "use strict";
 
-var _arguments = arguments;
 var eventer = {};
 var listeners = {};
 eventer.on = function (event, fn) {
@@ -151,16 +152,12 @@ eventer.on = function (event, fn) {
   listeners[event].push(fn);
 };
 eventer.raise = function (event) {
-  var args = [];
-  if (typeof _arguments[1] !== "undefined") {
-    for (var i = 1; i < _arguments.length; i++) {
-      // 0 番目は省略するため、i は、1 から始める。
-      args.push(_arguments[i]);
-    }
-  }
+  var _this = this;
+
+  var args = Array.prototype.slice.call(arguments, 1);
   if (listeners[event] instanceof Array) {
     listeners[event].forEach(function (listener) {
-      listener.apply(undefined, args);
+      listener.apply(_this, args);
     });
   }
 };
@@ -405,6 +402,9 @@ var uiModule = {
         }, 1000);
       })();
     }
+  },
+  isTrayItemObj: function isTrayItemObj(elem) {
+    return elem.parentElement.classList.contains("tray-list-obj");
   }
 };
 module.exports = uiModule;

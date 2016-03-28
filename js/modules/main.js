@@ -36,6 +36,6 @@ import * as tray from "./tray";
     ui.showInspector();
   });
   on.on("clickedTrayItem", (e) => {
-    
+    console.log(e);
   })
 } ();

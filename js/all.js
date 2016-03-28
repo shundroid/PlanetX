@@ -38,6 +38,7 @@ var canvasModule = {
     canvasElem.addEventListener("mouseup", function (e) {
       return void on.raise("mouseupCanvas");
     });
+    window.addEventListener("resize", canvasModule.fitToWindow);
   },
   disableSmoothing: function disableSmoothing() {
     // canvas.ts initDOM

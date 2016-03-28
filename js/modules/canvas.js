@@ -27,6 +27,7 @@ var canvasModule = {
       }
     });
     canvasElem.addEventListener("mouseup", e => void on.raise("mouseupCanvas"));
+    window.addEventListener("resize", canvasModule.fitToWindow);
   },
   disableSmoothing: function() {
     // canvas.ts initDOM

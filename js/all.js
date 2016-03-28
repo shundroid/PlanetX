@@ -1,62 +1,76 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
-var canvasModule = {};
+var _on = require("./on");
+
+var on = _interopRequireWildcard(_on);
+
+function _interopRequireWildcard(obj) {
+  if (obj && obj.__esModule) {
+    return obj;
+  } else {
+    var newObj = {};if (obj != null) {
+      for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+      }
+    }newObj.default = obj;return newObj;
+  }
+}
 
 // main.js から ctx、canvasElem へはアクセスしないようにする
 var canvasElem;
 var ctx;
 
-canvasModule.canvasRect = {};
+var canvasModule = {
+  canvasRect: {},
+  // initializeCanvas という名前にするのではなく、
+  // この中で処理がわかれている部分は 別関数にしたい。
+  // -> attachListeners resizeCanvas disableSmoothing
+  initializeCanvas: function initializeCanvas() {
+    // ui.setupCanvas
+    canvasElem = document.getElementById("pla-canvas");
+    canvasElem.addEventListener("mousedown", function (e) {
+      on.raise("mousedownCanvas");
+    });
+    canvasElem.addEventListener("mousemove", function (e) {
+      if (e.buttons === 1) {
+        on.raise("mousemoveCanvas");
+      } else {
+        on.raise("hoverCanvas");
+      }
+    });
+    canvasElem.addEventListener("mouseup", function (e) {
+      on.raise("mouseupCanvas");
+    });
 
-// initializeCanvas という名前にするのではなく、
-// この中で処理がわかれている部分は 別関数にしたい。
-// -> attachListeners resizeCanvas disableSmoothing
-canvasModule.initializeCanvas = function () {
-  // ui.setupCanvas
-  canvasElem = document.getElementById("pla-canvas");
-  canvasElem.addEventListener("mousedown", function (e) {
-    on.raise("mousedownCanvas");
-  });
-  canvasElem.addEventListener("mousemove", function (e) {
-    if (e.buttons === 1) {
-      on.raise("mousemoveCanvas");
-    } else {
-      on.raise("hoverCanvas");
+    // リサイズ処理を行う
+    canvasModule.resizeCanvas();
+
+    // canvas.ts initDOM
+    if (canvasElem && canvasElem.getContext) {
+      // 次 : ここから
+      ctx = canvasElem.getContext("2d");
+      ctx.imageSmoothingEnabled = false;
+      ctx.mozImageSmoothingEnabled = false;
+      ctx.webkitImageSmoothingEnabled = false;
+      ctx.msImageSmoothingEnabled = false;
     }
-  });
-  canvasElem.addEventListener("mouseup", function (e) {
-    on.raise("mouseupCanvas");
-  });
-
-  // リサイズ処理を行う
-  canvas.resizeCanvas();
-
-  // canvas.ts initDOM
-  if (canvasElem && canvasElem.getContext) {
-    // 次 : ここから
-    ctx = canvas.getContext("2d");
-    ctx.imageSmoothingEnabled = false;
-    ctx.mozImageSmoothingEnabled = false;
-    ctx.webkitImageSmoothingEnabled = false;
-    ctx.msImageSmoothingEnabled = false;
+  },
+  // イベントハンドラ (window.addEventListener("resize", ...)) は main.js に書くのが望ましい。
+  // -> いや、main.js からは、window などの Core にはアクセスせず、ラップしたい
+  resizeCanvas: function resizeCanvas() {
+    canvasElem.width = window.innerWidth;
+    canvasElem.height = window.innerHeight;
+    canvasModule.updateCanvasRect();
+  },
+  updateCanvasRect: function updateCanvasRect() {
+    canvasModule.canvasRect = { x: 0, y: 0, width: canvasElem.width, height: canvasElem.height };
   }
 };
 
-// イベントハンドラ (window.addEventListener("resize", ...)) は main.js に書くのが望ましい。
-// -> いや、main.js からは、window などの Core にはアクセスせず、ラップしたい
-canvasModule.resizeCanvas = function () {
-  canvasElem.width = window.innerWidth;
-  canvasElem.height = window.innerHeight;
-  canvasModule.updateCanvasRect();
-};
-
-canvasModule.updateCanvasRect = function () {
-  canvasModule.canvasRect = { x: 0, y: 0, width: canvasElem.width, height: canvasElem.height };
-};
 module.exports = canvasModule;
 
-},{}],2:[function(require,module,exports){
+},{"./on":4}],2:[function(require,module,exports){
 "use strict";
 
 module.exports = {

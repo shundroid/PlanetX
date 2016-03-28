@@ -155,6 +155,20 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     }
     temp.ui.isFullscreenTray = !temp.ui.isFullscreenTray;
   });
+  on.on("clickedTrayTool", function (event) {
+    var elem = event.target;
+    if (elem.nodeName === "I") {
+      elem = elem.parentElement;
+    }
+    var toolName = elem.dataset["toolname"];
+    // Tool (pencil, erase など) でなく、Tool-btn (save, seting) の場合
+    if (elem.classList.contains("tool-btn")) {
+      on.raise("clickTrayToolBtn", toolName);
+    } else {
+      ui.setActiveToolUI(toolName);
+      temp.tray.activeToolName = toolName;
+    }
+  });
 }();
 
 },{"./canvas":1,"./editor-config":2,"./on":4,"./pack":5,"./stage":6,"./temp-datas":7,"./tray":8,"./ui":9}],4:[function(require,module,exports){
@@ -217,7 +231,8 @@ var datas = {
   tray: {
     dataUrls: {},
     activeBlock: null,
-    isObjMode: false
+    isObjMode: false,
+    activeToolName: "pencil"
   },
   ui: {
     isShowInspector: false,
@@ -302,7 +317,7 @@ var uiModule = {
         return void on.raise(elem.dataset["listener"], e);
       });
     });
-    Array.prototype.forEach.call(document.querySelector(".ev-input"), function (elem) {
+    Array.prototype.forEach.call(document.querySelectorAll(".ev-input"), function (elem) {
       if (typeof elem.dataset["default"] !== "undefined") {
         elem.value = elem.dataset["default"];
       }
@@ -310,9 +325,14 @@ var uiModule = {
         elem.addEventListener("change", uiModule[elem.dataset["change"]]);
       }
     });
-    Array.prototype.forEach.call(document.querySelector(".ins-show-btn"), function (elem) {
+    Array.prototype.forEach.call(document.querySelectorAll(".ins-show-btn"), function (elem) {
       elem.addEventListener("click", function (e) {
         on.on("clickInspectorShowButton", e);
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".tray-list-tool"), function (elem) {
+      elem.addEventListener("mousedown", function (e) {
+        return void on.raise("clickedTrayTool", e);
       });
     });
   },
@@ -455,6 +475,10 @@ var uiModule = {
     var tray = document.querySelector(".pla-footer");
     tray.style.height = "50px";
     document.querySelector("#tray-fullscreen").textContent = "↑";
+  },
+  setActiveToolUI: function setActiveToolUI(toolName) {
+    document.querySelector(".tool-active").classList.remove("tool-active");
+    document.querySelector("[data-toolname=" + toolName + "]").classList.add("tool-active");
   }
 };
 module.exports = uiModule;

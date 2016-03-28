@@ -55,4 +55,18 @@ import * as tray from "./tray";
     }
     temp.ui.isFullscreenTray = !temp.ui.isFullscreenTray;
   });
+  on.on("clickedTrayTool", event => {
+    let elem = event.target;
+    if (elem.nodeName === "I") {
+      elem = elem.parentElement;
+    }
+    let toolName = elem.dataset["toolname"];
+    // Tool (pencil, erase など) でなく、Tool-btn (save, seting) の場合
+    if (elem.classList.contains("tool-btn")) {
+      on.raise("clickTrayToolBtn", toolName);
+    } else {
+      ui.setActiveToolUI(toolName);
+      temp.tray.activeToolName = toolName;
+    }
+  });
 } ();

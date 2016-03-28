@@ -2,7 +2,8 @@ var datas = {
   tray: {
     dataUrls: {},
     activeBlock: null,
-    isObjMode: false
+    isObjMode: false,
+    activeToolName: "pencil"
   },
   ui: {
     isShowInspector: false,

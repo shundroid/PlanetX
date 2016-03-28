@@ -9,7 +9,7 @@ var uiModule = {
     Array.prototype.forEach.call(document.querySelectorAll(".ev-btn"), elem => {
       elem.addEventListener("click", (e) => void on.raise(elem.dataset["listener"], e));
     });
-    Array.prototype.forEach.call(document.querySelector(".ev-input"), elem => {
+    Array.prototype.forEach.call(document.querySelectorAll(".ev-input"), elem => {
       if (typeof elem.dataset["default"] !== "undefined") {
         elem.value = elem.dataset["default"];
       }
@@ -17,10 +17,13 @@ var uiModule = {
         elem.addEventListener("change", uiModule[elem.dataset["change"]]);
       }
     });
-    Array.prototype.forEach.call(document.querySelector(".ins-show-btn"), elem => {
+    Array.prototype.forEach.call(document.querySelectorAll(".ins-show-btn"), elem => {
       elem.addEventListener("click", (e) => {
         on.on("clickInspectorShowButton", e);
       });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".tray-list-tool"), elem => {
+      elem.addEventListener("mousedown", e => void on.raise("clickedTrayTool", e));
     });
   },
   setEditorBackground: function (path) {
@@ -158,6 +161,10 @@ var uiModule = {
     let tray = document.querySelector(".pla-footer");
     tray.style.height = "50px";
     document.querySelector("#tray-fullscreen").textContent = "↑";
+  },
+  setActiveToolUI: (toolName) => {
+    document.querySelector(".tool-active").classList.remove("tool-active");
+    document.querySelector(`[data-toolname=${toolName}]`).classList.add("tool-active");
   }
 };
 module.exports = uiModule;

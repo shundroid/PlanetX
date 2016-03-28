@@ -259,6 +259,7 @@ var _editorConfig = require("./editor-config");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
+var guideElement;
 var uiModule = {
   setListeners: function setListeners() {
     Array.prototype.forEach.call(document.querySelectorAll(".ev-btn"), function (elem) {
@@ -347,6 +348,25 @@ var uiModule = {
         }
       }
     }
+  },
+  initializeGuide: function initializeGuide() {
+    guideElement = document.createElement("div");
+    guideElement.id = "guide";
+    guideElement.style.position = "fixed";
+    guideElement.style.backgroundColor = "rgba(240,0,0,0.6)";
+    guideElement.style.pointerEvents = "none";
+    document.body.appendChild(guideElement);
+  },
+  showGuide: function showGuide(screenPos, size, color) {
+    guideElement.style.visibility = "visible";
+    guideElement.style.left = screenPos.x + "px";
+    guideElement.style.top = screenPos.y + "px";
+    guideElement.style.width = size.x + "px";
+    guideElement.style.height = size.y + "px";
+    guideElement.style.backgroundColor = color;
+  },
+  hideGuide: function hideGuide() {
+    guideElement.style.visibility = "hidden";
   }
 };
 module.exports = uiModule;

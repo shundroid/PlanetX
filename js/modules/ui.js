@@ -1,7 +1,7 @@
 import {getPackPath} from "./pack";
 import * as on from "./on";
 import {pack as packName} from "./editor-config";
-
+var guideElement;
 var uiModule = {
   setListeners: function () {
     Array.prototype.forEach.call(document.querySelectorAll(".ev-btn"), elem => {
@@ -51,7 +51,7 @@ var uiModule = {
         });
       };
       appendTrayItem(0);
-    }((conf) => {
+    } ((conf) => {
       uiModule.changeLoadingStatusUI(`Loading Tray(${conf.mode}) : ${conf.numerator} / ${conf.denominator}`);
       document.querySelector(".tray-items").appendChild(conf.item);
     }, () => {
@@ -91,5 +91,24 @@ var uiModule = {
       }
     }
   },
+  initializeGuide: () => {
+    guideElement = document.createElement("div");
+    guideElement.id = "guide";
+    guideElement.style.position = "fixed";
+    guideElement.style.backgroundColor = "rgba(240,0,0,0.6)";
+    guideElement.style.pointerEvents = "none";
+    document.body.appendChild(guideElement);
+  },
+  showGuide: (screenPos, size, color) => {
+    guideElement.style.visibility = "visible";
+    guideElement.style.left = `${screenPos.x}px`;
+    guideElement.style.top = `${screenPos.y}px`;
+    guideElement.style.width = `${size.x}px`;
+    guideElement.style.height = `${size.y}px`;
+    guideElement.style.backgroundColor = color;
+  },
+  hideGuide: () => {
+    guideElement.style.visibility = "hidden";
+  }
 };
 module.exports = uiModule;

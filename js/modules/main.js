@@ -116,7 +116,7 @@ import Rx from "rx";
         } else {
           trayItem.classList.add("tray-list", "tray-list-obj");
         }
-        trayItem.addEventListener("mousedown", (e) => { on.raise("clickedTray", e) });
+        trayItem.addEventListener("mousedown", e => void on.raise("clickedTray", e));
         let trayItemThumbnail = document.createElement("img");
         let packItem = isModeObj ? pack.objs[item] : pack.blocks[item];
         trayItemThumbnail.src = getPackPath(config.pack, packItem.filename);

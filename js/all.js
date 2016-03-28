@@ -5,17 +5,7 @@ var _on = require("./on");
 
 var on = _interopRequireWildcard(_on);
 
-function _interopRequireWildcard(obj) {
-  if (obj && obj.__esModule) {
-    return obj;
-  } else {
-    var newObj = {};if (obj != null) {
-      for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
-      }
-    }newObj.default = obj;return newObj;
-  }
-}
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 // main.js から ctx、canvasElem へはアクセスしないようにする
 var canvasElem;
@@ -36,7 +26,7 @@ var canvasModule = {
     // ui.setupCanvas
     canvasElem = document.getElementById("pla-canvas");
     canvasElem.addEventListener("mousedown", function (e) {
-      on.raise("mousedownCanvas");
+      return void on.raise("mousedownCanvas");
     });
     canvasElem.addEventListener("mousemove", function (e) {
       if (e.buttons === 1) {
@@ -46,7 +36,7 @@ var canvasModule = {
       }
     });
     canvasElem.addEventListener("mouseup", function (e) {
-      on.raise("mouseupCanvas");
+      return void on.raise("mouseupCanvas");
     });
   },
   disableSmoothing: function disableSmoothing() {
@@ -110,21 +100,9 @@ var _rx = require("rx");
 
 var _rx2 = _interopRequireDefault(_rx);
 
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj };
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _interopRequireWildcard(obj) {
-  if (obj && obj.__esModule) {
-    return obj;
-  } else {
-    var newObj = {};if (obj != null) {
-      for (var key in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
-      }
-    }newObj.default = obj;return newObj;
-  }
-}
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 +function () {
   var pack = void 0;
@@ -146,7 +124,7 @@ function _interopRequireWildcard(obj) {
     updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName);
     hideLoadingUI();
     on.raise("ready", null);
-  });;
+  });
 
   // stage 関係
 
@@ -236,7 +214,7 @@ function _interopRequireWildcard(obj) {
           trayItem.classList.add("tray-list", "tray-list-obj");
         }
         trayItem.addEventListener("mousedown", function (e) {
-          on.raise("clickedTray", e);
+          return void on.raise("clickedTray", e);
         });
         var trayItemThumbnail = document.createElement("img");
         var packItem = isModeObj ? pack.objs[item] : pack.blocks[item];

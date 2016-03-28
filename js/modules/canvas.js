@@ -18,7 +18,7 @@ var canvasModule = {
   attachListeners: function() {
     // ui.setupCanvas
     canvasElem = document.getElementById("pla-canvas");
-    canvasElem.addEventListener("mousedown", (e) => { on.raise("mousedownCanvas") });
+    canvasElem.addEventListener("mousedown", e => void on.raise("mousedownCanvas"));
     canvasElem.addEventListener("mousemove", (e) => {
       if (e.buttons === 1) {
         on.raise("mousemoveCanvas");
@@ -26,7 +26,7 @@ var canvasModule = {
         on.raise("hoverCanvas");
       }
     });
-    canvasElem.addEventListener("mouseup", (e) => { on.raise("mouseupCanvas") });
+    canvasElem.addEventListener("mouseup", e => void on.raise("mouseupCanvas"));
   },
   disableSmoothing: function() {
     // canvas.ts initDOM

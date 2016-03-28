@@ -99,6 +99,10 @@ footer.pla-footer .tray #tray-fullscreen {
   border-top-left-radius: 20px;
   padding: 5px 5px 5px 10px;
   box-sizing: border-box;
+  transition: left 0.5s cubic-bezier(0.01, 0.64, 0.43, 2.12) 0s;
+}
+.pla-inspector.pla-inspector-animate-showing {
+  left: 80%;
 }
 .pla-inspector #ins-close {
   float: right;

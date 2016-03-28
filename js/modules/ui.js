@@ -1,6 +1,8 @@
 import {getPackPath} from "./pack";
 import * as on from "./on";
 import {pack as packName} from "./editor-config";
+import {ui as tempUI} from "./temp-datas";
+
 var guideElement;
 var uiModule = {
   setListeners: function () {
@@ -14,6 +16,11 @@ var uiModule = {
       if (typeof elem.dataset["change"] !== "undefined") {
         elem.addEventListener("change", uiModule[elem.dataset["change"]]);
       }
+    });
+    Array.prototype.forEach.call(document.querySelector(".ins-show-btn"), elem => {
+      elem.addEventListener("click", (e) => {
+        on.on("clickInspectorShowButton", e);
+      });
     });
   },
   setEditorBackground: function (path) {
@@ -109,6 +116,24 @@ var uiModule = {
   },
   hideGuide: () => {
     guideElement.style.visibility = "hidden";
+  },
+  initializeVersionUI: (version, author) => {
+    document.getElementById("pla-ver").innerHTML = `Planet ${version} by ${author}`;
+  },
+  showInspector: (articleName) => {
+    // active な article がすでにある場合は削除する
+    document.querySelector(".ins-article-active") && document.querySelector(".ins-article-active").classList.remove("ins-article-active");
+    document.getElementById("ins-" + articleName).classList.add("ins-article-active");
+    if (!tempUI.isShowInspector) {
+      tempUI.isShowInspector = true;
+      
+      // animation
+      let inspector = document.querySelector(".pla-inspector");
+      inspector.classList.add("pla-inspector-animate-showing");
+      setTimeout(function() {
+        inspector.classList.remove("pla-inspector-animate-showing");
+      }, 1000);
+    }
   }
 };
 module.exports = uiModule;

@@ -120,6 +120,9 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
       ui.setEditorBackgroundMode(pack.editor);
       ui.initilizeTray(pack.blocks, pack.objs);
     });
+    ui.setListeners();
+    ui.initializeGuide();
+    ui.initializeVersionUI();
   });
   on.on("initializedTray", function () {
     ui.changeLoadingStatusUI("making DataUrl");
@@ -128,6 +131,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     temp.tray.updateActiveBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName, config.grid);
     ui.hideLoadingUI();
     on.raise("ready", null);
+  });
+  on.on("clickInspectorShowButton", function (e) {
+    ui.showInspector();
+    temp.ui.isShowInspector = true;
   });
 }();
 
@@ -196,6 +203,9 @@ var datas = {
   tray: {
     dataUrls: {},
     activeBlock: null
+  },
+  ui: {
+    isShowInspector: false
   }
 };
 module.exports = datas;
@@ -257,6 +267,8 @@ var on = _interopRequireWildcard(_on);
 
 var _editorConfig = require("./editor-config");
 
+var _tempDatas = require("./temp-datas");
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 var guideElement;
@@ -272,6 +284,11 @@ var uiModule = {
       if (typeof elem.dataset["change"] !== "undefined") {
         elem.addEventListener("change", uiModule[elem.dataset["change"]]);
       }
+    });
+    Array.prototype.forEach.call(document.querySelector(".ins-show-btn"), function (elem) {
+      elem.addEventListener("click", function (e) {
+        on.on("clickInspectorShowButton", e);
+      });
     });
   },
   setEditorBackground: function setEditorBackground(path) {
@@ -367,8 +384,28 @@ var uiModule = {
   },
   hideGuide: function hideGuide() {
     guideElement.style.visibility = "hidden";
+  },
+  initializeVersionUI: function initializeVersionUI(version, author) {
+    document.getElementById("pla-ver").innerHTML = "Planet " + version + " by " + author;
+  },
+  showInspector: function showInspector(articleName) {
+    // active な article がすでにある場合は削除する
+    document.querySelector(".ins-article-active") && document.querySelector(".ins-article-active").classList.remove("ins-article-active");
+    document.getElementById("ins-" + articleName).classList.add("ins-article-active");
+    if (!_tempDatas.ui.isShowInspector) {
+      (function () {
+        _tempDatas.ui.isShowInspector = true;
+
+        // animation
+        var inspector = document.querySelector(".pla-inspector");
+        inspector.classList.add("pla-inspector-animate-showing");
+        setTimeout(function () {
+          inspector.classList.remove("pla-inspector-animate-showing");
+        }, 1000);
+      })();
+    }
   }
 };
 module.exports = uiModule;
 
-},{"./editor-config":2,"./on":4,"./pack":5}]},{},[3]);
+},{"./editor-config":2,"./on":4,"./pack":5,"./temp-datas":7}]},{},[3]);

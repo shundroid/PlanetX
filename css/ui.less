@@ -103,6 +103,10 @@ footer.pla-footer {
   border-top-left-radius: 20px;
   padding: 5px 5px 5px 10px;
   box-sizing: border-box; // paddingをwidthに含む
+  transition: left 0.5s cubic-bezier(.01,.64,.43,2.12) 0s;
+  &.pla-inspector-animate-showing {
+    left: 80%;
+  }
   #ins-close {
     float: right;
   }

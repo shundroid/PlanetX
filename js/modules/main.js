@@ -19,6 +19,10 @@ import * as tray from "./tray";
       ui.setEditorBackgroundMode(pack.editor);
       ui.initilizeTray(pack.blocks, pack.objs);
     });
+    ui.setListeners();
+    ui.initializeGuide();
+    ui.initializeVersionUI();
+    
   });
   on.on("initializedTray", () => {
     ui.changeLoadingStatusUI("making DataUrl");
@@ -27,5 +31,9 @@ import * as tray from "./tray";
     temp.tray.updateActiveBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName, config.grid);
     ui.hideLoadingUI();
     on.raise("ready", null);
+  });
+  on.on("clickInspectorShowButton", (e) => {
+    ui.showInspector();
+    temp.ui.isShowInspector = true;
   });
 } ();

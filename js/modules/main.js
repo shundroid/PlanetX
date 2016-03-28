@@ -26,9 +26,6 @@ import Rx from "rx";
     hideLoadingUI();
     on.raise("ready", null);
   });
-  on.on("ready", () => {
-    
-  });
 
   // stage 関係
 

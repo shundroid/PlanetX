@@ -146,8 +146,7 @@ function _interopRequireWildcard(obj) {
     updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName);
     hideLoadingUI();
     on.raise("ready", null);
-  });
-  on.on("ready", function () {});
+  });;
 
   // stage 関係
 

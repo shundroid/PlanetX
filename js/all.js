@@ -1,12 +1,70 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
+var canvasModule = {};
+
+// main.js から ctx、canvasElem へはアクセスしないようにする
+var canvasElem;
+var ctx;
+
+canvasModule.canvasRect = {};
+
+// initializeCanvas という名前にするのではなく、
+// この中で処理がわかれている部分は 別関数にしたい。
+// -> attachListeners resizeCanvas disableSmoothing
+canvasModule.initializeCanvas = function () {
+  // ui.setupCanvas
+  canvasElem = document.getElementById("pla-canvas");
+  canvasElem.addEventListener("mousedown", function (e) {
+    on.raise("mousedownCanvas");
+  });
+  canvasElem.addEventListener("mousemove", function (e) {
+    if (e.buttons === 1) {
+      on.raise("mousemoveCanvas");
+    } else {
+      on.raise("hoverCanvas");
+    }
+  });
+  canvasElem.addEventListener("mouseup", function (e) {
+    on.raise("mouseupCanvas");
+  });
+
+  // リサイズ処理を行う
+  canvas.resizeCanvas();
+
+  // canvas.ts initDOM
+  if (canvasElem && canvasElem.getContext) {
+    // 次 : ここから
+    ctx = canvas.getContext("2d");
+    ctx.imageSmoothingEnabled = false;
+    ctx.mozImageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.msImageSmoothingEnabled = false;
+  }
+};
+
+// イベントハンドラ (window.addEventListener("resize", ...)) は main.js に書くのが望ましい。
+// -> いや、main.js からは、window などの Core にはアクセスせず、ラップしたい
+canvasModule.resizeCanvas = function () {
+  canvasElem.width = window.innerWidth;
+  canvasElem.height = window.innerHeight;
+  canvasModule.updateCanvasRect();
+};
+
+canvasModule.updateCanvasRect = function () {
+  canvasModule.canvasRect = { x: 0, y: 0, width: canvasElem.width, height: canvasElem.height };
+};
+module.exports = canvasModule;
+
+},{}],2:[function(require,module,exports){
+"use strict";
+
 module.exports = {
   pack: "oa",
   grid: 25
 };
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 "use strict";
 
 var _stage = require("./stage");
@@ -25,6 +83,10 @@ var _tempDatas = require("./temp-datas");
 
 var temp = _interopRequireWildcard(_tempDatas);
 
+var _canvas = require("./canvas");
+
+var canvas = _interopRequireWildcard(_canvas);
+
 var _rx = require("rx");
 
 var _rx2 = _interopRequireDefault(_rx);
@@ -37,11 +99,12 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
   var pack = void 0;
 
   document.addEventListener("DOMContentLoaded", function () {
-    setCanvasListeners();
+    canvas.initializeCanvas();
     loadPack(config.pack).then(function (packObject) {
       pack = packObject;
       stage.skyboxes.push(pack.editor.defaultSkybox);
       setEditorBackground(getPackPath(config.pack, pack.skyboxes[pack.editor.defaultSkybox].filename));
+      on.raise("initializedPack", null);
       initilizeTray();
     });
   });
@@ -94,10 +157,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
   }
 
   // ui 関係
-  function setCanvasListeners() {
-    // ui.setupCanvas
-    var canvas = document.getElementById("pla-canvas");
-  }
   function setEditorBackground(path) {
     document.body.style.backgroundImage = "url(" + path + ")";
   }
@@ -120,6 +179,19 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
       on.raise("initializedTray", null);
     });
   }
+  on.on("initializedPack", function () {
+    // ui での pack の配置方法を決める
+    if (typeof pack.editor.skyboxMode !== "undefined") {
+      if (pack.editor.skyboxMode === "repeat") {
+        document.body.style.backgroundRepeat = "repeat";
+        if (typeof pack.editor.skyboxSize !== "undefined") {
+          document.body.style.backgroundSize = pack.editor.skyboxSize;
+        } else {
+          document.body.style.backgroundSize = "auto";
+        }
+      }
+    }
+  });
   function getInitializeTrayObserve() {
     return _rx2.default.Observable.create(function (observer) {
       var blockList = Object.keys(pack.blocks);
@@ -182,7 +254,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
   }
 }();
 
-},{"./editor-config":1,"./on":3,"./stage":4,"./temp-datas":5,"rx":7}],3:[function(require,module,exports){
+},{"./canvas":1,"./editor-config":2,"./on":4,"./stage":5,"./temp-datas":6,"rx":8}],4:[function(require,module,exports){
 "use strict";
 
 var _arguments = arguments;
@@ -210,7 +282,7 @@ eventer.raise = function (event) {
 };
 module.exports = eventer;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 var stage = {};
@@ -218,7 +290,7 @@ stage.skyboxes = [];
 
 module.exports = stage;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 var datas = {
@@ -229,7 +301,7 @@ var datas = {
 };
 module.exports = datas;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -322,7 +394,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function (process,global){
 // Copyright (c) Microsoft, All rights reserved. See License.txt in the project root for license information.
 
@@ -12714,4 +12786,4 @@ var ReactiveTest = Rx.ReactiveTest = {
 }.call(this));
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":6}]},{},[2]);
+},{"_process":7}]},{},[3]);

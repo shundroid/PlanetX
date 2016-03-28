@@ -2,17 +2,19 @@ import * as stage from "./stage";
 import * as config from "./editor-config";
 import * as on from "./on";
 import * as temp from "./temp-datas";
+import * as canvas from "./canvas";
 import Rx from "rx";
 
 +function () {
   let pack;
 
   document.addEventListener("DOMContentLoaded", function () {
-    setCanvasListeners();
+    canvas.initializeCanvas();
     loadPack(config.pack).then(packObject => {
       pack = packObject;
       stage.skyboxes.push(pack.editor.defaultSkybox);
       setEditorBackground(getPackPath(config.pack, pack.skyboxes[pack.editor.defaultSkybox].filename));
+      on.raise("initializedPack", null);
       initilizeTray();
     });
   });
@@ -25,6 +27,7 @@ import Rx from "rx";
     on.raise("ready", null);
   });
   on.on("ready", () => {
+    
   });
 
   // stage 関係
@@ -66,10 +69,6 @@ import Rx from "rx";
   }
 
   // ui 関係
-  function setCanvasListeners() {
-    // ui.setupCanvas
-    let canvas = document.getElementById("pla-canvas");
-  }
   function setEditorBackground(path) {
     document.body.style.backgroundImage = `url(${path})`;
   }
@@ -94,6 +93,19 @@ import Rx from "rx";
       }
     );
   }
+  on.on("initializedPack", () => {
+    // ui での pack の配置方法を決める
+    if (typeof pack.editor.skyboxMode !== "undefined") {
+      if (pack.editor.skyboxMode === "repeat") {
+        document.body.style.backgroundRepeat = "repeat";
+        if (typeof pack.editor.skyboxSize !== "undefined") {
+          document.body.style.backgroundSize = pack.editor.skyboxSize;
+        } else {
+          document.body.style.backgroundSize = "auto";
+        }
+      }
+    }
+  });
   function getInitializeTrayObserve() {
     return Rx.Observable.create(function (observer) {
       let blockList = Object.keys(pack.blocks);

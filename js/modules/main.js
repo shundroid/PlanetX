@@ -22,13 +22,13 @@ import * as tray from "./tray";
     ui.setListeners();
     ui.initializeGuide();
     ui.initializeVersionUI();
-    
+
   });
   on.on("initializedTray", () => {
     ui.changeLoadingStatusUI("making DataUrl");
     temp.tray.dataUrls = tray.makeDataUrls(pack.blocks, pack.objs, config.grid);
     let defaultItem = pack.blocks[pack.editor.defaultBlock];
-    temp.tray.activeBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName, config.grid);
+    temp.tray.activeBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.name, config.grid);
     ui.hideLoadingUI();
     on.raise("ready", null);
   });
@@ -36,6 +36,15 @@ import * as tray from "./tray";
     ui.showInspector();
   });
   on.on("clickedTrayItem", (e) => {
-    console.log(e);
-  })
+    temp.tray.isObjMode = ui.isTrayItemObj(e.target);
+    let blockName = e.target.dataset["block"];
+    if (!temp.tray.isObjMode) {
+      let block = pack.blocks[blockName];
+      tray.updateActiveBlock(blockName, block.filename, block.name, config.grid);
+    } else {
+      let block = pack.objs[blockName];
+      tray.updateActiveBlock(blockName, block.filename, block.name, { width: block.width, height: block.height });
+    }
+    ui.changeActiveBlockUI(blockName);
+  });
 } ();

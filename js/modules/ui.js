@@ -135,6 +135,11 @@ var uiModule = {
       }, 1000);
     }
   },
-  isTrayItemObj: (elem) => elem.parentElement.classList.contains("tray-list-obj")
+  isTrayItemObj: (imageElem) => imageElem.parentElement.classList.contains("tray-list-obj"),
+  changeActiveBlockUI: (blockName) => {
+    // active な trayItem があるのであれば削除する。
+    document.querySelector(".tray-active") && document.querySelector(".tray-active").classList.remove("tray-active");
+    document.querySelector(`[data-block="${blockName}"]`).classList.add("tray-active");
+  }
 };
 module.exports = uiModule;

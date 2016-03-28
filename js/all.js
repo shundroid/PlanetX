@@ -128,7 +128,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     ui.changeLoadingStatusUI("making DataUrl");
     temp.tray.dataUrls = tray.makeDataUrls(pack.blocks, pack.objs, config.grid);
     var defaultItem = pack.blocks[pack.editor.defaultBlock];
-    temp.tray.activeBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName, config.grid);
+    temp.tray.activeBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.name, config.grid);
     ui.hideLoadingUI();
     on.raise("ready", null);
   });
@@ -136,7 +136,16 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     ui.showInspector();
   });
   on.on("clickedTrayItem", function (e) {
-    console.log(e);
+    temp.tray.isObjMode = ui.isTrayItemObj(e.target);
+    var blockName = e.target.dataset["block"];
+    if (!temp.tray.isObjMode) {
+      var block = pack.blocks[blockName];
+      tray.updateActiveBlock(blockName, block.filename, block.name, config.grid);
+    } else {
+      var _block = pack.objs[blockName];
+      tray.updateActiveBlock(blockName, _block.filename, _block.name, { width: _block.width, height: _block.height });
+    }
+    ui.changeActiveBlockUI(blockName);
   });
 }();
 
@@ -229,9 +238,16 @@ var trayModule = {
     });
     return urls;
   },
-  updateActiveBlock: function updateActiveBlock(blockName, fileName, label, width, height, grid) {
-    var w = width || grid * 2;
-    var h = height || grid * 2;
+  updateActiveBlock: function updateActiveBlock(blockName, fileName, label, size) {
+    var w = void 0,
+        h = void 0;
+    if (typeof size === "number") {
+      w = size * 2;
+      h = size * 2;
+    } else {
+      w = size.width;
+      h = size.height;
+    }
     return { blockName: blockName, fileName: fileName, label: label, w: w, h: h };
   }
 };
@@ -403,8 +419,13 @@ var uiModule = {
       })();
     }
   },
-  isTrayItemObj: function isTrayItemObj(elem) {
-    return elem.parentElement.classList.contains("tray-list-obj");
+  isTrayItemObj: function isTrayItemObj(imageElem) {
+    return imageElem.parentElement.classList.contains("tray-list-obj");
+  },
+  changeActiveBlockUI: function changeActiveBlockUI(blockName) {
+    // active な trayItem があるのであれば削除する。
+    document.querySelector(".tray-active") && document.querySelector(".tray-active").classList.remove("tray-active");
+    document.querySelector("[data-block=\"" + blockName + "\"]").classList.add("tray-active");
   }
 };
 module.exports = uiModule;

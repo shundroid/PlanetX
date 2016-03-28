@@ -15,9 +15,15 @@ var trayModule = {
     });
     return urls;
   },
-  updateActiveBlock: function (blockName, fileName, label, width, height, grid) {
-    let w = width || grid * 2;
-    let h = height || grid * 2;
+  updateActiveBlock: function (blockName, fileName, label, size) {
+    let w, h;
+    if (typeof size === "number") {
+      w = size * 2;
+      h = size * 2;
+    } else {
+      w = size.width;
+      h = size.height;
+    }
     return { blockName, fileName, label, w, h };
   }
 };

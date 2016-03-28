@@ -9,7 +9,7 @@ import Rx from "rx";
   let pack;
 
   document.addEventListener("DOMContentLoaded", function () {
-    canvas.initializeCanvas();
+    canvas.initialize();
     loadPack(config.pack).then(packObject => {
       pack = packObject;
       stage.skyboxes.push(pack.editor.defaultSkybox);

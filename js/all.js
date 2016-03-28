@@ -5,7 +5,17 @@ var _on = require("./on");
 
 var on = _interopRequireWildcard(_on);
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) {
+  if (obj && obj.__esModule) {
+    return obj;
+  } else {
+    var newObj = {};if (obj != null) {
+      for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+      }
+    }newObj.default = obj;return newObj;
+  }
+}
 
 // main.js から ctx、canvasElem へはアクセスしないようにする
 var canvasElem;
@@ -16,10 +26,10 @@ var canvasModule = {
   // [x] initializeCanvas という名前にするのではなく、
   // [x] この中で処理がわかれている部分は 別関数にしたい。
   // [x] -> attachListeners resizeCanvas disableSmoothing
-  initializeCanvas: function initializeCanvas() {
+  initialize: function initialize() {
     canvasModule.attachListeners();
     // リサイズ処理を行う
-    canvasModule.resizeCanvas();
+    canvasModule.fitToWindow();
     canvasModule.disableSmoothing();
   },
   attachListeners: function attachListeners() {
@@ -52,7 +62,8 @@ var canvasModule = {
   },
   // イベントハンドラ (window.addEventListener("resize", ...)) は main.js に書くのが望ましい。
   // -> いや、main.js からは、window などの Core にはアクセスせず、ラップしたい
-  resizeCanvas: function resizeCanvas() {
+  // -> いや、on.js でwindow.addEventListener をラップしたい（イベント名で判別 とか）
+  fitToWindow: function fitToWindow() {
     canvasElem.width = window.innerWidth;
     canvasElem.height = window.innerHeight;
     canvasModule.updateCanvasRect();
@@ -99,15 +110,27 @@ var _rx = require("rx");
 
 var _rx2 = _interopRequireDefault(_rx);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) {
+  if (obj && obj.__esModule) {
+    return obj;
+  } else {
+    var newObj = {};if (obj != null) {
+      for (var key in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+      }
+    }newObj.default = obj;return newObj;
+  }
+}
 
 +function () {
   var pack = void 0;
 
   document.addEventListener("DOMContentLoaded", function () {
-    canvas.initializeCanvas();
+    canvas.initialize();
     loadPack(config.pack).then(function (packObject) {
       pack = packObject;
       stage.skyboxes.push(pack.editor.defaultSkybox);

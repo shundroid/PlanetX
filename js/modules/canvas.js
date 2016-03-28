@@ -9,10 +9,10 @@ var canvasModule = {
   // [x] initializeCanvas という名前にするのではなく、
   // [x] この中で処理がわかれている部分は 別関数にしたい。
   // [x] -> attachListeners resizeCanvas disableSmoothing
-  initializeCanvas: function () {
+  initialize: function () {
     canvasModule.attachListeners();
     // リサイズ処理を行う
-    canvasModule.resizeCanvas();
+    canvasModule.fitToWindow();
     canvasModule.disableSmoothing();
   },
   attachListeners: function() {
@@ -41,7 +41,8 @@ var canvasModule = {
   },
   // イベントハンドラ (window.addEventListener("resize", ...)) は main.js に書くのが望ましい。
   // -> いや、main.js からは、window などの Core にはアクセスせず、ラップしたい
-  resizeCanvas: function () {
+  // -> いや、on.js でwindow.addEventListener をラップしたい（イベント名で判別 とか）
+  fitToWindow: function () {
     canvasElem.width = window.innerWidth;
     canvasElem.height = window.innerHeight;
     canvasModule.updateCanvasRect();

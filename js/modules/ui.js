@@ -1,6 +1,7 @@
 import Rx from "rx";
 import {getPackPath} from "./pack";
 import * as on from "./on";
+import {pack as packName} from "./editor-config";
 
 var uiModule = {
   setListeners: function () {
@@ -28,7 +29,7 @@ var uiModule = {
       document.querySelector(".loading").style.display = "none";
     }, 1000);
   },
-  initilizeTray: function (blocks, objs, packName) {
+  initilizeTray: function (blocks, objs) {
     Rx.Observable.create(function (observer) {
       let blockList = Object.keys(blocks);
       let objList = Object.keys(objs);
@@ -36,7 +37,7 @@ var uiModule = {
       let appendTrayItem = (i) => {
         let blockName = isModeObj ? objList[i] : blockList[i];
         let packItem = isModeObj ? objs[blockName] : blocks[blockName];
-        uiModule.makeTrayItem(isModeObj ? "obj" : "block", packItem, packName, blockName, (trayItem) => {
+        uiModule.makeTrayItem(isModeObj ? "obj" : "block", packItem, blockName, (trayItem) => {
           if (isModeObj && i === objList.length - 1) {
             observer.onCompleted();
           } else if (!isModeObj && i === blockList.length - 1) {
@@ -62,7 +63,7 @@ var uiModule = {
       }
     );
   },
-  makeTrayItem: (mode, packItem, packName, blockName, onloadCallback) => {
+  makeTrayItem: (mode, packItem, blockName, onloadCallback) => {
     let trayItem = document.createElement("div");
     trayItem.classList.add("tray-list", `tray-list-${mode}`);
     trayItem.addEventListener("mousedown", e => void on.raise("clickedTray", e));

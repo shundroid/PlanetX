@@ -17,12 +17,12 @@ import * as tray from "./tray";
       stage.skyboxes.push(pack.editor.defaultSkybox);
       ui.setEditorBackground(getPackPath(config.pack, pack.skyboxes[pack.editor.defaultSkybox].filename));
       on.raise("initializedPack", null);
-      ui.initilizeTray(pack.blocks, pack.objs, config.pack);
+      ui.initilizeTray(pack.blocks, pack.objs);
     });
   });
   on.on("initializedTray", () => {
     ui.changeLoadingStatusUI("making DataUrl");
-    temp.tray.dataUrls = tray.makeDataUrl(pack.blocks, pack.objs, config.pack, config.grid);
+    temp.tray.dataUrls = tray.makeDataUrl(pack.blocks, pack.objs, config.grid);
     let defaultItem = pack.blocks[pack.editor.defaultBlock];
     temp.tray.updateActiveBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName, config.grid);
     ui.hideLoadingUI();

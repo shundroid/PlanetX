@@ -118,12 +118,12 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
       stage.skyboxes.push(pack.editor.defaultSkybox);
       ui.setEditorBackground((0, _pack.getPackPath)(config.pack, pack.skyboxes[pack.editor.defaultSkybox].filename));
       on.raise("initializedPack", null);
-      ui.initilizeTray(pack.blocks, pack.objs, config.pack);
+      ui.initilizeTray(pack.blocks, pack.objs);
     });
   });
   on.on("initializedTray", function () {
     ui.changeLoadingStatusUI("making DataUrl");
-    temp.tray.dataUrls = tray.makeDataUrl(pack.blocks, pack.objs, config.pack, config.grid);
+    temp.tray.dataUrls = tray.makeDataUrl(pack.blocks, pack.objs, config.grid);
     var defaultItem = pack.blocks[pack.editor.defaultBlock];
     temp.tray.updateActiveBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName, config.grid);
     ui.hideLoadingUI();
@@ -265,6 +265,8 @@ var _on = require("./on");
 
 var on = _interopRequireWildcard(_on);
 
+var _editorConfig = require("./editor-config");
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -295,7 +297,7 @@ var uiModule = {
       document.querySelector(".loading").style.display = "none";
     }, 1000);
   },
-  initilizeTray: function initilizeTray(blocks, objs, packName) {
+  initilizeTray: function initilizeTray(blocks, objs) {
     _rx2.default.Observable.create(function (observer) {
       var blockList = Object.keys(blocks);
       var objList = Object.keys(objs);
@@ -303,7 +305,7 @@ var uiModule = {
       var appendTrayItem = function appendTrayItem(i) {
         var blockName = isModeObj ? objList[i] : blockList[i];
         var packItem = isModeObj ? objs[blockName] : blocks[blockName];
-        uiModule.makeTrayItem(isModeObj ? "obj" : "block", packItem, packName, blockName, function (trayItem) {
+        uiModule.makeTrayItem(isModeObj ? "obj" : "block", packItem, blockName, function (trayItem) {
           if (isModeObj && i === objList.length - 1) {
             observer.onCompleted();
           } else if (!isModeObj && i === blockList.length - 1) {
@@ -326,14 +328,14 @@ var uiModule = {
       on.raise("initializedTray", null);
     });
   },
-  makeTrayItem: function makeTrayItem(mode, packItem, packName, blockName, onloadCallback) {
+  makeTrayItem: function makeTrayItem(mode, packItem, blockName, onloadCallback) {
     var trayItem = document.createElement("div");
     trayItem.classList.add("tray-list", "tray-list-" + mode);
     trayItem.addEventListener("mousedown", function (e) {
       return void on.raise("clickedTray", e);
     });
     var trayItemThumbnail = document.createElement("img");
-    trayItemThumbnail.src = (0, _pack.getPackPath)(packName, packItem.filename);
+    trayItemThumbnail.src = (0, _pack.getPackPath)(_editorConfig.pack, packItem.filename);
     trayItemThumbnail.alt = packItem.name;
     trayItemThumbnail.dataset["block"] = blockName;
     trayItemThumbnail.onload = function () {
@@ -363,7 +365,7 @@ var uiModule = {
 };
 module.exports = uiModule;
 
-},{"./on":4,"./pack":5,"rx":11}],10:[function(require,module,exports){
+},{"./editor-config":2,"./on":4,"./pack":5,"rx":11}],10:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};

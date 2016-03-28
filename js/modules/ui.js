@@ -7,7 +7,7 @@ var guideElement;
 var uiModule = {
   setListeners: function () {
     Array.prototype.forEach.call(document.querySelectorAll(".ev-btn"), elem => {
-      elem.addEventListener("click", uiModule[elem.dataset["listener"]]);
+      elem.addEventListener("click", (e) => void on.raise(elem.dataset["listener"], e));
     });
     Array.prototype.forEach.call(document.querySelector(".ev-input"), elem => {
       if (typeof elem.dataset["default"] !== "undefined") {
@@ -135,11 +135,29 @@ var uiModule = {
       }, 1000);
     }
   },
+  closeInspector: () => {
+    if (tempUI.isShowInspector) {
+      tempUI.isShowInspector = false;
+      let inspector = document.querySelector(".pla-inspector");
+      inspector.style.left = "100%";
+    }
+  },
   isTrayItemObj: (imageElem) => imageElem.parentElement.classList.contains("tray-list-obj"),
   changeActiveBlockUI: (blockName) => {
     // active な trayItem があるのであれば削除する。
     document.querySelector(".tray-active") && document.querySelector(".tray-active").classList.remove("tray-active");
     document.querySelector(`[data-block="${blockName}"]`).classList.add("tray-active");
+  },
+  showTrayFullscreen: () => {
+    uiModule.closeInspector();
+    let tray = document.querySelector(".pla-footer");
+    tray.style.height = "100%";
+    document.querySelector("#tray-fullscreen").textContent = "↓";
+  },
+  hideTrayFullscreen: () => {
+    let tray = document.querySelector(".pla-footer");
+    tray.style.height = "50px";
+    document.querySelector("#tray-fullscreen").textContent = "↑";
   }
 };
 module.exports = uiModule;

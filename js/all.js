@@ -147,6 +147,14 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     }
     ui.changeActiveBlockUI(blockName);
   });
+  on.on("clickedToggleFullscreen", function (event) {
+    if (!temp.ui.isFullscreenTray) {
+      ui.showTrayFullscreen();
+    } else {
+      ui.hideTrayFullscreen();
+    }
+    temp.ui.isFullscreenTray = !temp.ui.isFullscreenTray;
+  });
 }();
 
 },{"./canvas":1,"./editor-config":2,"./on":4,"./pack":5,"./stage":6,"./temp-datas":7,"./tray":8,"./ui":9}],4:[function(require,module,exports){
@@ -212,7 +220,8 @@ var datas = {
     isObjMode: false
   },
   ui: {
-    isShowInspector: false
+    isShowInspector: false,
+    isFullscreenTray: false
   }
 };
 module.exports = datas;
@@ -289,7 +298,9 @@ var guideElement;
 var uiModule = {
   setListeners: function setListeners() {
     Array.prototype.forEach.call(document.querySelectorAll(".ev-btn"), function (elem) {
-      elem.addEventListener("click", uiModule[elem.dataset["listener"]]);
+      elem.addEventListener("click", function (e) {
+        return void on.raise(elem.dataset["listener"], e);
+      });
     });
     Array.prototype.forEach.call(document.querySelector(".ev-input"), function (elem) {
       if (typeof elem.dataset["default"] !== "undefined") {
@@ -419,6 +430,13 @@ var uiModule = {
       })();
     }
   },
+  closeInspector: function closeInspector() {
+    if (_tempDatas.ui.isShowInspector) {
+      _tempDatas.ui.isShowInspector = false;
+      var inspector = document.querySelector(".pla-inspector");
+      inspector.style.left = "100%";
+    }
+  },
   isTrayItemObj: function isTrayItemObj(imageElem) {
     return imageElem.parentElement.classList.contains("tray-list-obj");
   },
@@ -426,6 +444,17 @@ var uiModule = {
     // active な trayItem があるのであれば削除する。
     document.querySelector(".tray-active") && document.querySelector(".tray-active").classList.remove("tray-active");
     document.querySelector("[data-block=\"" + blockName + "\"]").classList.add("tray-active");
+  },
+  showTrayFullscreen: function showTrayFullscreen() {
+    uiModule.closeInspector();
+    var tray = document.querySelector(".pla-footer");
+    tray.style.height = "100%";
+    document.querySelector("#tray-fullscreen").textContent = "↓";
+  },
+  hideTrayFullscreen: function hideTrayFullscreen() {
+    var tray = document.querySelector(".pla-footer");
+    tray.style.height = "50px";
+    document.querySelector("#tray-fullscreen").textContent = "↑";
   }
 };
 module.exports = uiModule;

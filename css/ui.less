@@ -20,6 +20,7 @@ footer.pla-footer {
   width: 100%;
   height: @footer-height;
   bottom: 0;
+  transition: height 0.5s ease 0s;
   .tray {
     margin: 0 @tray-margin;
     background-color: rgba(255,255,255,0.6);
@@ -103,7 +104,7 @@ footer.pla-footer {
   border-top-left-radius: 20px;
   padding: 5px 5px 5px 10px;
   box-sizing: border-box; // paddingをwidthに含む
-  transition: left 0.5s cubic-bezier(.01,.64,.43,2.12) 0s;
+  transition: left 0.5s ease 0s;
   &.pla-inspector-animate-showing {
     left: 80%;
   }

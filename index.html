@@ -35,9 +35,6 @@
               <button data-ins="io" class="pla-btn ins-show-btn">Import / Export</button>
             </li>
             <li>
-              <button data-ins="header-footer" class="pla-btn ins-show-btn">Header / Footer</button>
-            </li>
-            <li>
               <button data-ins="conv-old-file" class="pla-btn ins-show-btn">Convert old file</button>
             </li>
             <li>
@@ -56,13 +53,6 @@
           <div>
             <button id="conv" data-bl="convert" data-listener="clickConvertOldFile" class="pla-btn bl bl-top ev-btn"><i class="fa fa-exchange"></i></button>
           </div>
-        </div>
-      </div>
-      <div id="ins-header-footer" class="ins-article">
-        <h1>Header / Footer</h1>
-        <div class="ins-content">Header:<br>
-          <textarea id="io-header" data-default="" class="io-hf ta-no-resize ev-input"></textarea>Footer:<br>
-          <textarea id="io-footer" data-default="" class="io-hf ta-no-resize ev-input"></textarea>
         </div>
       </div>
       <div id="ins-stage-effect" class="ins-article">
@@ -92,7 +82,7 @@
     </div>
     <footer class="pla-footer">
       <div class="tray">
-        <button id="tray-fullscreen" data-listener="togglefullScreen" class="pla-btn ev-btn">↑</button>
+        <button id="tray-fullscreen" data-listener="clickedToggleFullscreen" class="pla-btn ev-btn">↑</button>
         <div class="tray-items">
           <div data-toolname="pencil" class="tray-list tray-list-tool tool-active"><i class="fa fa-pencil"></i></div>
           <div data-toolname="brush" class="tray-list tray-list-tool"><i class="fa fa-paint-brush"></i></div>

@@ -47,4 +47,12 @@ import * as tray from "./tray";
     }
     ui.changeActiveBlockUI(blockName);
   });
+  on.on("clickedToggleFullscreen", event => {
+    if (!temp.ui.isFullscreenTray) {
+      ui.showTrayFullscreen();
+    } else {
+      ui.hideTrayFullscreen();
+    }
+    temp.ui.isFullscreenTray = !temp.ui.isFullscreenTray;
+  });
 } ();

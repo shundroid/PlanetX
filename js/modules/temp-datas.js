@@ -5,7 +5,8 @@ var datas = {
     isObjMode: false
   },
   ui: {
-    isShowInspector: false
+    isShowInspector: false,
+    isFullscreenTray: false
   },
 };
 module.exports = datas;

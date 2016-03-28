@@ -17,6 +17,7 @@ footer.pla-footer {
   width: 100%;
   height: 50px;
   bottom: 0;
+  transition: height 0.5s ease 0s;
 }
 footer.pla-footer .tray {
   margin: 0 10px;
@@ -99,7 +100,7 @@ footer.pla-footer .tray #tray-fullscreen {
   border-top-left-radius: 20px;
   padding: 5px 5px 5px 10px;
   box-sizing: border-box;
-  transition: left 0.5s cubic-bezier(0.01, 0.64, 0.43, 2.12) 0s;
+  transition: left 0.5s ease 0s;
 }
 .pla-inspector.pla-inspector-animate-showing {
   left: 80%;

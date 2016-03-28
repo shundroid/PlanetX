@@ -128,13 +128,14 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
     ui.changeLoadingStatusUI("making DataUrl");
     temp.tray.dataUrls = tray.makeDataUrl(pack.blocks, pack.objs, config.grid);
     var defaultItem = pack.blocks[pack.editor.defaultBlock];
-    temp.tray.updateActiveBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName, config.grid);
+    temp.tray.activeBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName, config.grid);
     ui.hideLoadingUI();
     on.raise("ready", null);
   });
   on.on("clickInspectorShowButton", function (e) {
     ui.showInspector();
   });
+  on.on("clickedTrayItem", function (e) {});
 }();
 
 },{"./canvas":1,"./editor-config":2,"./on":4,"./pack":5,"./stage":6,"./temp-datas":7,"./tray":8,"./ui":9}],4:[function(require,module,exports){
@@ -201,7 +202,8 @@ module.exports = stage;
 var datas = {
   tray: {
     dataUrls: {},
-    activeBlock: null
+    activeBlock: null,
+    isObjMode: false
   },
   ui: {
     isShowInspector: false
@@ -217,7 +219,7 @@ var _pack = require("./pack");
 var _editorConfig = require("./editor-config");
 
 var trayModule = {
-  makeDataUrl: function makeDataUrl(blocks, objs, grid) {
+  makeDataUrls: function makeDataUrls(blocks, objs, grid) {
     var urls = {};
     var blockList = Object.keys(blocks);
     blockList.forEach(function (item) {
@@ -335,7 +337,7 @@ var uiModule = {
     var trayItem = document.createElement("div");
     trayItem.classList.add("tray-list", "tray-list-" + mode);
     trayItem.addEventListener("mousedown", function (e) {
-      return void on.raise("clickedTray", e);
+      return void on.raise("clickedTrayItem", e);
     });
     var trayItemThumbnail = document.createElement("img");
     trayItemThumbnail.src = (0, _pack.getPackPath)(_editorConfig.pack, packItem.filename);

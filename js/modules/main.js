@@ -26,13 +26,16 @@ import * as tray from "./tray";
   });
   on.on("initializedTray", () => {
     ui.changeLoadingStatusUI("making DataUrl");
-    temp.tray.dataUrls = tray.makeDataUrl(pack.blocks, pack.objs, config.grid);
+    temp.tray.dataUrls = tray.makeDataUrls(pack.blocks, pack.objs, config.grid);
     let defaultItem = pack.blocks[pack.editor.defaultBlock];
-    temp.tray.updateActiveBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName, config.grid);
+    temp.tray.activeBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName, config.grid);
     ui.hideLoadingUI();
     on.raise("ready", null);
   });
   on.on("clickInspectorShowButton", (e) => {
     ui.showInspector();
   });
+  on.on("clickedTrayItem", (e) => {
+    
+  })
 } ();

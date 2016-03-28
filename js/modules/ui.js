@@ -68,7 +68,7 @@ var uiModule = {
   makeTrayItem: (mode, packItem, blockName, onloadCallback) => {
     let trayItem = document.createElement("div");
     trayItem.classList.add("tray-list", `tray-list-${mode}`);
-    trayItem.addEventListener("mousedown", e => void on.raise("clickedTray", e));
+    trayItem.addEventListener("mousedown", e => void on.raise("clickedTrayItem", e));
     let trayItemThumbnail = document.createElement("img");
     trayItemThumbnail.src = getPackPath(packName, packItem.filename);
     trayItemThumbnail.alt = packItem.name;

@@ -2,7 +2,7 @@ import {getPackPath} from "./pack";
 import {pack as packName} from "./editor-config";
 
 var trayModule = {
-  makeDataUrl: function (blocks, objs, grid) {
+  makeDataUrls: function (blocks, objs, grid) {
     let urls = {};
     let blockList = Object.keys(blocks);
     blockList.forEach(item => {

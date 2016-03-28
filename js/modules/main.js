@@ -34,6 +34,5 @@ import * as tray from "./tray";
   });
   on.on("clickInspectorShowButton", (e) => {
     ui.showInspector();
-    temp.ui.isShowInspector = true;
   });
 } ();

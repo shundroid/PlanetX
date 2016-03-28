@@ -134,7 +134,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
   });
   on.on("clickInspectorShowButton", function (e) {
     ui.showInspector();
-    temp.ui.isShowInspector = true;
   });
 }();
 

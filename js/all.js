@@ -96,11 +96,15 @@ var _canvas = require("./canvas");
 
 var canvas = _interopRequireWildcard(_canvas);
 
-var _rx = require("rx");
+var _ui = require("./ui");
 
-var _rx2 = _interopRequireDefault(_rx);
+var ui = _interopRequireWildcard(_ui);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _pack = require("./pack");
+
+var _tray = require("./tray");
+
+var tray = _interopRequireWildcard(_tray);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -109,160 +113,33 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
   document.addEventListener("DOMContentLoaded", function () {
     canvas.initialize();
-    loadPack(config.pack).then(function (packObject) {
+    (0, _pack.loadPack)(config.pack).then(function (packObject) {
       pack = packObject;
       stage.skyboxes.push(pack.editor.defaultSkybox);
-      setEditorBackground(getPackPath(config.pack, pack.skyboxes[pack.editor.defaultSkybox].filename));
+      ui.setEditorBackground((0, _pack.getPackPath)(config.pack, pack.skyboxes[pack.editor.defaultSkybox].filename));
       on.raise("initializedPack", null);
-      initilizeTray();
+      ui.initilizeTray(pack.blocks, pack.objs, config.pack);
     });
   });
   on.on("initializedTray", function () {
-    changeLoadingStatusUI("making DataUrl");
-    temp.tray.dataUrls = makeDataUrl();
+    ui.changeLoadingStatusUI("making DataUrl");
+    temp.tray.dataUrls = tray.makeDataUrl(pack.blocks, pack.objs, config.pack, config.grid);
     var defaultItem = pack.blocks[pack.editor.defaultBlock];
-    updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName);
-    hideLoadingUI();
+    temp.tray.updateActiveBlock = tray.updateActiveBlock(pack.editor.defaultBlock, defaultItem.filename, defaultItem.bName, config.grid);
+    ui.hideLoadingUI();
     on.raise("ready", null);
   });
 
   // stage 関係
 
   // tray 関係
-  function makeDataUrl() {
-    var urls = {};
-    var blockList = Object.keys(pack.blocks);
-    blockList.forEach(function (item) {
-      urls[item] = image(getPackPath(config.pack, pack.blocks[item].filename), true, { x: config.grid, y: config.grid }).src;
-    });
-    var objList = Object.keys(pack.objs);
-    objList.forEach(function (itemName) {
-      var item = pack.objs[itemName];
-      urls[itemName] = image(getPackPath(config.pack, item.filename), true, { x: item.width, y: item.height });
-    });
-    return urls;
-  }
-  function image(url, isNoJaggy, size) {
-    var a = new Image();
-    a.src = url;
-    if (isNoJaggy) {
-      var width = (a.width + size.x) / 2;
-      var height = (a.height + size.y) / 2;
-      var newC = document.createElement("canvas");
-      newC.width = width;
-      newC.height = height;
-      var ctx = newC.getContext("2d");
-      ctx.drawImage(a, 0, 0, width, height);
-      return image(newC.toDataURL("image/png"));
-    } else {
-      return a;
-    }
-  }
-  function updateActiveBlock(blockName, fileName, label, width, height) {
-    var w = width || config.grid * 2;
-    var h = height || config.grid * 2;
-    temp.tray.activeBlock = { blockName: blockName, fileName: fileName, label: label, w: w, h: h };
-  }
 
   // ui 関係
-  function setEditorBackground(path) {
-    document.body.style.backgroundImage = "url(" + path + ")";
-  }
-  function changeLoadingStatusUI(status) {
-    document.querySelector(".loading").innerHTML = "Loading...<br />" + status;
-  }
-  function hideLoadingUI() {
-    document.querySelector(".loading").classList.add("loading-closing");
-    setTimeout(function () {
-      document.querySelector(".loading").style.display = "none";
-    }, 1000);
-  }
-  function initilizeTray() {
-    getInitializeTrayObserve().subscribe(function (conf) {
-      changeLoadingStatusUI("Loading Tray(" + conf.mode + ") : " + conf.numerator + " / " + conf.denominator);
-      document.querySelector(".tray-items").appendChild(conf.item);
-    }, function (err) {
-      console.log("Tray Observe Error: " + err);
-    }, function () {
-      on.raise("initializedTray", null);
-    });
-  }
-  on.on("initializedPack", function () {
-    // ui での pack の配置方法を決める
-    if (typeof pack.editor.skyboxMode !== "undefined") {
-      if (pack.editor.skyboxMode === "repeat") {
-        document.body.style.backgroundRepeat = "repeat";
-        if (typeof pack.editor.skyboxSize !== "undefined") {
-          document.body.style.backgroundSize = pack.editor.skyboxSize;
-        } else {
-          document.body.style.backgroundSize = "auto";
-        }
-      }
-    }
-  });
-  function getInitializeTrayObserve() {
-    return _rx2.default.Observable.create(function (observer) {
-      var blockList = Object.keys(pack.blocks);
-      var objList = Object.keys(pack.objs);
-      var isModeObj = false;
-      var appendTrayItem = function appendTrayItem(i) {
-        var item = isModeObj ? objList[i] : blockList[i];
-        var trayItem = document.createElement("div");
-        if (!isModeObj) {
-          trayItem.classList.add("tray-list", "tray-list-block");
-        } else {
-          trayItem.classList.add("tray-list", "tray-list-obj");
-        }
-        trayItem.addEventListener("mousedown", function (e) {
-          return void on.raise("clickedTray", e);
-        });
-        var trayItemThumbnail = document.createElement("img");
-        var packItem = isModeObj ? pack.objs[item] : pack.blocks[item];
-        trayItemThumbnail.src = getPackPath(config.pack, packItem.filename);
-        trayItemThumbnail.alt = packItem.bName;
-        trayItemThumbnail.dataset["block"] = item;
-        trayItemThumbnail.onload = function () {
-          if (isModeObj) {
-            trayItem.style.width = trayItemThumbnail.style.width = pack.objs[item].width / (pack.objs[item].height / 50) + "px";
-            trayItem.style.height = trayItemThumbnail.style.height = "50px";
-            trayItem.appendChild(trayItemThumbnail);
-          }
-          if (isModeObj && i === objList.length - 1) {
-            observer.onCompleted();
-          } else if (!isModeObj && i === blockList.length - 1) {
-            isModeObj = true;
-            appendTrayItem(0);
-          } else {
-            var maxLength = isModeObj ? objList.length - 1 : blockList.length - 1;
-            observer.onNext({ numerator: i, denominator: maxLength, mode: isModeObj ? "obj" : "block", item: trayItem });
-            appendTrayItem(i + 1);
-          }
-        };
-        trayItem.appendChild(trayItemThumbnail);
-      };
-      appendTrayItem(0);
-    });
-  }
-
+  on.on("initializedPack", ui.setEditorBackgroundMode);
   // pack 関係
-  function loadPack(packName) {
-    return new Promise(function (resolve) {
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", getPackPath(packName, "packinfo.json"));
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          resolve(JSON.parse(xhr.responseText));
-        }
-      };
-      xhr.send(null);
-    });
-  }
-  function getPackPath(packName, file) {
-    return "pack/" + packName + "/" + file;
-  }
 }();
 
-},{"./canvas":1,"./editor-config":2,"./on":4,"./stage":5,"./temp-datas":6,"rx":8}],4:[function(require,module,exports){
+},{"./canvas":1,"./editor-config":2,"./on":4,"./pack":5,"./stage":6,"./temp-datas":7,"./tray":8,"./ui":9}],4:[function(require,module,exports){
 "use strict";
 
 var _arguments = arguments;
@@ -293,12 +170,34 @@ module.exports = eventer;
 },{}],5:[function(require,module,exports){
 "use strict";
 
+var packModule = {
+  loadPack: function loadPack(packName) {
+    return new Promise(function (resolve) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", packModule.getPackPath(packName, "packinfo.json"));
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          resolve(JSON.parse(xhr.responseText));
+        }
+      };
+      xhr.send(null);
+    });
+  },
+  getPackPath: function getPackPath(packName, file) {
+    return "pack/" + packName + "/" + file;
+  }
+};
+module.exports = packModule;
+
+},{}],6:[function(require,module,exports){
+"use strict";
+
 var stage = {};
 stage.skyboxes = [];
 
 module.exports = stage;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 var datas = {
@@ -309,7 +208,161 @@ var datas = {
 };
 module.exports = datas;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
+"use strict";
+
+var _pack = require("./pack");
+
+var trayModule = {
+  makeDataUrl: function makeDataUrl(blocks, objs, packName, grid) {
+    var urls = {};
+    var blockList = Object.keys(blocks);
+    blockList.forEach(function (item) {
+      urls[item] = image((0, _pack.getPackPath)(packName, blocks[item].filename), true, { x: grid, y: grid }).src;
+    });
+    var objList = Object.keys(objs);
+    objList.forEach(function (itemName) {
+      var item = objs[itemName];
+      urls[itemName] = image((0, _pack.getPackPath)(packName, item.filename), true, { x: item.width, y: item.height });
+    });
+    return urls;
+  },
+  updateActiveBlock: function updateActiveBlock(blockName, fileName, label, width, height, grid) {
+    var w = width || grid * 2;
+    var h = height || grid * 2;
+    return { blockName: blockName, fileName: fileName, label: label, w: w, h: h };
+  }
+};
+function image(url, isNoJaggy, size) {
+  var a = new Image();
+  a.src = url;
+  if (isNoJaggy) {
+    var width = (a.width + size.x) / 2;
+    var height = (a.height + size.y) / 2;
+    var newC = document.createElement("canvas");
+    newC.width = width;
+    newC.height = height;
+    var ctx = newC.getContext("2d");
+    ctx.drawImage(a, 0, 0, width, height);
+    return image(newC.toDataURL("image/png"));
+  } else {
+    return a;
+  }
+}
+
+module.exports = trayModule;
+
+},{"./pack":5}],9:[function(require,module,exports){
+"use strict";
+
+var _rx = require("rx");
+
+var _rx2 = _interopRequireDefault(_rx);
+
+var _pack = require("./pack");
+
+var _on = require("./on");
+
+var on = _interopRequireWildcard(_on);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var uiModule = {
+  setListeners: function setListeners() {
+    Array.prototype.forEach.call(document.querySelectorAll(".ev-btn"), function (elem) {
+      elem.addEventListener("click", uiModule[elem.dataset["listener"]]);
+    });
+    Array.prototype.forEach.call(document.querySelector(".ev-input"), function (elem) {
+      if (typeof elem.dataset["default"] !== "undefined") {
+        elem.value = elem.dataset["default"];
+      }
+      if (typeof elem.dataset["change"] !== "undefined") {
+        elem.addEventListener("change", uiModule[elem.dataset["change"]]);
+      }
+    });
+  },
+  setEditorBackground: function setEditorBackground(path) {
+    document.body.style.backgroundImage = "url(" + path + ")";
+  },
+  changeLoadingStatusUI: function changeLoadingStatusUI(status) {
+    document.querySelector(".loading").innerHTML = "Loading...<br />" + status;
+  },
+  hideLoadingUI: function hideLoadingUI() {
+    document.querySelector(".loading").classList.add("loading-closing");
+    setTimeout(function () {
+      document.querySelector(".loading").style.display = "none";
+    }, 1000);
+  },
+  initilizeTray: function initilizeTray(blocks, objs, packName) {
+    _rx2.default.Observable.create(function (observer) {
+      var blockList = Object.keys(blocks);
+      var objList = Object.keys(objs);
+      var isModeObj = false;
+      var appendTrayItem = function appendTrayItem(i) {
+        var item = isModeObj ? objList[i] : blockList[i];
+        var trayItem = document.createElement("div");
+        if (!isModeObj) {
+          trayItem.classList.add("tray-list", "tray-list-block");
+        } else {
+          trayItem.classList.add("tray-list", "tray-list-obj");
+        }
+        trayItem.addEventListener("mousedown", function (e) {
+          return void on.raise("clickedTray", e);
+        });
+        var trayItemThumbnail = document.createElement("img");
+        var packItem = isModeObj ? objs[item] : blocks[item];
+        trayItemThumbnail.src = (0, _pack.getPackPath)(packName, packItem.filename);
+        trayItemThumbnail.alt = packItem.bName;
+        trayItemThumbnail.dataset["block"] = item;
+        trayItemThumbnail.onload = function () {
+          if (isModeObj) {
+            trayItem.style.width = trayItemThumbnail.style.width = objs[item].width / (objs[item].height / 50) + "px";
+            trayItem.style.height = trayItemThumbnail.style.height = "50px";
+            trayItem.appendChild(trayItemThumbnail);
+          }
+          if (isModeObj && i === objList.length - 1) {
+            observer.onCompleted();
+          } else if (!isModeObj && i === blockList.length - 1) {
+            isModeObj = true;
+            appendTrayItem(0);
+          } else {
+            var maxLength = isModeObj ? objList.length - 1 : blockList.length - 1;
+            observer.onNext({ numerator: i, denominator: maxLength, mode: isModeObj ? "obj" : "block", item: trayItem });
+            appendTrayItem(i + 1);
+          }
+        };
+        trayItem.appendChild(trayItemThumbnail);
+      };
+      appendTrayItem(0);
+    }).subscribe(function (conf) {
+      uiModule.changeLoadingStatusUI("Loading Tray(" + conf.mode + ") : " + conf.numerator + " / " + conf.denominator);
+      document.querySelector(".tray-items").appendChild(conf.item);
+    }, function (err) {
+      console.log("Tray Observe Error: " + err);
+    }, function () {
+      on.raise("initializedTray", null);
+    });
+  },
+  setEditorBackgroundMode: function setEditorBackgroundMode(editor) {
+    // ui での pack の配置方法を決める
+    // editor = pack.editor
+    if (typeof editor.skyboxMode !== "undefined") {
+      if (editor.skyboxMode === "repeat") {
+        document.body.style.backgroundRepeat = "repeat";
+        if (typeof editor.skyboxSize !== "undefined") {
+          document.body.style.backgroundSize = editor.skyboxSize;
+        } else {
+          document.body.style.backgroundSize = "auto";
+        }
+      }
+    }
+  }
+};
+module.exports = uiModule;
+
+},{"./on":4,"./pack":5,"rx":11}],10:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -402,7 +455,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],8:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function (process,global){
 // Copyright (c) Microsoft, All rights reserved. See License.txt in the project root for license information.
 
@@ -12794,4 +12847,4 @@ var ReactiveTest = Rx.ReactiveTest = {
 }.call(this));
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":7}]},{},[3]);
+},{"_process":10}]},{},[3]);

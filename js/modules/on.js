@@ -15,7 +15,7 @@ eventer.raise = function (event) {
   let args = Array.prototype.slice.call(arguments, 1);
   if (listeners[event] instanceof Array) {
     listeners[event].forEach(listener => {
-      listener.apply(this, args);
+      listener.apply({eventName: event}, args);
     });
   }
 };

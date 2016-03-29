@@ -1,6 +1,11 @@
 var eventer = {};
 var listeners = {};
 eventer.on = (event, fn) => {
+  if (event instanceof Array) {
+    event.forEach(item => {
+      eventer.on(item, fn);
+    });
+  }
   if (!(listeners[event] instanceof Array)) {
     listeners[event] = [];
   }

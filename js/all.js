@@ -26,17 +26,17 @@ var canvasModule = {
     // ui.setupCanvas
     canvasElem = document.getElementById("pla-canvas");
     canvasElem.addEventListener("mousedown", function (e) {
-      return void on.raise("mousedownCanvas");
+      return void on.raise("mousedownCanvas", e);
     });
     canvasElem.addEventListener("mousemove", function (e) {
       if (e.buttons === 1) {
-        on.raise("mousemoveCanvas");
+        on.raise("mousemoveCanvas", e);
       } else {
-        on.raise("hoverCanvas");
+        on.raise("hoverCanvas", e);
       }
     });
     canvasElem.addEventListener("mouseup", function (e) {
-      return void on.raise("mouseupCanvas");
+      return void on.raise("mouseupCanvas", e);
     });
     window.addEventListener("resize", canvasModule.fitToWindow);
   },
@@ -170,6 +170,16 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
       temp.tray.activeToolName = toolName;
     }
   });
+  on.on(["mousedownCanvas", "mousemoveCanvas", "mouseupCanvas", "hoverCanvas"], function (event) {
+    var targetGridPos = stage.getGridPosFromMousePos({ x: event.clientX, y: event.clientY });
+    var gridDetails = stage.getGridDetails(targetGridPos.x, targetGridPos.y);
+    var prefab = stage.getPrefabFromActiveBlock(temp.tray.activeBlock, targetGridPos.x, targetGridPos.y);
+    ui.hideGuide();
+    switch (temp.tray.activeToolName) {
+      case "pencil":
+        if (this.eventName === "mousedownCanvas") {}
+    }
+  });
 }();
 
 },{"./canvas":1,"./editor-config":2,"./on":4,"./pack":5,"./stage":6,"./temp-datas":7,"./tray":8,"./ui":9}],4:[function(require,module,exports){
@@ -178,18 +188,21 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 var eventer = {};
 var listeners = {};
 eventer.on = function (event, fn) {
+  if (event instanceof Array) {
+    event.forEach(function (item) {
+      eventer.on(item, fn);
+    });
+  }
   if (!(listeners[event] instanceof Array)) {
     listeners[event] = [];
   }
   listeners[event].push(fn);
 };
 eventer.raise = function (event) {
-  var _this = this;
-
   var args = Array.prototype.slice.call(arguments, 1);
   if (listeners[event] instanceof Array) {
     listeners[event].forEach(function (listener) {
-      listener.apply(_this, args);
+      listener.apply({ eventName: event }, args);
     });
   }
 };
@@ -220,12 +233,34 @@ module.exports = packModule;
 },{}],6:[function(require,module,exports){
 "use strict";
 
+var _editorConfig = require("./editor-config");
+
+var config = _interopRequireWildcard(_editorConfig);
+
+var _tempDatas = require("./temp-datas");
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 var stage = {};
 stage.skyboxes = [];
-
+stage.getGridPosFromMousePos = function (mousePos) {
+  // absolute ・・ scroll の値を引いた、stage の絶対的な座標
+  var absoluteX = mousePos.x - _tempDatas.ui.scrollX;
+  var absoluteY = mousePos.y - _tempDatas.ui.scrollY;
+  var cleanX = absoluteX - absoluteX % config.grid;
+  var cleanY = absoluteY - absoluteY % config.grid;
+  return { x: cleanX / config.grid, y: cleanY / config.grid };
+};
+stage.toGridDistance = function (displayDistance) {
+  return displayDistance / config.grid;
+};
+stage.getPrefabFromActiveBlock = function (activeBlock, gridX, gridY) {
+  return { x: gridX, y: gridY, fileName: activeBlock.fileName, blockName: activeBlock.blockName, width: stage.toGridDistance(activeBlock.width), height: stage.toGridDistance(activeBlock.height) };
+};
+stage.getGridDetails = function (gridPos) {};
 module.exports = stage;
 
-},{}],7:[function(require,module,exports){
+},{"./editor-config":2,"./temp-datas":7}],7:[function(require,module,exports){
 "use strict";
 
 var datas = {
@@ -237,7 +272,12 @@ var datas = {
   },
   ui: {
     isShowInspector: false,
-    isFullscreenTray: false
+    isFullscreenTray: false,
+    scrollX: 0,
+    scrollY: 0
+  },
+  stage: {
+    items: []
   }
 };
 module.exports = datas;

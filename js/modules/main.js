@@ -69,4 +69,16 @@ import * as tray from "./tray";
       temp.tray.activeToolName = toolName;
     }
   });
+  on.on(["mousedownCanvas", "mousemoveCanvas", "mouseupCanvas", "hoverCanvas"], function (event) {
+    let targetGridPos = stage.getGridPosFromMousePos({ x: event.clientX, y: event.clientY });
+    let gridDetails = stage.getGridDetails(targetGridPos.x, targetGridPos.y);
+    let prefab = stage.getPrefabFromActiveBlock(temp.tray.activeBlock, targetGridPos.x, targetGridPos.y);
+    ui.hideGuide();
+    switch (temp.tray.activeToolName) {
+      case "pencil":
+        if (this.eventName === "mousedownCanvas") {
+          
+        }
+    }
+  });
 } ();

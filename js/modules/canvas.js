@@ -18,15 +18,15 @@ var canvasModule = {
   attachListeners: function() {
     // ui.setupCanvas
     canvasElem = document.getElementById("pla-canvas");
-    canvasElem.addEventListener("mousedown", e => void on.raise("mousedownCanvas"));
+    canvasElem.addEventListener("mousedown", e => void on.raise("mousedownCanvas", e));
     canvasElem.addEventListener("mousemove", (e) => {
       if (e.buttons === 1) {
-        on.raise("mousemoveCanvas");
+        on.raise("mousemoveCanvas", e);
       } else {
-        on.raise("hoverCanvas");
+        on.raise("hoverCanvas", e);
       }
     });
-    canvasElem.addEventListener("mouseup", e => void on.raise("mouseupCanvas"));
+    canvasElem.addEventListener("mouseup", e => void on.raise("mouseupCanvas", e));
     window.addEventListener("resize", canvasModule.fitToWindow);
   },
   disableSmoothing: function() {

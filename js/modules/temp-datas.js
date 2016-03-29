@@ -7,7 +7,14 @@ var datas = {
   },
   ui: {
     isShowInspector: false,
-    isFullscreenTray: false
+    isFullscreenTray: false,
+    scrollX: 0,
+    scrollY: 0
   },
+  stage: {
+    items: [
+      
+    ]
+  }
 };
 module.exports = datas;
